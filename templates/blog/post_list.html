@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="blog">
+    <div class="blog__header">
+        <div class="container">
+            <h1 class="blog__title">Блог</h1>
+            <p class="blog__subtitle">Полезные статьи о проверке брокеров, защите инвесторов и юридических консультациях</p>
+        </div>
+    </div>
+
+    <div class="blog__content">
+        <div class="container">
+            <div class="blog__layout">
+                <!-- Основной контент -->
+                <div class="blog__main">
+                    {% if posts %}
+                        <div class="blog__posts">
+                            {% for post in posts %}
+                            <article class="blog-post">
+                                {% if post.featured_image %}
+                                <div class="blog-post__image">
+                                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                                </div>
+                                {% endif %}
+                                <div class="blog-post__content">
+                                    <div class="blog-post__meta">
+                                        <span class="blog-post__date">{{ post.created_at|date:"d.m.Y" }}</span>
+                                        {% if post.category %}
+                                        <a href="{% url 'blog:category' post.category.slug %}" class="blog-post__category">
+                                            {{ post.category.name }}
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                    <h2 class="blog-post__title">
+                                        <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+                                    </h2>
+                                    <p class="blog-post__excerpt">{{ post.excerpt }}</p>
+                                    <div class="blog-post__footer">
+                                        <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn--primary">
+                                            Читать далее
+                                        </a>
+                                        {% if post.tags.all %}
+                                        <div class="blog-post__tags">
+                                            {% for tag in post.tags.all %}
+                                            <a href="{% url 'blog:tag' tag.slug %}" class="blog-post__tag">
+                                                #{{ tag.name }}
+                                            </a>
+                                            {% endfor %}
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </article>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Пагинация -->
+                        {% if is_paginated %}
+                        <div class="pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page=1" class="pagination__link">&laquo; Первая</a>
+                                <a href="?page={{ page_obj.previous_page_number }}" class="pagination__link">Предыдущая</a>
+                            {% endif %}
+
+                            <span class="pagination__current">
+                                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                            </span>
+
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}" class="pagination__link">Следующая</a>
+                                <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination__link">Последняя &raquo;</a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="blog__empty">
+                            <p>Пока что нет статей. Загляните позже!</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Сайдбар -->
+                <aside class="blog__sidebar">
+                    {% include "includes/sidebar_form.html" %}
+                    <!-- Поиск -->
+                    <div class="blog-sidebar__widget">
+                        <h3 class="blog-sidebar__title">Поиск</h3>
+                        <form method="get" action="{% url 'blog:search' %}" class="search-form">
+                            <input type="text" name="q" placeholder="Поиск по статьям..." 
+                                   value="{{ request.GET.q }}" class="search-form__input">
+                            <button type="submit" class="search-form__btn">Поиск</button>
+                        </form>
+                    </div>
+
+                    <!-- Категории -->
+                    {% if categories %}
+                    <div class="blog-sidebar__widget">
+                        <h3 class="blog-sidebar__title">Категории</h3>
+                        <ul class="blog-sidebar__list">
+                            {% for category in categories %}
+                            <li class="blog-sidebar__item">
+                                <a href="{% url 'blog:category' category.slug %}" class="blog-sidebar__link">
+                                    {{ category.name }}
+                                </a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- Популярные теги -->
+                    {% if tags %}
+                    <div class="blog-sidebar__widget">
+                        <h3 class="blog-sidebar__title">Популярные теги</h3>
+                        <div class="blog-sidebar__tags">
+                            {% for tag in tags %}
+                            <a href="{% url 'blog:tag' tag.slug %}" class="blog-sidebar__tag">
+                                #{{ tag.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </aside>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

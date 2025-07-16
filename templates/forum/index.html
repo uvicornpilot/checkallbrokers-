@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta_title %}{{ forum_title|default:"Форум Broker Control - Обсуждение брокеров и юридические консультации" }}{% endblock %}
+{% block meta_description %}{{ forum_description|default:"Присоединяйтесь к обсуждению вопросов, связанных с брокерами. Получайте консультации и делитесь опытом." }}{% endblock %}
+{% block meta_keywords %}{{ forum_keywords|default:"форум, брокер, обсуждение, консультации, юридическая помощь, отзывы" }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Форум Broker Control</h1>
+                <p class="hero-subtitle">Обсуждайте вопросы, связанные с брокерами, и получайте юридические консультации</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Forum Categories Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="services__grid">
+                    {% for category in categories %}
+                    <div class="service-card">
+                        <div class="service-card__icon">
+                            {{ category.icon|default:"💬" }}
+                        </div>
+                        <h3 class="service-card__title">
+                            <a href="{% url 'forum:category_detail' category.slug %}" class="text-decoration-none">
+                                {{ category.name }}
+                            </a>
+                        </h3>
+                        <p class="service-card__description">
+                            {{ category.description|default:"Обсуждение тем категории" }}
+                        </p>
+                        <div class="service-card__meta">
+                            <small class="text-muted">
+                                {{ category.topics_count }} тем • {{ category.posts_count }} сообщений
+                            </small>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12 text-center">
+                        <div class="blog__empty">
+                            <p>Категории форума еще не созданы</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Topics -->
+        {% if recent_topics %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="section-title">Последние темы</h2>
+                <div class="blog__grid">
+                    {% for topic in recent_topics %}
+                    <article class="blog-post">
+                        <div class="blog-post__content">
+                            <div class="blog-post__meta">
+                                <span class="blog-post__category">
+                                    <a href="{% url 'forum:category_detail' topic.category.slug %}">
+                                        {{ topic.category.name }}
+                                    </a>
+                                </span>
+                                <span class="blog-post__date">{{ topic.created_at|date:"d.m.Y" }}</span>
+                            </div>
+                            <h3 class="blog-post__title">
+                                <a href="{% url 'forum:topic_detail' topic.slug %}">
+                                    {{ topic.title }}
+                                </a>
+                            </h3>
+                            <div class="blog-post__footer">
+                                <small class="text-muted">
+                                    Автор: {{ topic.author.username }} • 
+                                    {{ topic.posts.count }} комментариев • 
+                                    {{ topic.views_count }} просмотров
+                                </small>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Popular Topics -->
+        {% if popular_topics %}
+        <div class="row mt-5">
+            <div class="col-12">
+                <h2 class="section-title">Популярные темы</h2>
+                <div class="blog__grid">
+                    {% for topic in popular_topics %}
+                    <article class="blog-post">
+                        <div class="blog-post__content">
+                            <div class="blog-post__meta">
+                                <span class="blog-post__category">
+                                    <a href="{% url 'forum:category_detail' topic.category.slug %}">
+                                        {{ topic.category.name }}
+                                    </a>
+                                </span>
+                                <span class="blog-post__date">{{ topic.created_at|date:"d.m.Y" }}</span>
+                            </div>
+                            <h3 class="blog-post__title">
+                                <a href="{% url 'forum:topic_detail' topic.slug %}">
+                                    {{ topic.title }}
+                                </a>
+                            </h3>
+                            <div class="blog-post__footer">
+                                <small class="text-muted">
+                                    Автор: {{ topic.author.username }} • 
+                                    {{ topic.posts.count }} комментариев • 
+                                    {{ topic.views_count }} просмотров
+                                </small>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Call to Action -->
+        <div class="row mt-5">
+            <div class="col-12 text-center">
+                <div class="contact-cta">
+                    <h3 class="contact-cta__title">Есть вопросы о брокерах?</h3>
+                    <p class="contact-cta__description">
+                        Присоединяйтесь к обсуждению или получите персональную консультацию
+                    </p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="#" onclick="openConsultationForm(); return false;" class="btn btn--primary">
+                            Получить консультацию
+                        </a>
+                        <a href="https://t.me/brokercontrol" target="_blank" class="btn btn--secondary">
+                            Telegram чат
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %} 

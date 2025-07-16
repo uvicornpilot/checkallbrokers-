@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block meta_title %}{{ topic.meta_title|default:topic.title }} - Форум Broker Control{% endblock %}
+{% block meta_description %}{{ topic.meta_description|default:"Обсуждение темы: "|add:topic.title }}{% endblock %}
+{% block meta_keywords %}{{ topic.meta_keywords|default:"форум, брокер, обсуждение, "|add:topic.category.name }}{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <nav aria-label="breadcrumb" class="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'forum:index' %}">Форум</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'forum:category_detail' topic.category.slug %}">
+                                {{ topic.category.name }}
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item active">{{ topic.title|truncatechars:50 }}</li>
+                    </ol>
+                </nav>
+                <h1 class="hero-title">{{ topic.title }}</h1>
+                <p class="hero-subtitle">
+                    Автор: {{ topic.author.username }} • 
+                    Создано: {{ topic.created_at|date:"d.m.Y H:i" }} • 
+                    Просмотров: {{ topic.views_count }}
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Post Section -->
+<section class="about-section">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Main Post -->
+                <div class="main-post mb-5">
+                    <div class="main-post__content">
+                        {{ topic.content|safe }}
+                    </div>
+                    <div class="main-post__meta">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="author-info">
+                                <span class="author-name">{{ topic.author.username }}</span>
+                                <span class="post-date">{{ topic.created_at|date:"d.m.Y H:i" }}</span>
+                            </div>
+                            <button class="btn btn--primary btn-sm" data-bs-toggle="modal" data-bs-target="#replyModal">
+                                <i class="fas fa-reply me-1"></i>
+                                Ответить
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Posts -->
+                {% if pending_posts %}
+                <div class="pending-posts mb-4">
+                    <h4 class="section-subtitle text-warning">
+                        <i class="fas fa-clock me-2"></i>
+                        Ожидают модерации
+                    </h4>
+                    {% for post in pending_posts %}
+                    <div class="comment-card comment-card--pending">
+                        <div class="comment-card__content">
+                            {{ post.content|safe }}
+                        </div>
+                        <div class="comment-card__meta">
+                            <span class="comment-author">{{ post.get_author_name }}</span>
+                            <span class="comment-date">{{ post.created_at|date:"d.m.Y H:i" }}</span>
+                            <span class="badge bg-warning">Ожидает модерации</span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Comments Section -->
+                <div class="comments-section">
+                    <h4 class="section-subtitle">
+                        <i class="fas fa-comments me-2"></i>
+                        Комментарии ({{ posts.paginator.count }})
+                    </h4>
+                    
+                    {% if posts %}
+                        {% for post in posts %}
+                        <div class="comment-card" id="post-{{ post.id }}">
+                            <div class="comment-card__content">
+                                {{ post.content|safe }}
+                            </div>
+                            <div class="comment-card__meta">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="comment-info">
+                                        <span class="comment-author">
+                                            {{ post.get_author_name }}
+                                            {% if post.author and post.author.is_staff %}
+                                            <span class="badge bg-danger ms-1">Админ</span>
+                                            {% endif %}
+                                        </span>
+                                        <span class="comment-date">{{ post.created_at|date:"d.m.Y H:i" }}</span>
+                                        {% if post.is_modified %}
+                                        <span class="text-muted small">ред.</span>
+                                        {% endif %}
+                                    </div>
+                                    <div class="comment-actions">
+                                        <button class="btn btn-sm btn--secondary">
+                                            <i class="fas fa-reply"></i>
+                                        </button>
+                                        {% if user.is_staff or user == post.author %}
+                                        <button class="btn btn-sm btn--secondary">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Replies -->
+                            {% if post.replies.all %}
+                            <div class="comment-replies">
+                                {% for reply in post.replies.all %}
+                                    {% if reply.is_approved %}
+                                    <div class="reply-card">
+                                        <div class="reply-card__content">
+                                            {{ reply.content|safe }}
+                                        </div>
+                                        <div class="reply-card__meta">
+                                            <span class="reply-author">{{ reply.get_author_name }}</span>
+                                            <span class="reply-date">{{ reply.created_at|date:"d.m.Y H:i" }}</span>
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+
+                        <!-- Pagination -->
+                        {% if posts.has_other_pages %}
+                        <nav aria-label="Навигация по комментариям" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                {% if posts.has_previous %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts.previous_page_number }}">Предыдущая</a>
+                                </li>
+                                {% endif %}
+
+                                {% for num in posts.paginator.page_range %}
+                                {% if posts.number == num %}
+                                <li class="page-item active">
+                                    <span class="page-link">{{ num }}</span>
+                                </li>
+                                {% elif num > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% endif %}
+                                {% endfor %}
+
+                                {% if posts.has_next %}
+                                <li class="page-item">
+                                    <a class="page-link" href="?page={{ posts.next_page_number }}">Следующая</a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    {% else %}
+                        <div class="empty-comments">
+                            <p>Пока нет комментариев. Будьте первым!</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reply Modal -->
+<div class="modal fade" id="replyModal" tabindex="-1" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyModalLabel">Ответить в тему</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'forum:post_create' topic.slug %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    {% if not user.is_authenticated %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="anonymous_name" class="form-label">Ваше имя *</label>
+                            <input type="text" class="form-control" id="anonymous_name" name="anonymous_name" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="anonymous_email" class="form-label">Ваш email *</label>
+                            <input type="email" class="form-control" id="anonymous_email" name="anonymous_email" required>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label for="content" class="form-label">Ваш ответ:</label>
+                        <textarea class="form-control" id="content" name="content" rows="6" required></textarea>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Ваш комментарий будет опубликован после проверки модератором
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Отправить на модерацию</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Reply to Comment Modal -->
+<div class="modal fade" id="replyToCommentModal" tabindex="-1" aria-labelledby="replyToCommentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replyToCommentModalLabel">Ответить на комментарий</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="post" action="{% url 'forum:post_create' topic.slug %}">
+                {% csrf_token %}
+                <input type="hidden" id="parent_post_id" name="parent_id" value="">
+                <div class="modal-body">
+                    {% if not user.is_authenticated %}
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="reply_anonymous_name" class="form-label">Ваше имя *</label>
+                            <input type="text" id="reply_anonymous_name" name="anonymous_name" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="reply_anonymous_email" class="form-label">Ваш email *</label>
+                            <input type="email" id="reply_anonymous_email" name="anonymous_email" class="form-control" required>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="mb-3">
+                        <label for="reply_content" class="form-label">Ваш ответ:</label>
+                        <textarea id="reply_content" name="content" class="form-control" rows="6" required></textarea>
+                        <div class="form-text">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Ваш комментарий будет опубликован после проверки модератором
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Отправить на модерацию</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Функция для ответа на комментарий
+function replyToComment(postId) {
+    document.getElementById('parent_post_id').value = postId;
+    
+    const modal = new bootstrap.Modal(document.getElementById('replyToCommentModal'));
+    modal.show();
+    document.getElementById('reply_content').focus();
+}
+
+// Функция для редактирования комментария
+function editComment(postId) {
+    alert('Функция редактирования будет добавлена позже');
+}
+
+// Функция для показа сообщений
+function showMessage(message, type) {
+    const alertClass = type === 'success' ? 'alert-success' : 'alert-danger';
+    const alert = document.createElement('div');
+    alert.className = `alert ${alertClass} alert-dismissible fade show position-fixed`;
+    alert.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    document.body.appendChild(alert);
+    
+    // Автоматически удаляем через 5 секунд
+    setTimeout(() => {
+        if (alert.parentNode) {
+            alert.remove();
+        }
+    }, 5000);
+}
+</script>
+{% endblock %} 

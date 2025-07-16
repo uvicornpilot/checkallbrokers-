@@ -1,0 +1,36 @@
+{% load static %}
+
+
+<!-- Header -->
+<header class="header">
+    <div class="container">
+        <div class="header__content">
+            <div class="header__logo-section">
+                <div class="header__logo">
+                    {% if site_settings.logo %}
+                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="header__logo-img">
+                    {% else %}
+                        <img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name|default:'Broker Control' }}" class="header__logo-img">
+                    {% endif %}
+{#                    <div class="header__logo-text">#}
+{#                        <h1 class="header__logo-title">{{ site_settings.site_name|default:"Broker Control" }}</h1>#}
+{#                    </div>#}
+                </div>
+            </div>
+
+            <!-- Navigation -->
+            {% include 'includes/navigation.html' %}
+
+            <div class="header__banner">
+                <button class="btn btn--primary" onclick="openConsultationForm()">Оставить заявку</button>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </div>
+</header>

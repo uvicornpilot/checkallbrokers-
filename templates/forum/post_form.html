@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Добавить комментарий - Форум{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white px-0 mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Форум</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'forum:category_detail' form.topic.category.slug %}">{{ form.topic.category.name }}</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'forum:topic_detail' form.topic.slug %}">{{ form.topic.title }}</a></li>
+            <li class="breadcrumb-item active">Новый комментарий</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h4 class="mb-0">Добавить комментарий</h4>
+                    <p class="text-muted mb-0">Тема: {{ form.topic.title }}</p>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.content.id_for_label }}" class="form-label fw-semibold">Ваш комментарий:</label>
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.content.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Ваш комментарий будет опубликован после проверки модератором
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'forum:topic_detail' form.topic.slug %}" class="btn btn-secondary px-3 py-2">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Назад к теме
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Опубликовать комментарий
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,31 @@
+<nav class="nav" id="mainNav">
+    <div class="nav__container">
+        <ul class="nav__list" id="navList">
+            <li class="nav__item">
+                <a href="{% url 'content:home' %}" class="nav__link {% if request.resolver_match.url_name == 'home' %}nav__link--active{% endif %}">
+                    Главная
+                </a>
+            </li>
+            <li class="nav__item">
+                <a href="{% url 'blog:post_list' %}" class="nav__link {% if 'blog' in request.resolver_match.namespace %}nav__link--active{% endif %}">
+                    Блог
+                </a>
+            </li>
+            <li class="nav__item">
+                <a href="#" class="nav__link" onclick="openConsultationForm(); return false;">
+                    Консультации
+                </a>
+            </li>
+            <li class="nav__item">
+                <a href="{% url 'forum:index' %}" class="nav__link {% if 'forum' in request.resolver_match.namespace %}nav__link--active{% endif %}">
+                    Форум
+                </a>
+            </li>
+            <li class="nav__item">
+                <a href="{% url 'content:about' %}" class="nav__link {% if request.resolver_match.url_name == 'about' %}nav__link--active{% endif %}">
+                    О нас
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav> 

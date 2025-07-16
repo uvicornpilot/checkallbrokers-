@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="about-hero">
+    <div class="container">
+        <div class="about-hero__content">
+            <h1 class="about-hero__title">О нас</h1>
+            <p class="about-hero__subtitle">Команда експертів з досвіду в фінансових послугах та юридичній практиці</p>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<main class="about-main">
+    <div class="container">
+        <!-- About Section -->
+        {% if about_section %}
+        <section class="about-content">
+            <div class="about-content__header">
+                <h2 class="about-content__title">{{ about_section.title|default:"Про Broker Control" }}</h2>
+                {% if about_section.subtitle %}
+                    <p class="about-content__subtitle">{{ about_section.subtitle }}</p>
+                {% endif %}
+            </div>
+            <div class="about-content__body">
+                {{ about_section.content|safe }}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Mission & Values -->
+        <section class="mission-values">
+            <div class="mission-values__grid">
+                <div class="mission-card">
+                    <div class="mission-card__icon">🎯</div>
+                    <h3 class="mission-card__title">Наша миссия</h3>
+                    <p class="mission-card__description">
+                        Защищать инвесторов от мошенников брокеров и предоставлять профессиональную юридическую поддержку тем, кто уже стал жертвой мошенников.
+                    </p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-card__icon">💼</div>
+                    <h3 class="mission-card__title">Наш опыт</h3>
+                    <p class="mission-card__description">
+                        Более 5 лет опыта в анализе финансовых компаний и предоставлении юридических консультаций в сфере инвестиций.
+                    </p>
+                </div>
+                <div class="mission-card">
+                    <div class="mission-card__icon">🤝</div>
+                    <h3 class="mission-card__title">Наши ценности</h3>
+                    <p class="mission-card__description">
+                        Прозрачность, профессионализм, безразличие и постоянная поддержка клиентов на пути к справедливости.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Team Section -->
+        <section class="team-section">
+            <h2 class="team-section__title">Наша команда</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="team-member__avatar">
+                        <img src="{% static 'images/team-lawyer.jpg' %}" alt="Юрист">
+                    </div>
+                    <h3 class="team-member__name">Олександр Петренко</h3>
+                    <p class="team-member__position">Головний юрист</p>
+                    <p class="team-member__description">
+                        Специализируется на финансовом праве и защите прав инвесторов. Имеет 8+ лет опыта в сфере.
+                    </p>
+                </div>
+                <div class="team-member">
+                    <div class="team-member__avatar">
+                        <img src="{% static 'images/team-analyst.jpg' %}" alt="Аналітик">
+                    </div>
+                    <h3 class="team-member__name">Марія Коваленко</h3>
+                    <p class="team-member__position">Финансовый аналитик</p>
+                    <p class="team-member__description">
+                        Эксперт по анализу брокерских компаний и выявлению признаков мошенничества. Опыт работы в регуляторных органах.
+                    </p>
+                </div>
+                <div class="team-member">
+                    <div class="team-member__avatar">
+                        <img src="{% static 'images/team-consultant.jpg' %}" alt="Консультант">
+                    </div>
+                    <h3 class="team-member__name">Дмитро Іваненко</h3>
+                    <p class="team-member__position">Руководитель консультаций</p>
+                    <p class="team-member__description">
+                        Руководит работой с клиентами и обеспечивает качество предоставляемых консультаций. Опыт в управлении проектами.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Statistics -->
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-item__number">500+</div>
+                    <div class="stat-item__label">Успешных дел</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item__number">1000+</div>
+                    <div class="stat-item__label">Довольных клиентов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item__number">5+</div>
+                    <div class="stat-item__label">Лет опыта</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-item__number">24/7</div>
+                    <div class="stat-item__label">Поддержка</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact CTA -->
+        <section class="contact-cta">
+            <div class="contact-cta__content">
+                <h2 class="contact-cta__title">Нужна помощь?</h2>
+                <p class="contact-cta__description">
+                    Свяжитесь с нами для получения бесплатной консультации
+                </p>
+                <button class="btn btn--primary" onclick="openConsultationForm()">
+                    Получить консультацию
+                </button>
+            </div>
+        </section>
+    </div>
+</main>
+{% endblock %} 

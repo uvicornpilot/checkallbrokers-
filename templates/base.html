@@ -1,0 +1,130 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>{% block meta_title %}{{ meta_title|default:"Broker Control - Анализ и оценка брокерских компаний" }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ meta_description|default:"Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций жертвам мошеннических компаний" }}{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}{{ meta_keywords|default:"брокер, проверка брокера, юридическая консультация, мошенничество, финансовые услуги, защита инвесторов" }}{% endblock %}">
+    <meta name="author" content="Broker Control">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    <meta property="og:title" content="{% block og_title %}{{ meta_title|default:"Broker Control - Анализ и оценка брокерских компаний" }}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}{{ meta_description|default:"Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций" }}{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% if site_settings.og_image %}{{ request.build_absolute_uri }}{{ site_settings.og_image.url }}{% else %}{{ request.build_absolute_uri }}{% static 'images/og-default.jpg' %}{% endif %}{% endblock %}">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
+    <meta property="twitter:title" content="{% block twitter_title %}{{ meta_title|default:"Broker Control - Анализ и оценка брокерских компаний" }}{% endblock %}">
+    <meta property="twitter:description" content="{% block twitter_description %}{{ meta_description|default:"Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций" }}{% endblock %}">
+    <meta property="twitter:image" content="{% block twitter_image %}{% if site_settings.twitter_image %}{{ request.build_absolute_uri }}{{ site_settings.twitter_image.url }}{% else %}{{ request.build_absolute_uri }}{% static 'images/twitter-default.jpg' %}{% endif %}{% endblock %}">
+
+    <!-- Favicon -->
+    {% if site_settings.favicon %}
+        <link rel="icon" type="image/x-icon" href="{{ site_settings.favicon.url }}">
+    {% endif %}
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon-16x16.png' %}">
+
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    {% include 'consultations/header.html' %}
+    {% block content %}{% endblock %}
+    {% include 'consultations/footer.html' %}
+
+    <!-- Modal Popup -->
+    <div id="consultationModal" class="modal">
+        <div class="modal__content">
+            <button class="modal__close" onclick="closeConsultationForm()">&times;</button>
+            <div class="modal__header">
+                <h2 class="modal__header-title">Потеряли деньги? Не знаете что делать?</h2>
+                <p class="modal__header-subtitle">Получите бесплатную консультацию!</p>
+            </div>
+            <form class="modal__form" id="modalConsultationForm">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="modal-name" class="form-group__label">Имя *</label>
+                    <input type="text" id="modal-name" name="name" class="form-group__input" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-phone" class="form-group__label">Телефон *</label>
+                    <input type="tel" id="modal-phone" name="phone" class="form-group__input" required>
+                </div>
+                <div class="form-group">
+                    <label for="modal-problem" class="form-group__label">Опишите вашу проблему *</label>
+                    <textarea id="modal-problem" name="problem" class="form-group__textarea" rows="4" required placeholder="Расскажите подробно о вашей ситуации..."></textarea>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full">Получить консультацию</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/main.js' %}"></script>
+    {% block extra_js %}{% endblock %}
+
+    <!-- Floating Action Buttons -->
+    <div class="floating-buttons">
+        <a href="https://t.me/brokercontrol" target="_blank" class="floating-btn floating-btn--telegram" title="Telegram">
+            <span class="floating-btn__icon">📱</span>
+        </a>
+        <button class="floating-btn floating-btn--chat" onclick="openChat()" title="Онлайн чат">
+            <span class="floating-btn__icon">💬</span>
+        </button>
+    </div>
+
+    <!-- Chat Widget -->
+    <div id="chatWidget" class="chat-widget">
+        <div class="chat-widget__header">
+            <div class="chat-widget__title">
+                <span class="chat-widget__icon">💬</span>
+                <span>Онлайн консультант</span>
+            </div>
+            <button class="chat-widget__close" onclick="closeChat()">&times;</button>
+        </div>
+        <div class="chat-widget__messages" id="chatMessages">
+            <div class="chat-message chat-message--bot">
+                <div class="chat-message__content">
+                    <p>Здравствуйте! 👋 Я консультант Broker Control. Чем могу помочь?</p>
+                </div>
+                <div class="chat-message__time">Сейчас</div>
+            </div>
+        </div>
+        <div class="chat-widget__input">
+            <input type="text" id="chatInput" placeholder="Введите сообщение..." onkeypress="handleChatKeyPress(event)">
+            <button onclick="sendChatMessage()" class="chat-widget__send">📤</button>
+        </div>
+    </div>
+
+    <!-- Analytics -->
+    {% if site_settings.google_analytics_id %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site_settings.google_analytics_id }}"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{{ site_settings.google_analytics_id }}');
+    </script>
+    {% endif %}
+
+  
+</body>
+</html> 

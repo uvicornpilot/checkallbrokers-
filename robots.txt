@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://brokercontrol.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1
+
+# Disallow admin areas (for future Django integration)
+Disallow: /admin/
+Disallow: /api/
+Disallow: /static/admin/ 

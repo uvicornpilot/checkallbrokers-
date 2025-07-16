@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Создать новую тему - Форум{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-white px-0 mb-4">
+            <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Форум</a></li>
+            <li class="breadcrumb-item active">Новая тема</li>
+        </ol>
+    </nav>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-white border-0">
+                    <h4 class="mb-0">Создать новую тему</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">Категория:</label>
+                            {{ form.category }}
+                            {% if form.category.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.category.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">Заголовок темы:</label>
+                            {{ form.title }}
+                            {% if form.title.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.title.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.content.id_for_label }}" class="form-label fw-semibold">Содержание сообщения:</label>
+                            {{ form.content }}
+                            {% if form.content.errors %}
+                            <div class="text-danger mt-1">
+                                {% for error in form.content.errors %}
+                                <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Ваше сообщение будет опубликовано после проверки модератором
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'forum:index' %}" class="btn btn-secondary px-3 py-2">
+                                <i class="fas fa-arrow-left me-2"></i>
+                                Назад
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 py-2">
+                                <i class="fas fa-paper-plane me-2"></i>
+                                Создать тему
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

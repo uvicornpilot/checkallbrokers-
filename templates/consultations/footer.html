@@ -1,0 +1,101 @@
+{% load static %}
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer__content">
+            <div class="footer__main">
+                <div class="footer__info">
+                    <div class="footer__logo">
+                        {% if site_settings.logo %}
+                            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="footer__logo-img">
+                        {% else %}
+                            <img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name|default:'Broker Control' }}" class="footer__logo-img">
+                        {% endif %}
+                        <!-- <h3 class="footer__title">{{ site_settings.site_name|default:"Broker Control" }}</h3> -->
+                    </div>
+                    <!-- <p class="footer__description">{{ site_settings.site_description|default:"Независимый информационно-аналитический проект по защите инвесторов от мошеннических брокеров" }}</p> -->
+                    <p class="footer__description">Независимый информационно-аналитический проект с защитой инвесторов</p>
+                    <!-- Contact Info -->
+                    {% if site_settings.contact_email or site_settings.contact_phone %}
+                    <div class="footer__contacts">
+                        {% if site_settings.contact_email %}
+                        <div class="footer__contact-item">
+                            <span class="footer__contact-icon">📧</span>
+                            <a href="mailto:{{ site_settings.contact_email }}" class="footer__contact-link">{{ site_settings.contact_email }}</a>
+                        </div>
+                        {% endif %}
+                        {% if site_settings.contact_phone %}
+                        <div class="footer__contact-item">
+                            <span class="footer__contact-icon">📞</span>
+                            <a href="tel:{{ site_settings.contact_phone }}" class="footer__contact-link">{{ site_settings.contact_phone }}</a>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="footer__links">
+                    <div class="footer__column">
+                        <h4 class="footer__column-title">Услуги</h4>
+                        <ul class="footer__column-list">
+                            <li class="footer__column-item">
+                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Бесплатная консультация</a>
+                            </li>
+                            <li class="footer__column-item">
+                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Проверка брокеров</a>
+                            </li>
+                            <li class="footer__column-item">
+                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Правовая поддержка</a>
+                            </li>
+                            <li class="footer__column-item">
+                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Возврат средств</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer__column">
+                        <h4 class="footer__column-title">Информация</h4>
+                        <ul class="footer__column-list">
+                            <li class="footer__column-item">
+                                <a href="{% url 'content:about' %}" class="footer__column-link">О нас</a>
+                            </li>
+                            <li class="footer__column-item">
+                                <a href="{% url 'blog:post_list' %}" class="footer__column-link">Блог</a>
+                            </li>
+                            <li class="footer__column-item">
+                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Контакты</a>
+                            </li>
+                            <li class="footer__column-item">
+                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">FAQ</a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer__column">
+                        <h4 class="footer__column-title">Социальные сети</h4>
+                        <div class="footer__social">
+                            <a href="https://t.me/brokercontrol" target="_blank" class="footer__social-link" title="Telegram">
+                                <span class="footer__social-icon">📱</span>
+                                <span>Telegram</span>
+                            </a>
+                            <a href="#" class="footer__social-link" onclick="openChat(); return false;" title="Онлайн чат">
+                                <span class="footer__social-icon">💬</span>
+                                <span>Онлайн чат</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer__bottom">
+            <div class="footer__bottom-content">
+                <p class="footer__copyright">&copy; {% now "Y" %} {{ site_settings.site_name|default:"Broker Control" }}. Все права защищены.</p>
+                <div class="footer__legal">
+                    <a href="#" class="footer__legal-link">Политика конфиденциальности</a>
+                    <a href="#" class="footer__legal-link">Условия использования</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

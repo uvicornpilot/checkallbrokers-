@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<!-- Hero Section with Banner and Form -->
+{% if hero_banner %}
+<section class="hero-section">
+    <div class="hero-background" style="background-color: {{ hero_banner.background_color|default:'#16C646' }}">
+        {% if hero_banner.background_image %}
+            <img src="{{ hero_banner.background_image.url }}" alt="{{ hero_banner.title }}" class="hero-bg-image">
+        {% endif %}
+    </div>
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">{{ hero_banner.title }}</h1>
+                {% if hero_banner.subtitle %}
+                    <p class="hero-subtitle">{{ hero_banner.subtitle }}</p>
+                {% endif %}
+                {% if hero_banner.description %}
+                    <p class="hero-description">{{ hero_banner.description }}</p>
+                {% endif %}
+                {% if hero_banner.button_text and hero_banner.button_url %}
+                    <a href="{{ hero_banner.button_url }}" class="btn btn--primary hero-btn">{{ hero_banner.button_text }}</a>
+                {% endif %}
+            </div>
+            <div class="hero-form">
+                {% include "includes/sidebar_form.html" %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Main Content -->
+<main>
+    <!-- About Section -->
+    {% if sections.about %}
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about__content">
+                <h2 class="section-title">{{ sections.about.title|default:"О проекте" }}</h2>
+                <div class="about__text">
+                    {{ sections.about.content|safe }}
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Services Section -->
+    {% if services %}
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title">Наши услуги</h2>
+            <div class="services__grid">
+                {% for service in services %}
+                <div class="service-card">
+                    <div class="service-card__icon">
+                        {% if service.icon_svg %}
+                            {{ service.icon_svg|safe }}
+                        {% else %}
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="48" height="48" rx="24" fill="#E8F5E8"/>
+                                <path d="M24 12L28.5 18.5L36 20L30 25.5L31.5 33L24 29.5L16.5 33L18 25.5L12 20L19.5 18.5L24 12Z" fill="#16C646"/>
+                            </svg>
+                        {% endif %}
+                    </div>
+                    <h3 class="service-card__title">{{ service.title }}</h3>
+                    <p class="service-card__description">{{ service.description }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Broker Selection Banner -->
+    {% if sections.broker_banner %}
+    <section class="broker-banner">
+        <div class="container">
+            <div class="broker-banner__content">
+                <h2 class="broker-banner__title">{{ sections.broker_banner.title|default:"Подобрать надежного брокера" }}</h2>
+                <p class="broker-banner__subtitle">{{ sections.broker_banner.subtitle|default:"Получите персональную рекомендацию от наших экспертов" }}</p>
+                <button class="btn btn--primary" onclick="openConsultationForm()">Заполнить заявку</button>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Blog Section -->
+    <section class="blog-section">
+        <div class="container">
+            <h2 class="section-title">Полезные статьи</h2>
+            <div class="blog__grid">
+                {% for post in latest_posts %}
+                <article class="blog-card">
+                    <div class="blog-card__image">
+                        {% if post.featured_image %}
+                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="blog-card__img">
+                        {% else %}
+                            <img src="{% static 'images/blog-placeholder.jpg' %}" alt="{{ post.title }}" class="blog-card__img">
+                        {% endif %}
+                    </div>
+                    <div class="blog-card__content">
+                        <h3 class="blog-card__title">{{ post.title }}</h3>
+                        <p class="blog-card__excerpt">{{ post.excerpt }}</p>
+                        <a href="{{ post.get_absolute_url }}" class="btn btn--secondary">Читать далее</a>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="blog__empty">
+                    <p>Статьи будут добавлены в ближайшее время</p>
+                </div>
+                {% endfor %}
+            </div>
+            {% if latest_posts %}
+            <div class="blog__more">
+                <a href="{% url 'blog:post_list' %}" class="btn btn--secondary">Все статьи</a>
+            </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="consult-form" class="contact-section">
+        <div class="container">
+            <h2 class="section-title">Получить консультацию</h2>
+            <div class="contact__content">
+                <div class="contact__info">
+                    <h3 class="contact__info-title">Бесплатная юридическая консультация</h3>
+                    <p class="contact__info-description">Заполните форму ниже, и наш эксперт свяжется с вами в течение 24 часов для предоставления бесплатной консультации.</p>
+                    <div class="contact__features">
+                        <div class="contact__feature">
+                            <span class="contact__feature-icon">✓</span>
+                            <span class="contact__feature-text">Бесплатная консультация</span>
+                        </div>
+                        <div class="contact__feature">
+                            <span class="contact__feature-icon">✓</span>
+                            <span class="contact__feature-text">Опытные юристы</span>
+                        </div>
+                        <div class="contact__feature">
+                            <span class="contact__feature-icon">✓</span>
+                            <span class="contact__feature-text">Конфиденциальность</span>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" id="consultationForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="name" class="form-group__label">Имя *</label>
+                        <input type="text" id="name" name="name" class="form-group__input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone" class="form-group__label">Телефон *</label>
+                        <input type="tel" id="phone" name="phone" class="form-group__input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="problem" class="form-group__label">Опишите вашу проблему *</label>
+                        <textarea id="problem" name="problem" class="form-group__textarea" rows="4" required placeholder="Расскажите подробно о вашей ситуации с брокером..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--full">Отправить заявку</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+{% endblock %} 

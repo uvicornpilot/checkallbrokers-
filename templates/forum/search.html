@@ -1,0 +1,113 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Поиск по форуму - Broker Control{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row mb-4">
+        <div class="col-12 text-center">
+            <h1 class="display-5 fw-bold mb-3">Поиск по форуму</h1>
+        </div>
+    </div>
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <form method="get" action="{% url 'forum:search' %}">
+                <div class="input-group input-group-lg shadow-sm">
+                    <input type="text" class="form-control" name="q" value="{{ query }}" placeholder="Введите поисковый запрос...">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search me-2"></i>
+                        Поиск
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    {% if query %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <h4 class="fw-bold">Результаты поиска для "{{ query }}"</h4>
+            <p class="text-muted">Найдено {{ results.count }} результатов</p>
+        </div>
+    </div>
+
+    {% if results %}
+    <div class="row">
+        {% for result in results %}
+        <div class="col-12 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <a href="{% url 'forum:topic_detail' result.topic.slug %}" class="text-decoration-none fw-semibold">
+                            {{ result.topic.title }}
+                        </a>
+                    </h5>
+                    <p class="card-text text-muted">
+                        {{ result.content|truncatewords:50 }}
+                    </p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <small class="text-muted">
+                            Автор: {{ result.author.username }} | 
+                            Категория: {{ result.topic.category.name }} | 
+                            Дата: {{ result.created_at|date:"d.m.Y H:i" }}
+                        </small>
+                        <a href="{% url 'forum:topic_detail' result.topic.slug %}" class="btn btn-outline-primary btn-sm">
+                            Читать далее
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if results.has_other_pages %}
+    <div class="row mt-4">
+        <div class="col-12">
+            <nav aria-label="Навигация по страницам">
+                <ul class="pagination justify-content-center">
+                    {% if results.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ results.previous_page_number }}">Предыдущая</a>
+                    </li>
+                    {% endif %}
+
+                    {% for num in results.paginator.page_range %}
+                    {% if results.number == num %}
+                    <li class="page-item active">
+                        <span class="page-link">{{ num }}</span>
+                    </li>
+                    {% elif num > results.number|add:'-3' and num < results.number|add:'3' %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+
+                    {% if results.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?q={{ query }}&page={{ results.next_page_number }}">Следующая</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="fas fa-search me-2"></i>
+                По вашему запросу ничего не найдено
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% endif %}
+</div>
+{% endblock %} 

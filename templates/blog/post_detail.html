@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="blog-detail">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <article class="blog-detail__article">
+                    <!-- Заголовок статьи -->
+                    <header class="blog-detail__header">
+                        <div class="blog-detail__meta">
+                            <span class="blog-detail__date">{{ post.created_at|date:"d.m.Y" }}</span>
+                            {% if post.category %}
+                            <a href="{% url 'blog:category' post.category.slug %}" class="blog-detail__category">
+                                {{ post.category.name }}
+                            </a>
+                            {% endif %}
+                            <span class="blog-detail__views">{{ post.views_count }} просмотров</span>
+                        </div>
+                        
+                        <h1 class="blog-detail__title">{{ post.title }}</h1>
+                        
+                        {% if post.excerpt %}
+                        <p class="blog-detail__excerpt">{{ post.excerpt }}</p>
+                        {% endif %}
+                    </header>
+
+                    <!-- Изображение статьи -->
+                    {% if post.featured_image %}
+                    <div class="blog-detail__image">
+                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                    </div>
+                    {% endif %}
+
+                    <!-- Основной контент -->
+                    <div class="blog-detail__content">
+                        {{ post.content|safe }}
+                    </div>
+
+                    <!-- Теги -->
+                    {% if post.tags.all %}
+                    <div class="blog-detail__tags">
+                        <h3>Теги:</h3>
+                        {% for tag in post.tags.all %}
+                        <a href="{% url 'blog:tag' tag.slug %}" class="blog-detail__tag">
+                            #{{ tag.name }}
+                        </a>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <!-- Навигация между статьями -->
+                    <nav class="blog-detail__navigation">
+                        <div class="blog-detail__nav-links">
+                            {% if post.get_previous_post %}
+                            <a href="{% url 'blog:post_detail' post.get_previous_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--prev">
+                                ← {{ post.get_previous_post.title }}
+                            </a>
+                            {% endif %}
+                            
+                            {% if post.get_next_post %}
+                            <a href="{% url 'blog:post_detail' post.get_next_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--next">
+                                {{ post.get_next_post.title }} →
+                            </a>
+                            {% endif %}
+                        </div>
+                    </nav>
+                </article>
+
+                <!-- Похожие статьи -->
+                {% if related_posts %}
+                <section class="blog-detail__related">
+                    <h2 class="blog-detail__related-title">Похожие статьи</h2>
+                    <div class="blog-detail__related-posts">
+                        {% for related_post in related_posts %}
+                        <article class="blog-detail__related-post">
+                            {% if related_post.featured_image %}
+                            <div class="blog-detail__related-image">
+                                <img src="{{ related_post.featured_image.url }}" alt="{{ related_post.title }}">
+                            </div>
+                            {% endif %}
+                            <div class="blog-detail__related-content">
+                                <h3 class="blog-detail__related-title">
+                                    <a href="{% url 'blog:post_detail' related_post.slug %}">{{ related_post.title }}</a>
+                                </h3>
+                                <p class="blog-detail__related-excerpt">{{ related_post.excerpt }}</p>
+                                <a href="{% url 'blog:post_detail' related_post.slug %}" class="btn btn--primary">
+                                    Читать далее
+                                </a>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endif %}
+
+                <!-- Популярные статьи -->
+                {% if popular_posts %}
+                <section class="blog-detail__popular">
+                    <h2 class="blog-detail__popular-title">Популярные статьи</h2>
+                    <div class="blog-detail__popular-posts">
+                        {% for popular_post in popular_posts %}
+                        <article class="blog-detail__popular-post">
+                            <h3 class="blog-detail__popular-title">
+                                <a href="{% url 'blog:post_detail' popular_post.slug %}">{{ popular_post.title }}</a>
+                            </h3>
+                            <div class="blog-detail__popular-meta">
+                                <span class="blog-detail__popular-date">{{ popular_post.created_at|date:"d.m.Y" }}</span>
+                                <span class="blog-detail__popular-views">{{ popular_post.views_count }} просмотров</span>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                </section>
+                {% endif %}
+            </div>
+            <div class="col-lg-4">
+                {% include "includes/sidebar_form.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
