@@ -1,0 +1,32 @@
+{% load static %}
+
+<section class="contact-section" id="consult-form">
+    <div class="container">
+        <div class="contact-section__content">
+            <div class="contact-section__info">
+                <h2 class="contact-section__title">Нужна консультация?</h2>
+                <p class="contact-section__text">
+                    Получите бесплатную консультацию от наших экспертов. 
+                    Мы поможем вам вернуть потерянные деньги и защитить ваши права.
+                </p>
+                <div class="contact-section__features">
+                    <div class="feature">
+                        <span class="feature__icon">⚖️</span>
+                        <span class="feature__text">Юридическая поддержка</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature__icon">💰</span>
+                        <span class="feature__text">Возврат средств</span>
+                    </div>
+                    <div class="feature">
+                        <span class="feature__icon">🛡️</span>
+                        <span class="feature__text">Защита прав</span>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-section__form">
+                {% include 'includes/consultation_form.html' %}
+            </div>
+        </div>
+    </div>
+</section>

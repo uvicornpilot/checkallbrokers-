@@ -123,47 +123,5 @@
         </div>
     </section>
 
-    <!-- Contact Form Section -->
-    <section id="consult-form" class="contact-section">
-        <div class="container">
-            <h2 class="section-title">Получить консультацию</h2>
-            <div class="contact__content">
-                <div class="contact__info">
-                    <h3 class="contact__info-title">Бесплатная юридическая консультация</h3>
-                    <p class="contact__info-description">Заполните форму ниже, и наш эксперт свяжется с вами в течение 24 часов для предоставления бесплатной консультации.</p>
-                    <div class="contact__features">
-                        <div class="contact__feature">
-                            <span class="contact__feature-icon">✓</span>
-                            <span class="contact__feature-text">Бесплатная консультация</span>
-                        </div>
-                        <div class="contact__feature">
-                            <span class="contact__feature-icon">✓</span>
-                            <span class="contact__feature-text">Опытные юристы</span>
-                        </div>
-                        <div class="contact__feature">
-                            <span class="contact__feature-icon">✓</span>
-                            <span class="contact__feature-text">Конфиденциальность</span>
-                        </div>
-                    </div>
-                </div>
-                <form class="contact-form" id="consultationForm">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="name" class="form-group__label">Имя *</label>
-                        <input type="text" id="name" name="name" class="form-group__input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="phone" class="form-group__label">Телефон *</label>
-                        <input type="tel" id="phone" name="phone" class="form-group__input" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="problem" class="form-group__label">Опишите вашу проблему *</label>
-                        <textarea id="problem" name="problem" class="form-group__textarea" rows="4" required placeholder="Расскажите подробно о вашей ситуации с брокером..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn--primary btn--full">Отправить заявку</button>
-                </form>
-            </div>
-        </div>
-    </section>
 </main>
 {% endblock %} 

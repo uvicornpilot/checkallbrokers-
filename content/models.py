@@ -115,3 +115,76 @@ class SiteSettings(models.Model):
         if not self.pk and SiteSettings.objects.exists():
             return
         super().save(*args, **kwargs)
+
+
+class ContactInfo(models.Model):
+    """Общие настройки сайта"""
+    email = models.EmailField(blank=True, verbose_name="Email")
+    phone = models.CharField(max_length=20, blank=True, verbose_name="Телефон")
+    telegram = models.CharField(max_length=20, blank=True, verbose_name="Telegram")
+    
+    class Meta:
+        verbose_name = "Контактная информация"
+        verbose_name_plural = "Контактная информация"
+
+    def __str__(self):
+        return "Настройки сайта"
+
+
+class AboutUs(models.Model):
+    """О нас"""
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    description = models.TextField(verbose_name="Описание")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
+    
+    class Meta:
+        verbose_name = "О нас"
+        verbose_name_plural = "О нас"
+
+    def __str__(self):
+        return self.title
+    
+class OurMission(models.Model):
+    """Наша миссия"""
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    description = models.TextField(verbose_name="Описание")
+    icon_svg = models.TextField(blank=True, verbose_name="SVG иконка")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
+    
+    class Meta:
+        verbose_name = "Наша миссия"
+        verbose_name_plural = "Наша миссия"
+
+class OurTeam(models.Model):
+    """Наша команда"""
+    name = models.CharField(max_length=200, verbose_name="Имя")
+    position = models.CharField(max_length=200, verbose_name="Должность")
+    description = models.TextField(verbose_name="Описание")
+    image = models.ImageField(upload_to='our_team/', blank=True, verbose_name="Изображение")
+    is_active = models.BooleanField(default=True, verbose_name="Активный")
+    order = models.IntegerField(default=0, verbose_name="Порядок")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлено")
+    
+    class Meta:
+        verbose_name = "Наша команда"
+        verbose_name_plural = "Наша команда"
+
+    def __str__(self):
+        return self.name
+
+class OurValues(models.Model):
+    """Наши преимущества"""
+    title = models.CharField(max_length=200, verbose_name="Заголовок")
+    description = models.TextField(verbose_name="Описание")
+    
+    
+    class Meta:
+        verbose_name = "Наши преимущества"
+        verbose_name_plural = "Наши преимущества"
+
+    def __str__(self):
+        return self.title
+    

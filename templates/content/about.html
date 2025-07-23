@@ -6,8 +6,8 @@
 <section class="about-hero">
     <div class="container">
         <div class="about-hero__content">
-            <h1 class="about-hero__title">О нас</h1>
-            <p class="about-hero__subtitle">Команда експертів з досвіду в фінансових послугах та юридичній практиці</p>
+            <h1 class="about-hero__title">{{about_us.title}}</h1>
+            <p class="about-hero__subtitle">{{about_us.description}}</p>
         </div>
     </div>
 </section>
@@ -33,27 +33,15 @@
         <!-- Mission & Values -->
         <section class="mission-values">
             <div class="mission-values__grid">
+                {% for mission in our_mission %}
                 <div class="mission-card">
-                    <div class="mission-card__icon">🎯</div>
-                    <h3 class="mission-card__title">Наша миссия</h3>
+                    <div class="mission-card__icon">{{mission.icon_svg|safe}}</div>
+                    <h3 class="mission-card__title">{{mission.title}}</h3>
                     <p class="mission-card__description">
-                        Защищать инвесторов от мошенников брокеров и предоставлять профессиональную юридическую поддержку тем, кто уже стал жертвой мошенников.
+                        {{mission.description}}
                     </p>
                 </div>
-                <div class="mission-card">
-                    <div class="mission-card__icon">💼</div>
-                    <h3 class="mission-card__title">Наш опыт</h3>
-                    <p class="mission-card__description">
-                        Более 5 лет опыта в анализе финансовых компаний и предоставлении юридических консультаций в сфере инвестиций.
-                    </p>
-                </div>
-                <div class="mission-card">
-                    <div class="mission-card__icon">🤝</div>
-                    <h3 class="mission-card__title">Наши ценности</h3>
-                    <p class="mission-card__description">
-                        Прозрачность, профессионализм, безразличие и постоянная поддержка клиентов на пути к справедливости.
-                    </p>
-                </div>
+                {% endfor %}
             </div>
         </section>
 
@@ -61,58 +49,32 @@
         <section class="team-section">
             <h2 class="team-section__title">Наша команда</h2>
             <div class="team-grid">
+                {% for team in our_team %}
+                {% if team.is_active %}
                 <div class="team-member">
                     <div class="team-member__avatar">
-                        <img src="{% static 'images/team-lawyer.jpg' %}" alt="Юрист">
+                        <img src="{{team.image.url}}" alt="{{team.name}}">
                     </div>
-                    <h3 class="team-member__name">Олександр Петренко</h3>
-                    <p class="team-member__position">Головний юрист</p>
+                    <h3 class="team-member__name">{{team.name}}</h3>
+                    <p class="team-member__position">{{team.position}}</p>
                     <p class="team-member__description">
-                        Специализируется на финансовом праве и защите прав инвесторов. Имеет 8+ лет опыта в сфере.
+                        {{team.description}}
                     </p>
                 </div>
-                <div class="team-member">
-                    <div class="team-member__avatar">
-                        <img src="{% static 'images/team-analyst.jpg' %}" alt="Аналітик">
-                    </div>
-                    <h3 class="team-member__name">Марія Коваленко</h3>
-                    <p class="team-member__position">Финансовый аналитик</p>
-                    <p class="team-member__description">
-                        Эксперт по анализу брокерских компаний и выявлению признаков мошенничества. Опыт работы в регуляторных органах.
-                    </p>
-                </div>
-                <div class="team-member">
-                    <div class="team-member__avatar">
-                        <img src="{% static 'images/team-consultant.jpg' %}" alt="Консультант">
-                    </div>
-                    <h3 class="team-member__name">Дмитро Іваненко</h3>
-                    <p class="team-member__position">Руководитель консультаций</p>
-                    <p class="team-member__description">
-                        Руководит работой с клиентами и обеспечивает качество предоставляемых консультаций. Опыт в управлении проектами.
-                    </p>
-                </div>
+                {% endif %}
+                {% endfor %}
             </div>
         </section>
 
         <!-- Statistics -->
         <section class="stats-section">
             <div class="stats-grid">
+                {% for value in our_values %}
                 <div class="stat-item">
-                    <div class="stat-item__number">500+</div>
-                    <div class="stat-item__label">Успешных дел</div>
+                    <div class="stat-item__number">{{value.title}}</div>
+                    <div class="stat-item__label">{{value.description}}</div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-item__number">1000+</div>
-                    <div class="stat-item__label">Довольных клиентов</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-item__number">5+</div>
-                    <div class="stat-item__label">Лет опыта</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-item__number">24/7</div>
-                    <div class="stat-item__label">Поддержка</div>
-                </div>
+                {% endfor %}
             </div>
         </section>
 

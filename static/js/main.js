@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initModal();
     initForms();
     initSmoothScrolling();
+    initPhoneInputs();
     
     // Показ модального окна через 3 секунды
     setTimeout(function() {
@@ -22,6 +23,36 @@ function initModal() {
             handleFormSubmission(this, 'modal');
         });
     }
+    
+    // Завантажуємо налаштування для модального вікна
+    loadModalFormSettings();
+}
+
+function loadModalFormSettings() {
+    fetch('/consultations/settings/')
+        .then(response => response.json())
+        .then(data => {
+            // Показуємо/приховуємо поля згідно з налаштуваннями
+            if (data.show_email_field) {
+                const emailField = document.getElementById('modalEmailField');
+                if (emailField) emailField.style.display = 'block';
+            }
+            if (data.show_broker_field) {
+                const brokerField = document.getElementById('modalBrokerField');
+                if (brokerField) brokerField.style.display = 'block';
+            }
+            if (data.show_amount_field) {
+                const amountField = document.getElementById('modalAmountField');
+                if (amountField) amountField.style.display = 'block';
+            }
+            if (data.show_investment_type_field) {
+                const investmentField = document.getElementById('modalInvestmentField');
+                if (investmentField) investmentField.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Помилка завантаження налаштувань модального вікна:', error);
+        });
 }
 
 function openConsultationForm() {
@@ -77,16 +108,37 @@ document.addEventListener('keydown', function(e) {
 
 // Формы
 function initForms() {
-    const consultationForm = document.getElementById('consultationForm');
-    if (consultationForm) {
-        consultationForm.addEventListener('submit', function(e) {
+    const consultationForms = document.querySelectorAll('#consultationFormComponent');
+    consultationForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
             e.preventDefault();
             handleFormSubmission(this, 'main');
         });
+    });
+    
+    const modalForm = document.getElementById('modalConsultationForm');
+    if (modalForm) {
+        modalForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleFormSubmission(this, 'modal');
+        });
+    }
+    
+    const sidebarForm = document.getElementById('sidebarConsultationForm');
+    console.log('Sidebar form found:', sidebarForm); // Діагностика
+    if (sidebarForm) {
+        sidebarForm.addEventListener('submit', function(e) {
+            console.log('Sidebar form submitted'); // Діагностика
+            e.preventDefault();
+            handleFormSubmission(this, 'sidebar');
+        });
+    } else {
+        console.log('Sidebar form not found!'); // Діагностика
     }
 }
 
 function handleFormSubmission(form, type) {
+    console.log('Form submission started:', type); // Діагностика
     const formData = new FormData(form);
     const submitButton = form.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
@@ -95,15 +147,36 @@ function handleFormSubmission(form, type) {
     submitButton.disabled = true;
     submitButton.textContent = 'Отправка...';
     
+    // Обрабатываем телефонные номера
+    const phoneInput = form.querySelector('input[type="tel"]');
+    if (phoneInput && phoneInput.iti) {
+        const fullNumber = phoneInput.iti.getNumber();
+        formData.set('phone', fullNumber);
+        console.log('Phone number processed:', fullNumber); // Діагностика
+    }
+    
     // Валидация
     if (!validateForm(form)) {
+        console.log('Form validation failed'); // Діагностика
         submitButton.disabled = false;
         submitButton.textContent = originalText;
         return;
     }
     
+    console.log('Form validation passed'); // Діагностика
+    
+    // Визначаємо URL для відправки форми
+    let submitUrl;
+    if (type === 'modal') {
+        submitUrl = '/consultations/modal-submit/';
+    } else if (type === 'sidebar') {
+        submitUrl = '/consultations/submit-ajax/';
+    } else {
+        submitUrl = '/consultations/submit-ajax/';
+    }
+    
     // Отправка формы
-    fetch('/consultations/submit/', {
+    fetch(submitUrl, {
         method: 'POST',
         body: formData,
         headers: {
@@ -113,12 +186,14 @@ function handleFormSubmission(form, type) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showMessage(form, 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.', 'success');
-            form.reset();
-            
-            // Закрываем модальное окно, если это оно
             if (type === 'modal') {
-                closeConsultationForm();
+                // Для модального вікна показываем ответ внутри модального окна
+                showModalResponse(data.message || 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.');
+                form.reset();
+            } else {
+                // Для других форм показываем обычное сообщение
+                showMessage(form, 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.', 'success');
+                form.reset();
             }
         } else {
             showMessage(form, data.message || 'Произошла ошибка при отправке заявки. Попробуйте еще раз.', 'error');
@@ -139,16 +214,16 @@ function validateForm(form) {
     let isValid = true;
     
     // Удаляем предыдущие сообщения об ошибках
-    form.querySelectorAll('.form-group__error').forEach(error => error.remove());
-    form.querySelectorAll('.form-group__input--error').forEach(input => {
-        input.classList.remove('form-group__input--error');
+    form.querySelectorAll('.form-group__error, .sidebar-form__error').forEach(error => error.remove());
+    form.querySelectorAll('.form-group__input--error, .sidebar-form__input--error').forEach(input => {
+        input.classList.remove('form-group__input--error', 'sidebar-form__input--error');
     });
     
     inputs.forEach(input => {
         if (!input.value.trim()) {
             showFieldError(input, 'Это поле обязательно для заполнения');
             isValid = false;
-        } else if (input.type === 'tel' && !validatePhone(input.value)) {
+        } else if (input.type === 'tel' && !validatePhone(input.value, input)) {
             showFieldError(input, 'Введите корректный номер телефона');
             isValid = false;
         } else if (input.type === 'email' && !validateEmail(input.value)) {
@@ -160,7 +235,13 @@ function validateForm(form) {
     return isValid;
 }
 
-function validatePhone(phone) {
+function validatePhone(phone, input) {
+    // Если есть intl-tel-input, используем его валидацию
+    if (input && input.iti) {
+        return input.iti.isValidNumber();
+    }
+    
+    // Fallback валидация
     const phoneRegex = /^[\+]?[0-9\s\-\(\)]{10,}$/;
     return phoneRegex.test(phone);
 }
@@ -171,13 +252,18 @@ function validateEmail(email) {
 }
 
 function showFieldError(input, message) {
-    input.classList.add('form-group__input--error');
+    // Добавляем класс ошибки в зависимости от типа формы
+    if (input.closest('.sidebar-form__form')) {
+        input.classList.add('sidebar-form__input--error');
+    } else {
+        input.classList.add('form-group__input--error');
+    }
     
     const errorElement = document.createElement('div');
-    errorElement.className = 'form-group__error';
+    errorElement.className = input.closest('.sidebar-form__form') ? 'sidebar-form__error' : 'form-group__error';
     errorElement.textContent = message;
     
-    const formGroup = input.closest('.form-group');
+    const formGroup = input.closest('.form-group, .form-field');
     if (formGroup) {
         formGroup.appendChild(errorElement);
     }
@@ -185,10 +271,17 @@ function showFieldError(input, message) {
 
 function showMessage(form, message, type) {
     // Удаляем предыдущие сообщения
-    form.querySelectorAll('.form-message').forEach(msg => msg.remove());
+    form.querySelectorAll('.form-message, .sidebar-form__message').forEach(msg => msg.remove());
     
     const messageElement = document.createElement('div');
-    messageElement.className = `form-message form-message--${type}`;
+    
+    // Специальная обработка для sidebar формы
+    if (form.classList.contains('sidebar-form__form')) {
+        messageElement.className = `sidebar-form__message sidebar-form__message--${type}`;
+    } else {
+        messageElement.className = `form-message form-message--${type}`;
+    }
+    
     messageElement.textContent = message;
     
     form.appendChild(messageElement);
@@ -199,6 +292,24 @@ function showMessage(form, message, type) {
             messageElement.remove();
         }
     }, 5000);
+}
+
+function showModalResponse(message) {
+    const modal = document.getElementById('consultationModal');
+    if (modal) {
+        // Очищаем содержимое модального окна
+        const modalContent = modal.querySelector('.modal__content');
+        if (modalContent) {
+            modalContent.innerHTML = `
+                <div class="modal__response">
+                    <div class="modal__response-icon">✅</div>
+                    <h2 class="modal__response-title">Спасибо!</h2>
+                    <p class="modal__response-message">${message}</p>
+                    <button class="btn btn--primary" onclick="closeConsultationForm()">Закрыть</button>
+                </div>
+            `;
+        }
+    }
 }
 
 function getCSRFToken() {
@@ -227,6 +338,45 @@ function initSmoothScrolling() {
                 });
             }
         });
+    });
+}
+
+// Инициализация телефонных полей
+function initPhoneInputs() {
+    const phoneInputs = document.querySelectorAll('.intl-tel-input');
+    console.log('Found phone inputs:', phoneInputs.length); // Діагностика
+    
+    phoneInputs.forEach((input, index) => {
+        console.log(`Initializing phone input ${index + 1}:`, input.id || input.name); // Діагностика
+        
+        // Инициализируем intl-tel-input
+        const iti = window.intlTelInput(input, {
+            initialCountry: 'auto',
+            geoIpLookup: function(callback) {
+                fetch('https://ipapi.co/json')
+                    .then(res => res.json())
+                    .then(data => callback(data.country_code))
+                    .catch(() => callback('ua')); // По умолчанию Украина
+            },
+            preferredCountries: ['ua', 'ru', 'kz', 'by'],
+            separateDialCode: true,
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+        });
+        
+        // Добавляем валидацию при вводе
+        input.addEventListener('blur', function() {
+            if (iti.isValidNumber()) {
+                input.classList.remove('form-group__input--error');
+                input.classList.add('form-group__input--valid');
+            } else {
+                input.classList.remove('form-group__input--valid');
+                input.classList.add('form-group__input--error');
+            }
+        });
+        
+        // Сохраняем экземпляр для использования в валидации
+        input.iti = iti;
+        console.log(`Phone input ${index + 1} initialized successfully`); // Діагностика
     });
 }
 

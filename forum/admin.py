@@ -122,30 +122,30 @@ class ForumPostAdmin(admin.ModelAdmin):
     mark_as_moderated.short_description = "Пометить как промодерированные"
 
 
-@admin.register(ForumModerationLog)
-class ForumModerationLogAdmin(admin.ModelAdmin):
-    list_display = ['moderator', 'post', 'action', 'reason', 'created_at']
-    list_filter = ['action', 'created_at', 'moderator']
-    search_fields = ['moderator__username', 'post__content', 'reason']
-    readonly_fields = ['created_at']
-    ordering = ['-created_at']
+# @admin.register(ForumModerationLog)
+# class ForumModerationLogAdmin(admin.ModelAdmin):
+#     list_display = ['moderator', 'post', 'action', 'reason', 'created_at']
+#     list_filter = ['action', 'created_at', 'moderator']
+#     search_fields = ['moderator__username', 'post__content', 'reason']
+#     readonly_fields = ['created_at']
+#     ordering = ['-created_at']
 
 
-@admin.register(ForumNotification)
-class ForumNotificationAdmin(admin.ModelAdmin):
-    list_display = ['user', 'notification_type', 'post', 'is_read', 'created_at']
-    list_filter = ['notification_type', 'is_read', 'created_at']
-    search_fields = ['user__username', 'post__content']
-    readonly_fields = ['created_at']
-    ordering = ['-created_at']
-    actions = ['mark_as_read', 'mark_as_unread']
+# @admin.register(ForumNotification)
+# class ForumNotificationAdmin(admin.ModelAdmin):
+#     list_display = ['user', 'notification_type', 'post', 'is_read', 'created_at']
+#     list_filter = ['notification_type', 'is_read', 'created_at']
+#     search_fields = ['user__username', 'post__content']
+#     readonly_fields = ['created_at']
+#     ordering = ['-created_at']
+#     actions = ['mark_as_read', 'mark_as_unread']
     
-    def mark_as_read(self, request, queryset):
-        updated = queryset.update(is_read=True)
-        self.message_user(request, f'Помечено как прочитанные {updated} уведомления.')
-    mark_as_read.short_description = "Пометить как прочитанные"
+#     def mark_as_read(self, request, queryset):
+#         updated = queryset.update(is_read=True)
+#         self.message_user(request, f'Помечено как прочитанные {updated} уведомления.')
+#     mark_as_read.short_description = "Пометить как прочитанные"
     
-    def mark_as_unread(self, request, queryset):
-        updated = queryset.update(is_read=False)
-        self.message_user(request, f'Помечено как непрочитанные {updated} уведомления.')
-    mark_as_unread.short_description = "Пометить как непрочитанные"
+#     def mark_as_unread(self, request, queryset):
+#         updated = queryset.update(is_read=False)
+#         self.message_user(request, f'Помечено как непрочитанные {updated} уведомления.')
+#     mark_as_unread.short_description = "Пометить как непрочитанные"

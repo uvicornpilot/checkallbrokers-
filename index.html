@@ -236,28 +236,30 @@
     <div id="modal" class="modal">
         <div class="modal__content">
             <span class="modal__close" onclick="closeModal()">&times;</span>
+            
             <div class="modal__header">
                 <h2 class="modal__header-title">Потеряли деньги? Не знаете что делать?</h2>
                 <p class="modal__header-subtitle">Получите бесплатную консультацию!</p>
             </div>
-            <form class="modal__form" id="modalForm">
-                <div class="form-group">
-                    <label for="modal-name" class="form-group__label">Имя *</label>
-                    <input type="text" id="modal-name" name="name" class="form-group__input" required>
-                </div>
-                <div class="form-group">
-                            <label for="modal-phone" class="form-group__label">Телефон *</label>
-                    <input type="tel" id="modal-phone" name="phone" class="form-group__input" required>
-                </div>
-                <div class="form-group">
-                    <label for="modal-problem" class="form-group__label">Опишите вашу проблему *</label>
-                    <textarea id="modal-problem" name="problem" class="form-group__textarea" rows="3" required placeholder="Расскажите про вашу ситуацию..."></textarea>
-                </div>
+    
+            <form method="post" class="modal__form" id="modalForm">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                    <div class="form-group">
+                        <label for="{{ field.id_for_label }}" class="form-group__label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <div class="form-group__error">{{ field.errors }}</div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+    
                 <button type="submit" class="btn btn--primary btn--full">Получить консультацию</button>
             </form>
         </div>
     </div>
-
+    
     <!-- Scripts -->
     <script src="main.js"></script>
 </body>

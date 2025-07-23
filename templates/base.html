@@ -43,11 +43,15 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
+    <!-- Intl Tel Input CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+    
     {% block extra_css %}{% endblock %}
 </head>
 <body>
     {% include 'consultations/header.html' %}
     {% block content %}{% endblock %}
+    {% include 'includes/cons_form.html' %}
     {% include 'consultations/footer.html' %}
 
     <!-- Modal Popup -->
@@ -58,32 +62,21 @@
                 <h2 class="modal__header-title">Потеряли деньги? Не знаете что делать?</h2>
                 <p class="modal__header-subtitle">Получите бесплатную консультацию!</p>
             </div>
-            <form class="modal__form" id="modalConsultationForm">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="modal-name" class="form-group__label">Имя *</label>
-                    <input type="text" id="modal-name" name="name" class="form-group__input" required>
-                </div>
-                <div class="form-group">
-                    <label for="modal-phone" class="form-group__label">Телефон *</label>
-                    <input type="tel" id="modal-phone" name="phone" class="form-group__input" required>
-                </div>
-                <div class="form-group">
-                    <label for="modal-problem" class="form-group__label">Опишите вашу проблему *</label>
-                    <textarea id="modal-problem" name="problem" class="form-group__textarea" rows="4" required placeholder="Расскажите подробно о вашей ситуации..."></textarea>
-                </div>
-                <button type="submit" class="btn btn--primary btn--full">Получить консультацию</button>
-            </form>
+            {% include 'includes/modal_consultation_form.html' %}
         </div>
     </div>
 
     <!-- Scripts -->
     <script src="{% static 'js/main.js' %}"></script>
+    
+    <!-- Intl Tel Input JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    
     {% block extra_js %}{% endblock %}
 
     <!-- Floating Action Buttons -->
     <div class="floating-buttons">
-        <a href="https://t.me/brokercontrol" target="_blank" class="floating-btn floating-btn--telegram" title="Telegram">
+        <a href="https://t.me/{{contact_info.telegram}}" target="_blank" class="floating-btn floating-btn--telegram" title="Telegram">
             <span class="floating-btn__icon">📱</span>
         </a>
         <button class="floating-btn floating-btn--chat" onclick="openChat()" title="Онлайн чат">

@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView
-from .models import SiteSection, Service, SiteSettings, HeroBanner
+from .models import SiteSection, Service, SiteSettings, HeroBanner, ContactInfo
 from blog.models import Post
+from consultations.forms import ConsultationForm
 
 
 class HomeView(TemplateView):
@@ -26,6 +27,9 @@ class HomeView(TemplateView):
         # Получаем последние посты блога
         latest_posts = Post.objects.filter(status='published').order_by('-created_at')[:3]
         context['latest_posts'] = latest_posts
+        
+        # Добавляем форму консультации
+        context['consultation_form'] = ConsultationForm()
         
         # Добавляем SEO метаданные
         if context.get('site_settings'):

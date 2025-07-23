@@ -1,10 +1,10 @@
 from django.urls import path
-from . import views
+from .views import consultation_view, submit_consultation_ajax, modal_consultation_view
 
 app_name = 'consultations'
 
 urlpatterns = [
-    path('form/', views.consultation_form, name='form'),
-    path('submit/', views.submit_consultation, name='submit'),
-    path('settings/', views.get_form_settings, name='settings'),
+    path('consultation/', consultation_view, name='consultation'),
+    path('submit-ajax/', submit_consultation_ajax, name='submit_ajax'),
+    path('modal-submit/', modal_consultation_view, name='modal_submit'),
 ] 

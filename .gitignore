@@ -1,0 +1,58 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pdb
+*.egg
+*.egg-info/
+*.log
+
+# Virtualenv
+env/
+venv/
+ENV/
+VENV/
+.venv/
+.env/
+*.env
+
+# Django
+media/
+staticfiles/
+local_settings.py
+settings_local.py
+
+# Django migrations
+**/migrations/
+!*/migrations/__init__.py
+
+# Pytest / Coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.cache
+.pytest_cache/
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node / Vite (якщо є фронт)
+node_modules/
+dist/
+build/
+*.lock
+
+# Docker
+*.pid
+
+# My custom files (optional)
+secrets.json

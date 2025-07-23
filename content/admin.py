@@ -1,28 +1,28 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import SiteSection, Service, SiteSettings, HeroBanner
+from .models import HeroBanner, ContactInfo, Service, AboutUs, OurMission, OurTeam, OurValues
 
 
-@admin.register(SiteSection)
-class SiteSectionAdmin(admin.ModelAdmin):
-    list_display = ['name', 'title', 'is_active', 'order', 'updated_at']
-    list_filter = ['is_active', 'name']
-    search_fields = ['title', 'content']
-    list_editable = ['is_active', 'order']
-    readonly_fields = ['created_at', 'updated_at']
+# @admin.register(SiteSection)
+# class SiteSectionAdmin(admin.ModelAdmin):
+#     list_display = ['name', 'title', 'is_active', 'order', 'updated_at']
+#     list_filter = ['is_active', 'name']
+#     search_fields = ['title', 'content']
+#     list_editable = ['is_active', 'order']
+#     readonly_fields = ['created_at', 'updated_at']
     
-    fieldsets = (
-        ('Основна інформація', {
-            'fields': ('name', 'title', 'subtitle', 'is_active', 'order')
-        }),
-        ('Контент', {
-            'fields': ('content',)
-        }),
-        ('Метадані', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
-        }),
-    )
+#     fieldsets = (
+#         ('Основна інформація', {
+#             'fields': ('name', 'title', 'subtitle', 'is_active', 'order')
+#         }),
+#         ('Контент', {
+#             'fields': ('content',)
+#         }),
+#         ('Метадані', {
+#             'fields': ('created_at', 'updated_at'),
+#             'classes': ('collapse',)
+#         }),
+#     )
 
 
 @admin.register(Service)
@@ -53,40 +53,40 @@ class ServiceAdmin(admin.ModelAdmin):
     short_description.short_description = "Опис"
 
 
-@admin.register(SiteSettings)
-class SiteSettingsAdmin(admin.ModelAdmin):
-    def has_add_permission(self, request):
-        # Дозволяємо створити тільки один екземпляр
-        return not SiteSettings.objects.exists()
+# @admin.register(SiteSettings)
+# class SiteSettingsAdmin(admin.ModelAdmin):
+#     def has_add_permission(self, request):
+#         # Дозволяємо створити тільки один екземпляр
+#         return not SiteSettings.objects.exists()
 
-    def has_delete_permission(self, request, obj=None):
-        # Забороняємо видалення
-        return False
+#     def has_delete_permission(self, request, obj=None):
+#         # Забороняємо видалення
+#         return False
 
-    fieldsets = (
-        ('Основна інформація', {
-            'fields': ('site_name', 'site_description')
-        }),
-        ('Зображення', {
-            'fields': ('logo', 'favicon', 'og_image', 'twitter_image')
-        }),
-        ('SEO налаштування', {
-            'fields': ('meta_title', 'meta_description', 'meta_keywords')
-        }),
-        ('Контактна інформація', {
-            'fields': ('contact_email', 'contact_phone')
-        }),
-        ('Аналітика', {
-            'fields': ('google_analytics_id', 'yandex_metrika_id'),
-            'classes': ('collapse',)
-        }),
-    )
+#     fieldsets = (
+#         ('Основна інформація', {
+#             'fields': ('site_name', 'site_description')
+#         }),
+#         ('Зображення', {
+#             'fields': ('logo', 'favicon', 'og_image', 'twitter_image')
+#         }),
+#         ('SEO налаштування', {
+#             'fields': ('meta_title', 'meta_description', 'meta_keywords')
+#         }),
+#         ('Контактна інформація', {
+#             'fields': ('contact_email', 'contact_phone')
+#         }),
+#         ('Аналітика', {
+#             'fields': ('google_analytics_id', 'yandex_metrika_id'),
+#             'classes': ('collapse',)
+#         }),
+#     )
 
-    def get_readonly_fields(self, request, obj=None):
-        # Робимо всі поля тільки для читання після створення
-        if obj:
-            return [field.name for field in obj._meta.fields]
-        return []
+#     def get_readonly_fields(self, request, obj=None):
+#         # Робимо всі поля тільки для читання після створення
+#         if obj:
+#             return [field.name for field in obj._meta.fields]
+#         return []
 
 
 @admin.register(HeroBanner)
@@ -129,3 +129,37 @@ class HeroBannerAdmin(admin.ModelAdmin):
             )
         return "Немає фону"
     preview_background.short_description = "Фон"
+
+@admin.register(ContactInfo)
+class ContactInfoAdmin(admin.ModelAdmin):
+    list_display = ['email', 'phone', 'telegram']
+    search_fields = ['email', 'phone', 'telegram']
+    
+    fieldsets = (   
+        ('Основна інформація', {
+            'fields': ('email', 'phone', 'telegram')
+        }),
+    )
+
+@admin.register(AboutUs)
+class AboutUsAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description']
+    search_fields = ['title', 'description']
+    readonly_fields = ['created_at', 'updated_at']
+    
+
+@admin.register(OurMission)
+class OurMissionAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description']
+    search_fields = ['title', 'description']
+    readonly_fields = ['created_at', 'updated_at']
+
+@admin.register(OurTeam)
+class OurTeamAdmin(admin.ModelAdmin):
+    list_display = ['name', 'position', 'description']
+    search_fields = ['name', 'position', 'description']
+
+@admin.register(OurValues)
+class OurValuesAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description']
+    search_fields = ['title', 'description']

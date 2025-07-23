@@ -1,7 +1,7 @@
 {% load static %}
 <!-- Footer -->
 <footer class="footer">
-    <div class="container">
+   <div class="container">
         <div class="footer__content">
             <div class="footer__main">
                 <div class="footer__info">
@@ -21,13 +21,13 @@
                         {% if site_settings.contact_email %}
                         <div class="footer__contact-item">
                             <span class="footer__contact-icon">📧</span>
-                            <a href="mailto:{{ site_settings.contact_email }}" class="footer__contact-link">{{ site_settings.contact_email }}</a>
+                            <a href="mailto:{{ contact_info.email }}" class="footer__contact-link">{{ contact_info.email }}</a>
                         </div>
                         {% endif %}
                         {% if site_settings.contact_phone %}
                         <div class="footer__contact-item">
                             <span class="footer__contact-icon">📞</span>
-                            <a href="tel:{{ site_settings.contact_phone }}" class="footer__contact-link">{{ site_settings.contact_phone }}</a>
+                            <a href="tel:{{ contact_info.phone }}" class="footer__contact-link">{{ contact_info.phone }}</a>
                         </div>
                         {% endif %}
                     </div>
@@ -74,7 +74,7 @@
                     <div class="footer__column">
                         <h4 class="footer__column-title">Социальные сети</h4>
                         <div class="footer__social">
-                            <a href="https://t.me/brokercontrol" target="_blank" class="footer__social-link" title="Telegram">
+                            <a href="https://t.me/{{contact_info.telegram}}" target="_blank" class="footer__social-link" title="Telegram">
                                 <span class="footer__social-icon">📱</span>
                                 <span>Telegram</span>
                             </a>

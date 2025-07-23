@@ -1,0 +1,22 @@
+{% load static %}
+
+<form method="post" action="{% url 'consultations:submit_ajax' %}" class="contact-form" id="consultationFormComponent">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="consultation-name" class="form-group__label">Имя *</label>
+        <input type="text" id="consultation-name" name="name" class="form-group__input" required placeholder="Ваше имя">
+    </div>
+    <div class="form-group">
+        <label for="consultation-phone" class="form-group__label">Телефон *</label>
+        <input type="tel" id="consultation-phone" name="phone" class="form-group__input intl-tel-input" required>
+    </div>
+    <div class="form-group">
+        <label for="consultation-email" class="form-group__label">Email *</label>
+        <input type="email" id="consultation-email" name="email" class="form-group__input" required placeholder="your@email.com">
+    </div>
+    <div class="form-group">
+        <label for="consultation-loss_amount" class="form-group__label">Сумма потерь *</label>
+        <input type="number" id="consultation-loss_amount" name="loss_amount" class="form-group__input" required placeholder="Например: 1000">
+    </div>
+    <button type="submit" class="btn btn--primary btn--full">Получить консультацию</button>
+</form> 

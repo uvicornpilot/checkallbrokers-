@@ -1,0 +1,18 @@
+{% load static %}
+
+<form method="post" action="{% url 'consultations:submit_ajax' %}" class="sidebar-form__form" id="sidebarConsultationForm">
+    {% csrf_token %}
+    <div class="form-field">
+        <input type="text" name="name" class="sidebar-form__input" placeholder="Ваше имя" required>
+    </div>
+    <div class="form-field">
+        <input type="tel" name="phone" class="sidebar-form__input intl-tel-input" placeholder="Телефон" required>
+    </div>
+    <div class="form-field">
+        <input type="email" name="email" class="sidebar-form__input" placeholder="E-mail" required>
+    </div>
+    <div class="form-field">
+        <input type="number" name="loss_amount" class="sidebar-form__input" placeholder="Сумма потерь">
+    </div>
+    <button type="submit" class="sidebar-form__btn">Получить консультацию</button>
+</form> 
