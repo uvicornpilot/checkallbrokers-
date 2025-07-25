@@ -3,20 +3,20 @@
 <form method="post" action="{% url 'consultations:submit_ajax' %}" class="modal__form" id="modalConsultationForm">
     {% csrf_token %}
     <div class="form-group">
-        <label for="modal-name" class="form-group__label">Имя *</label>
+        <!-- <label for="modal-name" class="form-group__label">Имя *</label> -->
         <input type="text" id="modal-name" name="name" class="form-group__input" required placeholder="Ваше имя">
     </div>
     <div class="form-group">
-        <label for="modal-phone" class="form-group__label">Телефон *</label>
+        <!-- <label for="modal-phone" class="form-group__label">Телефон *</label> -->
         <input type="tel" id="modal-phone" name="phone" class="form-group__input intl-tel-input" required>
     </div>
     <div class="form-group">
-        <label for="modal-email" class="form-group__label">Email *</label>
+        <!-- <label for="modal-email" class="form-group__label">Email *</label> -->
         <input type="email" id="modal-email" name="email" class="form-group__input" required placeholder="your@email.com">
     </div>
     <div class="form-group">
-        <label for="modal-loss_amount" class="form-group__label">Сумма потерь *</label>
-        <input type="number" id="modal-loss_amount" name="loss_amount" class="form-group__input" required placeholder="Например: 1000">
+        <!-- <label for="modal-loss_amount" class="form-group__label">Сумма потерь *</label> -->
+        <input type="number" id="modal-loss_amount" name="loss_amount" class="form-group__input" required placeholder="Например: 1000$">
     </div>
     <button type="submit" class="btn btn--primary btn--full">Получить консультацию</button>
 </form> 

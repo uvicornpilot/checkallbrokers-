@@ -1,38 +1,59 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.contrib import messages
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.utils.decorators import method_decorator
+from django.core.paginator import Paginator
 from django.db.models import Q
-from .models import Post, Category, Tag
+from .models import Post, Category, Tag, Review
+from .forms import ReviewForm
 
 
 class PostListView(ListView):
-    """Список всех статей"""
     model = Post
     template_name = 'blog/post_list.html'
     context_object_name = 'posts'
-    paginate_by = 6
+    paginate_by = 9
 
     def get_queryset(self):
-        """Получаем только опубликованные статьи"""
-        return Post.objects.filter(status='published').select_related('category').prefetch_related('tags')
+        queryset = Post.objects.filter(status='published')
+        
+        # Поиск
+        q = self.request.GET.get('q')
+        if q:
+            queryset = queryset.filter(
+                Q(title__icontains=q) | 
+                Q(content__icontains=q) | 
+                Q(excerpt__icontains=q)
+            )
+        
+        # Фильтр по категории
+        category_slug = self.kwargs.get('category_slug')
+        if category_slug:
+            queryset = queryset.filter(category__slug=category_slug)
+        
+        # Фильтр по тегу
+        tag_slug = self.kwargs.get('tag_slug')
+        if tag_slug:
+            queryset = queryset.filter(tags__slug=tag_slug)
+        
+        return queryset.select_related('category').prefetch_related('tags')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.filter(is_active=True)
-        context['tags'] = Tag.objects.filter(is_active=True)
-        context['meta_title'] = "Блог - Broker Control"
-        context['meta_description'] = "Полезные статьи о проверке брокеров, защите инвесторов и юридических консультациях"
+        context['categories'] = Category.objects.all()
+        context['tags'] = Tag.objects.all()
         return context
 
 
 class PostDetailView(DetailView):
-    """Детальная страница статьи"""
     model = Post
     template_name = 'blog/post_detail.html'
     context_object_name = 'post'
 
     def get_queryset(self):
-        """Получаем только опубликованные статьи"""
         return Post.objects.filter(status='published').select_related('category').prefetch_related('tags')
 
     def get_context_data(self, **kwargs):
@@ -40,107 +61,111 @@ class PostDetailView(DetailView):
         post = self.get_object()
         
         # Увеличиваем счетчик просмотров
-        post.increase_views()
-        
-        # Добавляем SEO метаданные
-        context['meta_title'] = post.meta_title or post.title
-        context['meta_description'] = post.meta_description or post.excerpt
-        context['meta_keywords'] = post.meta_keywords
+        post.views_count += 1
+        post.save(update_fields=['views_count'])
         
         # Похожие статьи
-        related_posts = Post.objects.filter(
+        context['related_posts'] = Post.objects.filter(
             status='published',
             category=post.category
         ).exclude(id=post.id)[:3]
-        context['related_posts'] = related_posts
         
         # Популярные статьи
-        popular_posts = Post.objects.filter(status='published').order_by('-views_count')[:5]
-        context['popular_posts'] = popular_posts
+        context['popular_posts'] = Post.objects.filter(
+            status='published'
+        ).order_by('-views_count')[:5]
+        
+        # Отзывы с пагинацией
+        reviews = post.reviews.filter(is_approved=True)
+        paginator = Paginator(reviews, 5)  # 5 отзывов на страницу
+        page_number = self.request.GET.get('review_page')
+        reviews_page = paginator.get_page(page_number)
+        context['reviews'] = reviews_page
+        
+        # Форма отзыва
+        context['review_form'] = ReviewForm()
         
         return context
 
 
-class CategoryPostListView(ListView):
-    """Список статей по категории"""
-    model = Post
-    template_name = 'blog/category_posts.html'
-    context_object_name = 'posts'
-    paginate_by = 6
+@csrf_exempt
+@require_http_methods(["POST"])
+def submit_review(request, post_id):
+    """AJAX view для отправки отзыва"""
+    post = get_object_or_404(Post, id=post_id, status='published')
+    form = ReviewForm(request.POST)
+    
+    if form.is_valid():
+        review = form.save(commit=False)
+        review.post = post
+        review.ip_address = request.META.get('REMOTE_ADDR')
+        review.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Спасибо за ваш отзыв! Он будет опубликован после модерации.'
+        })
+    else:
+        return JsonResponse({
+            'success': False,
+            'errors': form.errors
+        })
 
-    def get_queryset(self):
-        """Получаем статьи конкретной категории"""
-        self.category = get_object_or_404(Category, slug=self.kwargs['slug'], is_active=True)
-        return Post.objects.filter(
-            status='published',
-            category=self.category
-        ).select_related('category').prefetch_related('tags')
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['category'] = self.category
-        context['categories'] = Category.objects.filter(is_active=True)
-        context['tags'] = Tag.objects.filter(is_active=True)
-        context['meta_title'] = f"{self.category.name} - Broker Control"
-        context['meta_description'] = self.category.description or f"Статьи в категории {self.category.name}"
-        return context
+def category_posts(request, slug):
+    category = get_object_or_404(Category, slug=slug)
+    posts = Post.objects.filter(category=category, status='published')
+    
+    paginator = Paginator(posts, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'category': category,
+        'posts': page_obj,
+        'categories': Category.objects.all(),
+        'tags': Tag.objects.all(),
+    }
+    return render(request, 'blog/post_list.html', context)
 
 
-class TagPostListView(ListView):
-    """Список статей по тегу"""
-    model = Post
-    template_name = 'blog/tag_posts.html'
-    context_object_name = 'posts'
-    paginate_by = 6
-
-    def get_queryset(self):
-        """Получаем статьи с конкретным тегом"""
-        self.tag = get_object_or_404(Tag, slug=self.kwargs['slug'], is_active=True)
-        return Post.objects.filter(
-            status='published',
-            tags=self.tag
-        ).select_related('category').prefetch_related('tags')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['tag'] = self.tag
-        context['categories'] = Category.objects.filter(is_active=True)
-        context['tags'] = Tag.objects.filter(is_active=True)
-        context['meta_title'] = f"Тег: {self.tag.name} - Broker Control"
-        context['meta_description'] = f"Статьи с тегом {self.tag.name}"
-        return context
+def tag_posts(request, slug):
+    tag = get_object_or_404(Tag, slug=slug)
+    posts = Post.objects.filter(tags=tag, status='published')
+    
+    paginator = Paginator(posts, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    context = {
+        'tag': tag,
+        'posts': page_obj,
+        'categories': Category.objects.all(),
+        'tags': Tag.objects.all(),
+    }
+    return render(request, 'blog/post_list.html', context)
 
 
 def search_posts(request):
-    """Поиск по статьям"""
     query = request.GET.get('q', '')
-    posts = []
-    
     if query:
         posts = Post.objects.filter(
-            Q(status='published') &
-            (Q(title__icontains=query) | 
-             Q(excerpt__icontains=query) | 
-             Q(content__icontains=query))
-        ).select_related('category').prefetch_related('tags')
+            Q(title__icontains=query) | 
+            Q(content__icontains=query) | 
+            Q(excerpt__icontains=query),
+            status='published'
+        )
+    else:
+        posts = Post.objects.none()
     
-    # Пагинация
-    paginator = Paginator(posts, 6)
-    page = request.GET.get('page')
-    try:
-        posts = paginator.page(page)
-    except PageNotAnInteger:
-        posts = paginator.page(1)
-    except EmptyPage:
-        posts = paginator.page(paginator.num_pages)
+    paginator = Paginator(posts, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     
     context = {
-        'posts': posts,
+        'posts': page_obj,
         'query': query,
-        'categories': Category.objects.filter(is_active=True),
-        'tags': Tag.objects.filter(is_active=True),
-        'meta_title': f"Поиск: {query} - Broker Control" if query else "Поиск - Broker Control",
-        'meta_description': f"Результаты поиска для '{query}'" if query else "Поиск по статьям",
+        'categories': Category.objects.all(),
+        'tags': Tag.objects.all(),
     }
-    
-    return render(request, 'blog/search_results.html', context)
+    return render(request, 'blog/post_list.html', context)
