@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['forum-broker.com']
+#<<<<<<< HEAD
+#ALLOWED_HOSTS = ['forum-broker.com']
+#=======
+ALLOWED_HOSTS = ['forum-broker.com', 'localhost', '127.0.0.1']
+#>>>>>>> 4604d30ce0e484a4f8a58fc184cb074902cd222d
 
 
 # Application definition

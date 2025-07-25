@@ -6,6 +6,7 @@
     <div class="container">
         <div class="row">
             <div class="col-lg-8">
+                <div class="col-lg-8__header">
                 <article class="blog-detail__article">
                     <!-- Заголовок статьи -->
                     <header class="blog-detail__header">
@@ -50,24 +51,13 @@
                     </div>
                     {% endif %}
 
-                    <!-- Навигация между статьями -->
-                    <nav class="blog-detail__navigation">
-                        <div class="blog-detail__nav-links">
-                            {% if post.get_previous_post %}
-                            <a href="{% url 'blog:post_detail' post.get_previous_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--prev">
-                                ← {{ post.get_previous_post.title }}
-                            </a>
-                            {% endif %}
-                            
-                            {% if post.get_next_post %}
-                            <a href="{% url 'blog:post_detail' post.get_next_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--next">
-                                {{ post.get_next_post.title }} →
-                            </a>
-                            {% endif %}
-                        </div>
-                    </nav>
-                </article>
-
+                    </article>
+                    {% include 'includes/form_banner.html' %}
+                    
+                  
+                </div>
+                  <!-- Reviews Section -->
+                  {% include 'blog/includes/reviews.html' %}
                 <!-- Похожие статьи -->
                 {% if related_posts %}
                 <section class="blog-detail__related">
@@ -94,7 +84,22 @@
                     </div>
                 </section>
                 {% endif %}
-
+                  <!-- Навигация между статьями -->
+                  <nav class="blog-detail__navigation">
+                    <div class="blog-detail__nav-links">
+                        {% if post.get_previous_post %}
+                        <a href="{% url 'blog:post_detail' post.get_previous_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--prev">
+                            ← {{ post.get_previous_post.title }}
+                        </a>
+                        {% endif %}
+                        
+                        {% if post.get_next_post %}
+                        <a href="{% url 'blog:post_detail' post.get_next_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--next">
+                            {{ post.get_next_post.title }} →
+                        </a>
+                        {% endif %}
+                    </div>
+                </nav>
                 <!-- Популярные статьи -->
                 {% if popular_posts %}
                 <section class="blog-detail__popular">
@@ -122,3 +127,10 @@
     </div>
 </div>
 {% endblock %} 
+<style>
+    .blog-detail__header {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+</style>

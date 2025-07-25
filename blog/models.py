@@ -2,6 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 
 class Category(models.Model):
@@ -148,3 +149,53 @@ class Post(models.Model):
             status='published',
             published_at__gt=self.published_at
         ).order_by('-published_at').first()
+
+    def get_average_rating(self):
+        """Получить среднюю оценку статьи"""
+        reviews = self.reviews.filter(is_approved=True)
+        if reviews.exists():
+            return round(reviews.aggregate(models.Avg('rating'))['rating__avg'], 1)
+        return 0
+
+    def get_reviews_count(self):
+        """Получить количество одобренных отзывов"""
+        return self.reviews.filter(is_approved=True).count()
+
+class Review(models.Model):
+    RATING_CHOICES = [
+        (1, '1 звезда'),
+        (2, '2 звезды'),
+        (3, '3 звезды'),
+        (4, '4 звезды'),
+        (5, '5 звезд'),
+    ]
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reviews', verbose_name="Статья")
+    name = models.CharField(max_length=100, verbose_name="Имя")
+    rating = models.IntegerField(
+        choices=RATING_CHOICES,
+        validators=[MinValueValidator(1), MaxValueValidator(5)],
+        verbose_name="Оценка"
+    )
+    text = models.TextField(verbose_name="Текст отзыва")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата создания")
+    is_approved = models.BooleanField(default=False, verbose_name="Одобрено")
+    ip_address = models.GenericIPAddressField(blank=True, null=True, verbose_name="IP адрес")
+
+    class Meta:
+        verbose_name = "Отзыв"
+        verbose_name_plural = "Отзывы"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"Отзыв от {self.name} на статью {self.post.title}"
+
+    def get_rating_stars(self):
+        """Вернуть HTML для отображения звезд"""
+        stars = []
+        for i in range(1, 6):
+            if i <= self.rating:
+                stars.append('<span class="star star--filled">★</span>')
+            else:
+                stars.append('<span class="star star--empty">☆</span>')
+        return ''.join(stars)

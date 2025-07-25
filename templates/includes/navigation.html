@@ -1,31 +1,70 @@
-<nav class="nav" id="mainNav">
-    <div class="nav__container">
-        <ul class="nav__list" id="navList">
-            <li class="nav__item">
-                <a href="{% url 'content:home' %}" class="nav__link {% if request.resolver_match.url_name == 'home' %}nav__link--active{% endif %}">
-                    Главная
-                </a>
-            </li>
-            <li class="nav__item">
-                <a href="{% url 'blog:post_list' %}" class="nav__link {% if 'blog' in request.resolver_match.namespace %}nav__link--active{% endif %}">
-                    Блог
-                </a>
-            </li>
-            <li class="nav__item">
-                <a href="#" class="nav__link" onclick="openConsultationForm(); return false;">
-                    Консультации
-                </a>
-            </li>
-            <li class="nav__item">
-                <a href="{% url 'forum:index' %}" class="nav__link {% if 'forum' in request.resolver_match.namespace %}nav__link--active{% endif %}">
-                    Форум
-                </a>
-            </li>
-            <li class="nav__item">
-                <a href="{% url 'content:about' %}" class="nav__link {% if request.resolver_match.url_name == 'about' %}nav__link--active{% endif %}">
-                    О нас
-                </a>
-            </li>
-        </ul>
+<button class="burger" id="burgerBtn" aria-label="Открыть меню" type="button">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+<nav class="mobile-nav" id="mobileNav">
+    <button class="mobile-nav__close" id="closeNavBtn" aria-label="Закрыть меню" type="button">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_8112_9446)"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="var(--primary)"></path></g><defs><clipPath id="clip0_8112_9446">
+                <rect width="24" height="24" rx="12" fill="white"></rect></clipPath></defs></svg>
+    </button>
+    <ul class="mobile-nav__list">
+        <li><a href="{% url 'content:home' %}">Главная</a></li>
+        <li><a href="{% url 'blog:post_list' %}">Блог</a></li>
+        <li><a href="#" onclick="openConsultationForm(); return false;">Консультации</a></li>
+        <li><a href="{% url 'forum:index' %}">Форум</a></li>
+        <li><a href="{% url 'content:about' %}">О нас</a></li>
+    </ul>
+</nav>
+<nav class="desktop-nav" id="desktopNav">
+    <div class="desktop-nav__list">
+       <a href="{% url 'content:home' %}">Главная</a>
+        <a href="{% url 'blog:post_list' %}">Блог</a>
+        <a href="#" onclick="openConsultationForm(); return false;">Консультации</a>
+        <a href="{% url 'forum:index' %}">Форум</a>
+        <a href="{% url 'content:about' %}">О нас</a>
     </div>
-</nav> 
+</nav>
+<div class="mobile-nav__overlay" id="mobileNavOverlay"></div>
+
+<style>
+    .desktop-nav {
+        display: block;
+    }
+    .desktop-nav__list {
+        display: flex;
+        gap: 24px;
+    }
+    .desktop-nav__list a {
+        color: var(--text-primary);
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        text-transform: uppercase;
+        text-wrap: nowrap;
+        border-radius: 16px;
+    }
+    .desktop-nav__list a:hover {
+        color: var(--primary-dark);
+        transition: all 0.3s ease;
+        text-decoration: underline;
+        text-underline-offset: 4px;
+        text-decoration-thickness: 2px;
+        text-decoration-color: var(--primary-dark);
+        text-decoration-style: solid;
+        text-decoration-skip-ink: none;
+        text-decoration-skip-ink: none;
+    }
+    .mobile-nav {
+        display: none;
+    }
+    @media (max-width: 768px) {
+        .desktop-nav {
+            display: none;
+        }
+        .mobile-nav {
+            display: block;
+        }
+    }
+</style>

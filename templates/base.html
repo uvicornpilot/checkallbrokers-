@@ -57,9 +57,12 @@
     <!-- Modal Popup -->
     <div id="consultationModal" class="modal">
         <div class="modal__content">
-            <button class="modal__close" onclick="closeConsultationForm()">&times;</button>
+            <div class="modal__close" onclick="closeConsultationForm()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_8112_9446)"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="black"></path></g><defs><clipPath id="clip0_8112_9446"><rect width="24" height="24" rx="12" fill="white"></rect></clipPath></defs></svg>
+            </div>
             <div class="modal__header">
-                <h2 class="modal__header-title">Потеряли деньги? Не знаете что делать?</h2>
+                <h2 class="modal__header-title">Потеряли деньги?</h2>
+                <h2 class="modal__header-title">Не знаете что делать?</h2>
                 <p class="modal__header-subtitle">Получите бесплатную консультацию!</p>
             </div>
             {% include 'includes/modal_consultation_form.html' %}
@@ -77,7 +80,9 @@
     <!-- Floating Action Buttons -->
     <div class="floating-buttons">
         <a href="https://t.me/{{contact_info.telegram}}" target="_blank" class="floating-btn floating-btn--telegram" title="Telegram">
-            <span class="floating-btn__icon">📱</span>
+            <svg class="floating-btn__icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
         </a>
         <button class="floating-btn floating-btn--chat" onclick="openChat()" title="Онлайн чат">
             <span class="floating-btn__icon">💬</span>

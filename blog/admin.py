@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
-from .models import Category, Tag, Post
+from .models import Category, Tag, Post, Review
 
 
 @admin.register(Category)
@@ -110,3 +110,23 @@ class PostAdmin(admin.ModelAdmin):
         updated = queryset.update(status='draft', published_at=None)
         self.message_user(request, f'{updated} статей знято з публікації')
     unpublish_posts.short_description = "Зняти з публікації вибрані статті"
+
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ['name', 'post', 'rating', 'created_at', 'is_approved', 'ip_address']
+    list_filter = ['is_approved', 'rating', 'created_at']
+    search_fields = ['name', 'text', 'post__title']
+    readonly_fields = ['ip_address', 'created_at']
+    list_editable = ['is_approved']
+    actions = ['approve_reviews', 'reject_reviews']
+    
+    def approve_reviews(self, request, queryset):
+        updated = queryset.update(is_approved=True)
+        self.message_user(request, f'{updated} отзывов было одобрено.')
+    approve_reviews.short_description = "Одобрить выбранные отзывы"
+    
+    def reject_reviews(self, request, queryset):
+        updated = queryset.update(is_approved=False)
+        self.message_user(request, f'{updated} отзывов было отклонено.')
+    reject_reviews.short_description = "Отклонить выбранные отзывы"
