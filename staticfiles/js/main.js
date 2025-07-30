@@ -5,6 +5,9 @@ document.addEventListener('DOMContentLoaded', function() {
     initForms();
     initSmoothScrolling();
     initPhoneInputs();
+    initMobileMenu();
+    initScrollAnimations();
+    initReviewForm(); // Додано ініціалізацію форми відгуків
     
     // Показ модального окна через 3 секунды
     setTimeout(function() {
@@ -23,36 +26,6 @@ function initModal() {
             handleFormSubmission(this, 'modal');
         });
     }
-    
-    // Завантажуємо налаштування для модального вікна
-    loadModalFormSettings();
-}
-
-function loadModalFormSettings() {
-    fetch('/consultations/settings/')
-        .then(response => response.json())
-        .then(data => {
-            // Показуємо/приховуємо поля згідно з налаштуваннями
-            if (data.show_email_field) {
-                const emailField = document.getElementById('modalEmailField');
-                if (emailField) emailField.style.display = 'block';
-            }
-            if (data.show_broker_field) {
-                const brokerField = document.getElementById('modalBrokerField');
-                if (brokerField) brokerField.style.display = 'block';
-            }
-            if (data.show_amount_field) {
-                const amountField = document.getElementById('modalAmountField');
-                if (amountField) amountField.style.display = 'block';
-            }
-            if (data.show_investment_type_field) {
-                const investmentField = document.getElementById('modalInvestmentField');
-                if (investmentField) investmentField.style.display = 'block';
-            }
-        })
-        .catch(error => {
-            console.error('Помилка завантаження налаштувань модального вікна:', error);
-        });
 }
 
 function openConsultationForm() {
@@ -165,7 +138,7 @@ function handleFormSubmission(form, type) {
     
     console.log('Form validation passed'); // Діагностика
     
-    // Визначаємо URL для відправки форми
+    // Определяем URL для отправки в зависимости от типа формы
     let submitUrl;
     if (type === 'modal') {
         submitUrl = '/consultations/modal-submit/';
@@ -176,6 +149,9 @@ function handleFormSubmission(form, type) {
     }
     
     // Отправка формы
+    console.log('Sending form to URL:', submitUrl); // Діагностика
+    console.log('Form data:', Object.fromEntries(formData)); // Діагностика
+    
     fetch(submitUrl, {
         method: 'POST',
         body: formData,
@@ -183,8 +159,13 @@ function handleFormSubmission(form, type) {
             'X-CSRFToken': getCSRFToken()
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status); // Діагностика
+        console.log('Response headers:', response.headers); // Діагностика
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data); // Діагностика
         if (data.success) {
             if (type === 'modal') {
                 // Для модального вікна показываем ответ внутри модального окна
@@ -314,6 +295,7 @@ function showModalResponse(message) {
 
 function getCSRFToken() {
     const token = document.querySelector('input[name="csrfmiddlewaretoken"]');
+    console.log('CSRF token found:', token ? token.value : 'NOT FOUND'); // Діагностика
     return token ? token.value : '';
 }
 
@@ -379,7 +361,6 @@ function initPhoneInputs() {
         console.log(`Phone input ${index + 1} initialized successfully`); // Діагностика
     });
 }
-
 // Mobile Menu Toggle
 function toggleMobileMenu() {
     const nav = document.getElementById('mainNav');
@@ -397,6 +378,7 @@ function toggleMobileMenu() {
         }
     }
 }
+
 
 // Chat Widget Functions
 function openChat() {
@@ -500,12 +482,20 @@ function addChatMessage(text, sender) {
 
 // Мобильное меню
 function initMobileMenu() {
+    console.log('initMobileMenu called'); // Діагностика
+    
     const nav = document.getElementById('mainNav');
     const toggle = document.querySelector('.mobile-menu-toggle');
+    const overlay = document.querySelector('.nav__overlay');
+    
+    console.log('initMobileMenu elements:', { nav, toggle, overlay }); // Діагностика
     
     if (nav && toggle) {
+        console.log('Adding event listeners to mobile menu'); // Діагностика
+        
         // Обработчик клика
         toggle.addEventListener('click', function() {
+            console.log('Toggle button clicked'); // Діагностика
             toggleMobileMenu();
         });
         
@@ -513,7 +503,9 @@ function initMobileMenu() {
         document.addEventListener('click', function(e) {
             if (nav.classList.contains('nav--open') && 
                 !nav.contains(e.target) && 
-                !toggle.contains(e.target)) {
+                !toggle.contains(e.target) &&
+                !overlay.contains(e.target)) {
+                console.log('Closing menu - clicked outside'); // Діагностика
                 toggleMobileMenu();
             }
         });
@@ -523,10 +515,15 @@ function initMobileMenu() {
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
                 if (nav.classList.contains('nav--open')) {
+                    console.log('Closing menu - link clicked'); // Діагностика
                     toggleMobileMenu();
                 }
             });
         });
+        
+        console.log('Mobile menu initialized successfully'); // Діагностика
+    } else {
+        console.error('initMobileMenu: Nav or toggle element not found!'); // Діагностика
     }
 }
 
@@ -708,3 +705,154 @@ window.closeChat = closeChat;
 window.sendChatMessage = sendChatMessage;
 window.handleChatKeyPress = handleChatKeyPress;
 window.openConsultationFormFromChat = openConsultationFormFromChat; 
+
+// Ініціалізація форми відгуків
+function initReviewForm() {
+    const reviewForm = document.getElementById('reviewForm');
+    if (reviewForm) {
+        reviewForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleReviewSubmission(this);
+        });
+    }
+}
+
+// Обробка відправки відгуку
+function handleReviewSubmission(form) {
+    const formData = new FormData(form);
+    const submitButton = form.querySelector('.review-form__submit');
+    const originalText = submitButton.textContent;
+    
+    // Показуємо стан завантаження
+    submitButton.disabled = true;
+    submitButton.textContent = 'Отправка...';
+    
+    // Валідація
+    if (!validateReviewForm(form)) {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+        return;
+    }
+    
+    // Відправка форми
+    fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRFToken': getCSRFToken()
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showReviewMessage(form, data.message, 'success');
+            form.reset();
+        } else {
+            showReviewErrors(form, data.errors);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        showReviewMessage(form, 'Произошла ошибка при отправке отзыва. Попробуйте еще раз.', 'error');
+    })
+    .finally(() => {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+    });
+}
+
+// Валідація форми відгуку
+function validateReviewForm(form) {
+    const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+    let isValid = true;
+    
+    // Видаляємо попередні повідомлення про помилки
+    form.querySelectorAll('.review-form__error').forEach(error => error.remove());
+    form.querySelectorAll('.review-form__input--error, .review-form__textarea--error, .review-form__select--error').forEach(input => {
+        input.classList.remove('review-form__input--error', 'review-form__textarea--error', 'review-form__select--error');
+    });
+    
+    inputs.forEach(input => {
+        if (!input.value.trim()) {
+            showReviewFieldError(input, 'Это поле обязательно для заполнения');
+            isValid = false;
+        }
+    });
+    
+    return isValid;
+}
+
+// Показати помилку поля відгуку
+function showReviewFieldError(input, message) {
+    input.classList.add('review-form__input--error', 'review-form__textarea--error', 'review-form__select--error');
+    
+    const errorElement = document.createElement('div');
+    errorElement.className = 'review-form__error';
+    errorElement.textContent = message;
+    
+    const field = input.closest('.review-form__field');
+    if (field) {
+        field.appendChild(errorElement);
+    }
+}
+
+// Показати повідомлення відгуку
+function showReviewMessage(form, message, type) {
+    // Видаляємо попередні повідомлення
+    form.querySelectorAll('.review-form__message').forEach(msg => msg.remove());
+    
+    const messageElement = document.createElement('div');
+    messageElement.className = `review-form__message review-form__message--${type}`;
+    messageElement.textContent = message;
+    
+    form.appendChild(messageElement);
+    
+    // Автоматично приховуємо повідомлення через 5 секунд
+    setTimeout(() => {
+        if (messageElement.parentNode) {
+            messageElement.remove();
+        }
+    }, 5000);
+}
+
+// Показати помилки відгуку
+function showReviewErrors(form, errors) {
+    Object.keys(errors).forEach(fieldName => {
+        const input = form.querySelector(`[name="${fieldName}"]`);
+        if (input) {
+            showReviewFieldError(input, errors[fieldName][0]);
+        }
+    });
+} 
+
+// --- NEW MOBILE NAVIGATION ---
+document.addEventListener('DOMContentLoaded', function () {
+    const burger = document.getElementById('burgerBtn');
+    const nav = document.getElementById('mobileNav');
+    const closeBtn = document.getElementById('closeNavBtn');
+    const overlay = document.getElementById('mobileNavOverlay');
+    
+    function openMenu() {
+        nav.classList.add('open');
+        overlay.classList.add('open');
+        document.body.classList.add('mobile-nav-open');
+    }
+    function closeMenu() {
+        nav.classList.remove('open');
+        overlay.classList.remove('open');
+        document.body.classList.remove('mobile-nav-open');
+    }
+    if (burger) {
+        burger.addEventListener('click', openMenu);
+    }
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeMenu);
+    }
+    if (overlay) {
+        overlay.addEventListener('click', closeMenu);
+    }
+    // Закривати меню при переході по пункту
+    document.querySelectorAll('.mobile-nav__list a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+    });
+}); 
