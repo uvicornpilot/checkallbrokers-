@@ -55,7 +55,7 @@ class PostAdmin(admin.ModelAdmin):
     
     fieldsets = (
         ('Основна інформація', {
-            'fields': ('title', 'slug', 'excerpt', 'content')
+            'fields': ('title', 'slug', 'excerpt', 'content', 'author')
         }),
         ('Зображення', {
             'fields': ('featured_image',)

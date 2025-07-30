@@ -1,11 +1,18 @@
 {% load static %}
 <div class="blog-sidebar__widget sidebar-form">
     <div class="sidebar-form__header">
-        <div class="sidebar-form__icon">⚖️</div>
-        <h3 class="sidebar-form__main-title">Юридическая консультация</h3>
+        <div class="sidebar-form__icon">
+            <img src="{% static '/images/aleskandr.webp' %}" alt="Money">
+            <div class="sidebar-form__icon-text">
+                <h2 class="sidebar-form__main-title">Юрист Александр Корчаков</h2>
+            </div>
+        </div>
+        <h3 class="sidebar-form__main-title">        Оставьте заявку и получите бесплатную консультацию по возврату средств.</h3>
+        
     </div>
     <b class="sidebar-form__title">
-        Брокер не выводит средства? <br>Узнай, как вернуть деньги!
+
+        Помогу вернуть ваши деньги.
     </b>
     {% include 'includes/sidebar_consultation_form.html' %}
 </div> 

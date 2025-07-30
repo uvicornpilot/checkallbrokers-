@@ -32,6 +32,9 @@
                                             {{ post.category.name }}
                                         </a>
                                         {% endif %}
+                                        <div class="blog-post__author">
+                                            <span class="blog-post__author-name">Автор: {{ post.author }}</span>
+                                        </div>
                                     </div>
                                     <h2 class="blog-post__title">
                                         <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>

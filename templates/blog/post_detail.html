@@ -19,7 +19,14 @@
                             {% endif %}
                             <span class="blog-detail__views">{{ post.views_count }} просмотров</span>
                         </div>
+                        <div class="blog-detail__author">
+                            <span class="blog-detail__author-name">Автор: {{ post.author }}</span>
                         
+                            <a href="#reviews" class="blog-detail__author-link">
+                                <span>Отзывы</span>
+                                <img src="{% static '/images/arrow-down-circle.svg' %}" alt="arrow-down">
+                            </a>
+                        </div>
                         <h1 class="blog-detail__title">{{ post.title }}</h1>
                         
                         {% if post.excerpt %}
@@ -56,8 +63,13 @@
                     
                   
                 </div>
+                  <!-- Form -->
+                  <div class="col-lg-4" style="margin-top: 60px;">
+                    {% include "includes/sidebar_form.html" %}
+                </div>
                   <!-- Reviews Section -->
                   {% include 'blog/includes/reviews.html' %}
+                
                 <!-- Похожие статьи -->
                 {% if related_posts %}
                 <section class="blog-detail__related">
@@ -120,17 +132,7 @@
                 </section>
                 {% endif %}
             </div>
-            <div class="col-lg-4">
-                {% include "includes/sidebar_form.html" %}
-            </div>
         </div>
     </div>
 </div>
 {% endblock %} 
-<style>
-    .blog-detail__header {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-    }
-</style>

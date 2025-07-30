@@ -67,7 +67,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=200, unique=True, verbose_name="Slug")
     excerpt = models.TextField(max_length=500, verbose_name="Краткое описание")
     content = RichTextField(verbose_name="Контент")
-    
+    author = models.CharField(max_length=100, verbose_name="Автор", default="Admin")
     # Изображения
     featured_image = models.ImageField(upload_to='blog/', blank=True, verbose_name="Главное изображение")
     
