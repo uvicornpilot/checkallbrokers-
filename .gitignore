@@ -25,12 +25,17 @@ VENV/
 .venv/
 .env/
 *.env
+venv/
 
 # Django
 media/
 staticfiles/
 local_settings.py
 settings_local.py
+db.sqlite3
+db.sqlite3-journal
+db.sqlite3-wal
+db.sqlite3-shm
 
 # Django migrations
 **/migrations/
@@ -65,3 +70,18 @@ build/
 
 # My custom files (optional)
 secrets.json
+.env
+.env.local
+.env.production
+.env.development
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# Backup files
+*.bak
+*.backup
