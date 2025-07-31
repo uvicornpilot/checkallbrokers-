@@ -12,6 +12,17 @@
     <meta name="keywords" content="{% block meta_keywords %}{{ meta_keywords|default:"брокер, проверка брокера, юридическая консультация, мошенничество, финансовые услуги, защита инвесторов" }}{% endblock %}">
     <meta name="author" content="Broker Control">
     <meta name="robots" content="index, follow">
+    <meta name="google-site-verification" content="2g4LNCXhntEi9J9Fqc6bdYFWzG0-jg-N3l8WEX8xPIo" />
+    
+    <!-- Additional SEO Meta Tags -->
+    <meta name="language" content="ru">
+    <meta name="revisit-after" content="7 days">
+    <meta name="distribution" content="global">
+    <meta name="rating" content="general">
+    <meta name="geo.region" content="UA">
+    <meta name="geo.placename" content="Ukraine">
+    <meta name="geo.position" content="50.4501;30.5234">
+    <meta name="ICBM" content="50.4501, 30.5234">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -37,6 +48,27 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Broker Control",
+        "url": "{{ request.build_absolute_uri }}",
+        "logo": "{{ request.build_absolute_uri }}{% static 'images/logo.png' %}",
+        "description": "Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций",
+        "address": {
+            "@type": "PostalAddress",
+            "addressCountry": "UA"
+        },
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "availableLanguage": "Russian"
+        }
+    }
+    </script>
     
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=1">
