@@ -94,7 +94,7 @@ class PostDetailView(DetailView):
 def submit_review(request, post_id):
     """AJAX view для отправки отзыва"""
     post = get_object_or_404(Post, id=post_id, status='published')
-    form = ReviewForm(request.POST)
+    form = ReviewForm(request.POST, request.FILES)
     
     if form.is_valid():
         review = form.save(commit=False)

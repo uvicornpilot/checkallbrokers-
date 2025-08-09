@@ -30,5 +30,5 @@ class ConsultationForm(forms.ModelForm):
             'name': 'Ім\'я *',
             'phone': 'Телефон *',
             'email': 'Email *',
-            'loss_amount': 'Сума втрат *',
+            'loss_amount': 'Сума втрат',
         }

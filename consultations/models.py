@@ -4,7 +4,7 @@ class LossReport(models.Model):
     name = models.CharField("Імя", max_length=100)
     phone = models.CharField("Телефон", max_length=20)
     email = models.EmailField("Email")
-    loss_amount = models.DecimalField("Сума потери", max_digits=10, decimal_places=2)
+    loss_amount = models.DecimalField("Сума потери", max_digits=10, decimal_places=2, blank=True, null=True)
     created_at = models.DateTimeField("Дата", auto_now_add=True)
 
     def __str__(self):

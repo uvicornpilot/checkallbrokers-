@@ -4,7 +4,7 @@ from .models import Review
 class ReviewForm(forms.ModelForm):
     class Meta:
         model = Review
-        fields = ['name', 'rating', 'text', 'parent', 'avatar', 'is_admin']
+        fields = ['name', 'rating', 'text', 'parent', 'avatar', 'avatar_image', 'is_admin']
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'review-form__input',
@@ -26,6 +26,9 @@ class ReviewForm(forms.ModelForm):
                 'class': 'review-form__input',
                 'placeholder': '🙂 Аватар (эмодзи, опционально)'
             }),
+            'avatar_image': forms.FileInput(attrs={
+                'class': 'review-form__input'
+            }),
             'is_admin': forms.CheckboxInput(attrs={
                 'class': 'review-form__checkbox'
             })
@@ -35,5 +38,6 @@ class ReviewForm(forms.ModelForm):
             'rating': 'Оценка *',
             'text': 'Отзыв *',
             'avatar': 'Аватар',
-            'is_admin': 'Ответ администратора'
+            'is_admin': 'Ответ администратора',
+            'avatar_image': 'Фото (необязательно)'
         } 

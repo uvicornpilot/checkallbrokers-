@@ -4192,6 +4192,14 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     background: var(--background-light);
     margin-right: 8px;
 }
+.review-avatar-img {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 8px;
+    border: 2px solid var(--primary-light);
+}
 .review-actions {
     margin-top: 0.75rem;
 }

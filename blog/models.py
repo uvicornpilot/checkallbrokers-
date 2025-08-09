@@ -175,6 +175,7 @@ class Review(models.Model):
     # Новый функционал: трединг ответов и аватар
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies', verbose_name="Родительский комментарий")
     avatar = models.CharField(max_length=10, blank=True, null=True, verbose_name="Аватар (эмодзи)")
+    avatar_image = models.ImageField(upload_to='reviews/avatars/', blank=True, null=True, verbose_name="Аватар (фото)")
     is_admin = models.BooleanField(default=False, verbose_name="Ответ администратора")
     rating = models.IntegerField(
         choices=RATING_CHOICES,

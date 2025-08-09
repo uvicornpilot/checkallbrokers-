@@ -27,7 +27,11 @@
         <div class="review-item" id="review-{{ review.id }}">
             <div class="review-header">
                 <div class="review-author">
-                    <span class="review-avatar">{{ review.avatar|default:"🙂" }}</span>
+                    {% if review.avatar_image %}
+                        <img class="review-avatar-img" src="{{ review.avatar_image.url }}" alt="avatar" />
+                    {% else %}
+                        <span class="review-avatar">{{ review.avatar|default:"🙂" }}</span>
+                    {% endif %}
                     <strong class="review-name">{% if review.is_admin %}Администратор{% else %}{{ review.name }}{% endif %}</strong>
                 </div>
                 <div class="review-rating">
@@ -54,7 +58,11 @@
                 {% for reply in review.approved_replies %}
                 <div class="review-reply">
                     <div class="review-reply__header">
-                        <span class="review-avatar">{{ reply.avatar|default:"💬" }}</span>
+                        {% if reply.avatar_image %}
+                            <img class="review-avatar-img" src="{{ reply.avatar_image.url }}" alt="avatar" />
+                        {% else %}
+                            <span class="review-avatar">{{ reply.avatar|default:"💬" }}</span>
+                        {% endif %}
                         <strong class="review-name">{% if reply.is_admin %}Администратор{% else %}{{ reply.name }}{% endif %}</strong>
                         <span class="review-date">{{ reply.created_at|date:"d.m.Y H:i" }}</span>
                     </div>
@@ -109,6 +117,16 @@
                     {% if review_form.rating.errors %}
                         <div class="review-form__error">{{ review_form.rating.errors.0 }}</div>
                     {% endif %}
+                </div>
+            </div>
+            <div class="review-form__row">
+                <div class="review-form__field">
+                    <label for="{{ review_form.avatar.id_for_label }}" class="review-form__label">{{ review_form.avatar.label }}</label>
+                    {{ review_form.avatar }}
+                </div>
+                <div class="review-form__field">
+                    <label for="{{ review_form.avatar_image.id_for_label }}" class="review-form__label">{{ review_form.avatar_image.label }}</label>
+                    {{ review_form.avatar_image }}
                 </div>
             </div>
             <div class="review-form__field">
