@@ -189,7 +189,8 @@ EMAIL_USE_TLS = False
 EMAIL_HOST_USER = 'info@ab-legalgroup.com'
 EMAIL_HOST_PASSWORD = 'Asdf1234!'
 DEFAULT_FROM_EMAIL = 'info@ab-legalgroup.com'
-LEADS_EMAIL = 'info@ab-legalgroup.com'
+# Основні отримувачі лідів
+LEADS_EMAILS = ['koch98761@gmail.com', 'fert1k@icloud.com']
 
 # SEO Settings
 SITE_NAME = 'Broker Control'

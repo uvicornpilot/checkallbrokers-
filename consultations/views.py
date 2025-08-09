@@ -71,8 +71,11 @@ def _send_lead_email(instance):
         ]
         message = "\n".join([line for line in message_lines if line.strip()])
         from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@forum-broker.com')
-        recipient = getattr(settings, 'LEADS_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'info@forum-broker.com'
-        send_mail(subject, message, from_email, [recipient], fail_silently=True)
+        recipients = getattr(settings, 'LEADS_EMAILS', None)
+        if not recipients:
+            fallback = getattr(settings, 'LEADS_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'info@forum-broker.com'
+            recipients = [fallback]
+        send_mail(subject, message, from_email, recipients, fail_silently=True)
     except Exception:
         # Не прерываем основной поток при ошибках отправки
         pass
