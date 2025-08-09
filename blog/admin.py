@@ -114,11 +114,21 @@ class PostAdmin(admin.ModelAdmin):
 
 @admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
-    list_display = ['name', 'post', 'rating', 'created_at', 'is_approved', 'ip_address']
-    list_filter = ['is_approved', 'rating', 'created_at']
-    search_fields = ['name', 'text', 'post__title']
+    list_display = ['name', 'post', 'rating', 'created_at', 'is_approved', 'is_admin', 'parent', 'avatar', 'ip_address']
+    list_filter = ['is_approved', 'is_admin', 'rating', 'created_at']
+    search_fields = ['name', 'text', 'post__title', 'avatar']
     readonly_fields = ['ip_address', 'created_at']
-    list_editable = ['is_approved']
+    list_editable = ['is_approved', 'is_admin']
+    autocomplete_fields = ['post', 'parent']
+    fieldsets = (
+        (None, {
+            'fields': ('post', 'parent', 'name', 'avatar', 'is_admin', 'rating', 'text', 'is_approved')
+        }),
+        ('Системные', {
+            'fields': ('ip_address', 'created_at'),
+            'classes': ('collapse',)
+        })
+    )
     actions = ['approve_reviews', 'reject_reviews']
     
     def approve_reviews(self, request, queryset):

@@ -172,6 +172,10 @@ class Review(models.Model):
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='reviews', verbose_name="Статья")
     name = models.CharField(max_length=100, verbose_name="Имя")
+    # Новый функционал: трединг ответов и аватар
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='replies', verbose_name="Родительский комментарий")
+    avatar = models.CharField(max_length=10, blank=True, null=True, verbose_name="Аватар (эмодзи)")
+    is_admin = models.BooleanField(default=False, verbose_name="Ответ администратора")
     rating = models.IntegerField(
         choices=RATING_CHOICES,
         validators=[MinValueValidator(1), MaxValueValidator(5)],
@@ -199,3 +203,8 @@ class Review(models.Model):
             else:
                 stars.append('<span class="star star--empty">☆</span>')
         return ''.join(stars)
+
+    @property
+    def approved_replies(self):
+        """Одобренные ответы на этот отзыв"""
+        return self.replies.filter(is_approved=True).order_by('created_at')

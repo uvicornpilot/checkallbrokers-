@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView
 from django.contrib import messages
 from django.http import JsonResponse
+from django.contrib.auth.decorators import user_passes_test
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
@@ -75,8 +76,8 @@ class PostDetailView(DetailView):
             status='published'
         ).order_by('-views_count')[:5]
         
-        # Отзывы с пагинацией
-        reviews = post.reviews.filter(is_approved=True)
+        # Отзывы (только корневые) с пагинацией
+        reviews = post.reviews.filter(is_approved=True, parent__isnull=True).prefetch_related('replies')
         paginator = Paginator(reviews, 5)  # 5 отзывов на страницу
         page_number = self.request.GET.get('review_page')
         reviews_page = paginator.get_page(page_number)
@@ -99,6 +100,14 @@ def submit_review(request, post_id):
         review = form.save(commit=False)
         review.post = post
         review.ip_address = request.META.get('REMOTE_ADDR')
+        # Если пользователь отмечает как админский ответ, разрешаем только при авторизованном админ юзере
+        if form.cleaned_data.get('is_admin') and not (request.user.is_authenticated and request.user.is_staff):
+            review.is_admin = False
+        # Безопасность: parent должен принадлежать тому же посту
+        parent = form.cleaned_data.get('parent')
+        if parent and parent.post_id != post.id:
+            parent = None
+        review.parent = parent
         review.save()
         
         return JsonResponse({

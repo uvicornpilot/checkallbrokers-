@@ -4182,6 +4182,41 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     border: 1px solid var(--border-color);
     margin-bottom: 1rem;
 }
+.review-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--background-light);
+    margin-right: 8px;
+}
+.review-actions {
+    margin-top: 0.75rem;
+}
+.btn--sm {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+.review-replies {
+    border-left: 2px solid var(--border-color);
+    margin-left: 1rem;
+    padding-left: 1rem;
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.review-reply__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+}
+.review-reply__text {
+    color: var(--text-primary);
+}
 
 .review-header {
     display: flex;

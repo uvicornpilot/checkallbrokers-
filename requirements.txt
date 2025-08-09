@@ -4,7 +4,7 @@ django-ckeditor==6.7.0
 python-decouple==3.8
 django-crispy-forms==2.1
 crispy-bootstrap5==0.7
-django-sitemap==1.0.0
+# django-sitemap (3rd-party) не існує. Використовуємо стандартний django.contrib.sitemaps
 django-robots==4.3
 django-taggit==4.0.0
 django-filter==23.5
@@ -25,4 +25,4 @@ pytest==7.4.3
 pytest-django==4.7.0
 factory-boy==3.3.0
 faker==20.1.0
-requests==2.31.0 
+requests==2.31.0

@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': 'mydb',
         'USER': 'myuser',
         'PASSWORD': 'mypassword',
-        'HOST': 'localhost',  # або хост, який дав хостинг
+        'HOST': ' 69.48.186.49',  # або хост, який дав хостинг
         'PORT': '5432',       # або інший, якщо нестандартний
     }
 }
@@ -187,6 +187,8 @@ EMAIL_PORT = 1025
 EMAIL_USE_TLS = False
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'no-reply@forum-broker.com'
+LEADS_EMAIL = 'leads@forum-broker.com'
 
 # SEO Settings
 SITE_NAME = 'Broker Control'

@@ -715,6 +715,22 @@ function initReviewForm() {
             handleReviewSubmission(this);
         });
     }
+    // Reply buttons
+    document.querySelectorAll('[data-reply-to]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const parentId = this.getAttribute('data-reply-to');
+            const form = document.getElementById('reviewForm');
+            if (!form) return;
+            const parentInput = form.querySelector('input[name="parent"]');
+            if (parentInput) {
+                parentInput.value = parentId;
+            }
+            // Scroll to form and focus text
+            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const textarea = form.querySelector('textarea[name="text"]');
+            if (textarea) textarea.focus();
+        });
+    });
 }
 
 // Обробка відправки відгуку
