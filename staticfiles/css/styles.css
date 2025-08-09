@@ -127,7 +127,6 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 /* Header */
 .header {
-    background: linear-gradient(135deg, var(--background-white) 0%, var(--background-light) 100%);
     border-bottom: 1px solid var(--border-color);
 }
 
@@ -922,6 +921,19 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     .contact-form,
     .modal-form {
         padding: 1.5rem;
+    }
+    
+    .sidebar-form__icon {
+        padding: 10px;
+    }
+    
+    .sidebar-form__icon img {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .sidebar-form__icon-text .sidebar-form__main-title {
+        font-size: 0.9rem;
     }
 
     .btn {
@@ -1829,19 +1841,44 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 .sidebar-form__header {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 16px;
-    padding-bottom: 12px;
+    gap: 16px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
     border-bottom: 2px solid var(--primary-light);
 }
 
 .sidebar-form__icon {
-    font-size: 24px;
-    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-    -webkit-background-clip: text;
-    /* -webkit-text-fill-color: transparent; */
-    background-clip: text;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    width:100%;
+    background: rgba(22, 198, 70, 0.1);
+    border-radius: var(--border-radius);
+    border: 1px solid rgba(22, 198, 70, 0.2);
+}
+.sidebar-form__icon img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    box-shadow: 0 4px 12px rgba(22, 198, 70, 0.2);
+}
+
+.sidebar-form__icon-text {
+    flex: 1;
+}
+
+.sidebar-form__icon-text .sidebar-form__main-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.3;
 }
 
 .sidebar-form__main-title {
@@ -1849,6 +1886,8 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
+    line-height: 1.4;
+    text-align: center;
 }
 
 .sidebar-form__title {
@@ -1992,6 +2031,22 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
         position: static;
         margin-top: 24px;
         border-radius: 12px;
+    }
+    
+    .sidebar-form__icon {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 12px;
+    }
+    
+    .sidebar-form__icon img {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .sidebar-form__icon-text .sidebar-form__main-title {
+        font-size: 1rem;
     }
     
     .sidebar-form__main-title {
@@ -2793,7 +2848,11 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 .chat-widget__icon {
     font-size: 1.2rem;
 }
-
+.chat-widget__icon img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+}
 .chat-widget__close {
     background: none;
     border: none;
@@ -3879,6 +3938,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     margin-top: 100px;
     text-align: center;
     transition: var(--transition);
+    text-wrap: balance;
 }
 @media (max-width: 768px) {
     .form-banner {
@@ -3897,12 +3957,22 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 .form-banner__content {
     max-width: 600px;
     margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
 }
 
 .form-banner__icon {
     font-size: 3rem;
     margin-bottom: 1rem;
     display: block;
+}
+
+.form-banner__icon img {
+    width: 100px ;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .form-banner__title {
@@ -4496,4 +4566,32 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     animation-duration: 2s;
     animation-timing-function: ease-in-out;
     animation-iteration-count: infinite;
+}
+.blog-detail__header {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.blog-detail__author {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    justify-content: space-between;
+    
+}
+.blog-detail__author-name {
+    font-size: 14px;
+    color: #666;
+}
+.blog-detail__author-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #666;
+    text-decoration: none;
+}
+.blog-detail__author-link img {
+    width: 20px;
+    height: 20px;
 }
