@@ -87,22 +87,22 @@ WSGI_APPLICATION = 'broker_control.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.sqlite3',
-#        'NAME': BASE_DIR / 'db.sqlite3',
-#    }
-#}
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        'HOST': ' 69.48.186.49',  # або хост, який дав хостинг
-        'PORT': '5432',       # або інший, якщо нестандартний
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+#DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'mydb',
+#        'USER': 'myuser',
+#        'PASSWORD': 'mypassword',
+#        # 'HOST': ' 69.48.186.49',  # або хост, який дав хостинг
+#        'PORT': '5432',       # або інший, якщо нестандартний
+#    }
+#}
 
 
 # Password validation
@@ -180,15 +180,16 @@ CKEDITOR_CONFIGS = {
     },
 }
 
-# Email settings (for development)
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_PORT = 1025
+# Email settings (SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.titan.email'
+EMAIL_PORT = 465
+EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'no-reply@forum-broker.com'
-LEADS_EMAIL = 'leads@forum-broker.com'
+EMAIL_HOST_USER = 'info@ab-legalgroup.com'
+EMAIL_HOST_PASSWORD = 'Asdf1234!'
+DEFAULT_FROM_EMAIL = 'info@ab-legalgroup.com'
+LEADS_EMAIL = 'info@ab-legalgroup.com'
 
 # SEO Settings
 SITE_NAME = 'Broker Control'
