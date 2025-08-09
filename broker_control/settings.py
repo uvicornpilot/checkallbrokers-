@@ -24,9 +24,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['forum-broker.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['forum-broker.com', 'localhost', '127.0.0.1','www.forum-broker.com']
 
 
 
@@ -87,22 +87,22 @@ WSGI_APPLICATION = 'broker_control.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+   'default': {
+       'ENGINE': 'django.db.backends.postgresql',
+       'NAME': 'mydb',
+       'USER': 'myuser',
+       'PASSWORD': 'mypassword',
+       'HOST': 'localhost',  # або хост, який дав хостинг
+       'PORT': '5432',       # або інший, якщо нестандартний
+   }
 }
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql',
-#        'NAME': 'mydb',
-#        'USER': 'myuser',
-#        'PASSWORD': 'mypassword',
-#        # 'HOST': ' 69.48.186.49',  # або хост, який дав хостинг
-#        'PORT': '5432',       # або інший, якщо нестандартний
-#    }
-#}
 
 
 # Password validation
@@ -190,7 +190,7 @@ EMAIL_HOST_USER = 'info@ab-legalgroup.com'
 EMAIL_HOST_PASSWORD = 'Asdf1234!'
 DEFAULT_FROM_EMAIL = 'info@ab-legalgroup.com'
 # Основні отримувачі лідів
-LEADS_EMAILS = ['koch98761@gmail.com', 'fert1k@icloud.com']
+LEADS_EMAILS = ['koch98761@gmail.com']
 
 # SEO Settings
 SITE_NAME = 'Broker Control'

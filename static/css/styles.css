@@ -4200,6 +4200,17 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     margin-right: 8px;
     border: 2px solid var(--primary-light);
 }
+.review-avatar-initial {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    margin-right: 8px;
+}
 .review-actions {
     margin-top: 0.75rem;
 }
