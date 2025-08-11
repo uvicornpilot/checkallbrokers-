@@ -1,4 +1,5 @@
 {% load static %}
+{% load review_extras %}
 
 <!-- Reviews Section -->
 <section class="reviews-section" id="reviews">
@@ -27,7 +28,7 @@
         <div class="review-item" id="review-{{ review.id }}">
             <div class="review-header">
                 <div class="review-author">
-                    <span class="review-avatar-initial" style="background: {{ review.get_avatar_color }}">{{ review.get_initial }}</span>
+                    <span class="review-avatar-initial" style="background: {{ review.name|name_color }}">{{ review.name|initial }}</span>
                     <strong class="review-name">{% if review.is_admin %}Администратор{% else %}{{ review.name }}{% endif %}</strong>
                 </div>
                 <div class="review-rating">
@@ -54,7 +55,7 @@
                 {% for reply in review.approved_replies %}
                 <div class="review-reply">
                     <div class="review-reply__header">
-                        <span class="review-avatar-initial" style="background: {{ reply.get_avatar_color }}">{{ reply.get_initial }}</span>
+                        <span class="review-avatar-initial" style="background: {{ reply.name|name_color }}">{{ reply.name|initial }}</span>
                         <strong class="review-name">{% if reply.is_admin %}Администратор{% else %}{{ reply.name }}{% endif %}</strong>
                         <span class="review-date">{{ reply.created_at|date:"d.m.Y H:i" }}</span>
                     </div>
