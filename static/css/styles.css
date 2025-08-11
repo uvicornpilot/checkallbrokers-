@@ -4649,3 +4649,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     width: 20px;
     height: 20px;
 }
+.review-avatar-initial {
+    padding: 8px 12px;
+    border-radius: 50px;
+}
