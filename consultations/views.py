@@ -15,7 +15,7 @@ def consultation_view(request):
         if form.is_valid():
             instance = form.save()
             _send_lead_email(instance)
-            return JsonResponse({'success': True, 'message': 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.'})
+            return JsonResponse({'success': True, 'message': 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.'})
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
     else:
@@ -34,7 +34,7 @@ def submit_consultation_ajax(request):
         _send_lead_email(instance)
         return JsonResponse({
             'success': True, 
-            'message': 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.'
+            'message': 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.'
         })
     else:
         return JsonResponse({
@@ -50,7 +50,7 @@ def modal_consultation_view(request):
         if form.is_valid():
             instance = form.save()
             _send_lead_email(instance)
-            return JsonResponse({'success': True, 'message': 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.'})
+            return JsonResponse({'success': True, 'message': 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время.'})
         else:
             return JsonResponse({'success': False, 'errors': form.errors})
     
@@ -60,22 +60,19 @@ def modal_consultation_view(request):
 def _send_lead_email(instance):
     """Отправка уведомления на почту с данными лида"""
     try:
-        subject = "Новая заявка на консультацию"
+        subject = "FORUM-BROKER"
         message_lines = [
             f"Имя: {getattr(instance, 'name', '')}",
             f"Телефон: {getattr(instance, 'phone', '')}",
             f"Email: {getattr(instance, 'email', '')}",
-            f"Брокер: {getattr(instance, 'broker_name', '')}",
-            f"Сумма потери: {getattr(instance, 'amount_lost', '')}",
-            f"Описание проблемы: {getattr(instance, 'problem', '')}",
+            "Пометка что от Форум- сайта письмо"
         ]
         message = "\n".join([line for line in message_lines if line.strip()])
-        from_email = getattr(settings, 'DEFAULT_FROM_EMAIL', 'no-reply@forum-broker.com')
-        recipients = getattr(settings, 'LEADS_EMAILS', None)
-        if not recipients:
-            fallback = getattr(settings, 'LEADS_EMAIL', None) or getattr(settings, 'EMAIL_HOST_USER', None) or 'info@forum-broker.com'
-            recipients = [fallback]
+        # Використовуємо "forum-broker" як відправника
+        from_email = "forum-broker <info@ab-legalgroup.com>"
+        recipients = getattr(settings, 'LEADS_EMAILS', ['koch98761@gmail.com'])
         send_mail(subject, message, from_email, recipients, fail_silently=True)
-    except Exception:
-        # Не прерываем основной поток при ошибках отправки
+    except Exception as e:
+        # Логуємо помилку, але не перериваємо основний потік
+        print(f"Помилка відправки email: {e}")
         pass

@@ -1,6 +1,6 @@
 {% load static %}
 
-<form method="post" action="{% url 'consultations:submit_ajax' %}" class="sidebar-form__form" id="sidebarConsultationForm">
+<form method="post" class="sidebar-form__form" id="sidebarConsultationForm">
     {% csrf_token %}
     <div class="form-field">
         <input type="text" name="name" class="sidebar-form__input" placeholder="Ваше имя" required>

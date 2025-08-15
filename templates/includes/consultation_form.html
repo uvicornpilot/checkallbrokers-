@@ -1,6 +1,6 @@
 {% load static %}
 
-<form method="post" action="{% url 'consultations:submit_ajax' %}" class="contact-form" id="consultationFormComponent">
+<form method="post" class="contact-form" id="consultationFormComponent">
     {% csrf_token %}
     <div class="form-group">
         <label for="consultation-name" class="form-group__label">Имя *</label>

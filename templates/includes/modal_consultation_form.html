@@ -1,6 +1,6 @@
 {% load static %}
 
-<form method="post" action="{% url 'consultations:submit_ajax' %}" class="modal__form" id="modalConsultationForm">
+<form method="post" class="modal__form" id="modalConsultationForm">
     {% csrf_token %}
     <div class="form-group">
         <!-- <label for="modal-name" class="form-group__label">Имя *</label> -->

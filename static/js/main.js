@@ -38,14 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
 // Модальное окно
 function initModal() {
     const modal = document.getElementById('consultationModal');
-    const modalForm = document.getElementById('modalConsultationForm');
-    
-    if (modalForm) {
-        modalForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handleFormSubmission(this, 'modal');
-        });
-    }
+    // Прибираємо дублювання обробника подій - він буде в initForms()
 }
 
 function openConsultationForm() {
@@ -131,12 +124,22 @@ function initForms() {
 }
 
 function handleFormSubmission(form, type) {
-    console.log('Form submission started:', type); // Діагностика
+    // Генеруємо унікальний ID для кожної відправки
+    const submissionId = Date.now() + Math.random().toString(36).substr(2, 9);
+    console.log(`Form submission started: ${type} (ID: ${submissionId})`); // Діагностика
+    
     const formData = new FormData(form);
     const submitButton = form.querySelector('button[type="submit"]');
     const originalText = submitButton.textContent;
     
+    // Перевіряємо, чи форма вже відправляється
+    if (form.dataset.submitting === 'true') {
+        console.log(`Form ${type} is already submitting, ignoring duplicate submission`);
+        return;
+    }
+    
     // Показываем состояние загрузки
+    form.dataset.submitting = 'true';
     submitButton.disabled = true;
     submitButton.textContent = 'Отправка...';
     
@@ -189,11 +192,11 @@ function handleFormSubmission(form, type) {
         if (data.success) {
             if (type === 'modal') {
                 // Для модального вікна показываем ответ внутри модального окна
-                showModalResponse(data.message || 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.');
+                showModalResponse(data.message || 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время..');
                 form.reset();
             } else {
                 // Для других форм показываем обычное сообщение
-                showMessage(form, 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в течение 24 часов.', 'success');
+                showMessage(form, 'Спасибо! Ваша заявка отправлена. Мы свяжемся с вами в ближайшее время..', 'success');
                 form.reset();
             }
         } else {
@@ -207,6 +210,7 @@ function handleFormSubmission(form, type) {
     .finally(() => {
         submitButton.disabled = false;
         submitButton.textContent = originalText;
+        form.dataset.submitting = 'false'; // Скидаємо флаг відправки
     });
 }
 
@@ -303,7 +307,7 @@ function showModalResponse(message) {
         if (modalContent) {
             modalContent.innerHTML = `
                 <div class="modal__response">
-                    <div class="modal__response-icon">✅</div>
+                    
                     <h2 class="modal__response-title">Спасибо!</h2>
                     <p class="modal__response-message">${message}</p>
                     <button class="btn btn--primary" onclick="closeConsultationForm()">Закрыть</button>
@@ -794,6 +798,7 @@ function handleReviewSubmission(form) {
     .finally(() => {
         submitButton.disabled = false;
         submitButton.textContent = originalText;
+        form.dataset.submitting = 'false'; // Скидаємо флаг відправки
     });
 }
 
