@@ -1,4 +1,23 @@
 // Broker Control - Main JavaScript
+
+// CKEditor context menu enhancement
+function enhanceCKEditorContextMenu() {
+    if (typeof CKEDITOR !== 'undefined') {
+        CKEDITOR.on('instanceReady', function(evt) {
+            const editor = evt.editor;
+            
+            // Enhance context menu
+            editor.on('contextMenu', function(evt) {
+                const menu = evt.data.menu;
+                if (menu) {
+                    // Add custom styling
+                    menu.element.addClass('enhanced-context-menu');
+                }
+            });
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     // Инициализация всех компонентов
     initModal();
@@ -8,6 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initMobileMenu();
     initScrollAnimations();
     initReviewForm(); // Додано ініціалізацію форми відгуків
+    enhanceCKEditorContextMenu(); // Покращення контекстного меню CKEditor
     
     // Показ модального окна через 3 секунды
     setTimeout(function() {

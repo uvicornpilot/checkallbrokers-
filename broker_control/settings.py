@@ -24,7 +24,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-your-secret-key-here-change-in-production'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['forum-broker.com', 'localhost', '127.0.0.1','www.forum-broker.com']
 
@@ -87,22 +87,22 @@ WSGI_APPLICATION = 'broker_control.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': 'mydb',
-       'USER': 'myuser',
-       'PASSWORD': 'mypassword',
-       'HOST': 'localhost',  # або хост, який дав хостинг
-       'PORT': '5432',       # або інший, якщо нестандартний
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
+# DATABASES = {
+#    'default': {
+#        'ENGINE': 'django.db.backends.postgresql',
+#        'NAME': 'mydb',
+#        'USER': 'myuser',
+#        'PASSWORD': 'mypassword',
+#        'HOST': 'localhost',  # або хост, який дав хостинг
+#        'PORT': '5432',       # або інший, якщо нестандартний
+#    }
+# }
 
 
 # Password validation
@@ -157,28 +157,30 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # CKEditor settings
 CKEDITOR_UPLOAD_PATH = "uploads/"
 CKEDITOR_IMAGE_BACKEND = "pillow"
-
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': 'full',
+        'toolbar': 'Full',  # всі кнопки
         'height': 300,
         'width': '100%',
+        'resize_enabled': True,
+        'forcePasteAsPlainText': False,  # дозволяє вставку з форматуванням
+        'disableNativeSpellChecker': False,
+        'contextmenu': True,  # увімкнути контекстне меню
+        'menu_groups': 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea',  # групи меню
     },
-    'email_template': {
-        'toolbar': [
-            ['Bold', 'Italic', 'Underline', 'Strike'],
-            ['Font', 'FontSize'],
-            ['TextColor', 'BGColor'],
-            ['Link', 'Unlink'],
-            ['NumberedList', 'BulletedList'],
-            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
-            ['Table'],
-            ['Source'],
-        ],
+    'simple': {
+        'toolbar': [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink']],
         'height': 400,
         'width': '100%',
-    },
+        'resize_enabled': True,
+        'forcePasteAsPlainText': False,
+        'disableNativeSpellChecker': False,
+        'contextmenu': True,  # увімкнути контекстне меню
+    }
 }
+
+
+
 
 # Email settings (SMTP)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
