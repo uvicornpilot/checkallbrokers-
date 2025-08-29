@@ -2,7 +2,27 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
+from django.utils import timezone
 from .models import Category, Tag, Post, Review
+
+
+class ScheduledListFilter(admin.SimpleListFilter):
+    title = 'Заплановано'
+    parameter_name = 'scheduled'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', 'Так'),
+            ('no', 'Ні'),
+        )
+
+    def queryset(self, request, queryset):
+        now = timezone.now()
+        if self.value() == 'yes':
+            return queryset.filter(status='published', published_at__gt=now)
+        if self.value() == 'no':
+            return queryset.exclude(status='published', published_at__gt=now)
+        return queryset
 
 
 @admin.register(Category)
@@ -42,11 +62,12 @@ class PostAdmin(admin.ModelAdmin):
         'category', 
         'status', 
         'published_at', 
+        'scheduled_status',
         'views_count', 
         'reading_time_display',
         'created_at'
     ]
-    list_filter = ['status', 'category', 'tags', 'published_at', 'created_at']
+    list_filter = ['status', 'category', 'tags', 'published_at', 'created_at', ScheduledListFilter]
     search_fields = ['title', 'excerpt', 'content']
     list_editable = ['status']
     prepopulated_fields = {'slug': ('title',)}
@@ -96,7 +117,7 @@ class PostAdmin(admin.ModelAdmin):
             obj.published_at = timezone.now()
         super().save_model(request, obj, form, change)
 
-    actions = ['publish_posts', 'unpublish_posts']
+    actions = ['publish_posts', 'unpublish_posts', 'schedule_publish']
 
     def publish_posts(self, request, queryset):
         """Опублікувати вибрані статті"""
@@ -110,6 +131,47 @@ class PostAdmin(admin.ModelAdmin):
         updated = queryset.update(status='draft', published_at=None)
         self.message_user(request, f'{updated} статей знято з публікації')
     unpublish_posts.short_description = "Зняти з публікації вибрані статті"
+
+    def is_scheduled(self, obj):
+        """Фільтр: заплановані публікації (опубліковано у майбутньому)"""
+        return obj.status == 'published' and obj.published_at and obj.published_at > timezone.now()
+    is_scheduled.boolean = True
+    is_scheduled.short_description = 'Заплановано'
+
+    def scheduled_status(self, obj):
+        """Індикатор стану: Опубліковано / Заплановано / Чернетка"""
+        if obj.status == 'draft':
+            return format_html('<span style="color:#999;">Чернетка</span>')
+        if obj.published_at and obj.published_at > timezone.now():
+            return format_html('<span style="color:#d97706;">Заплановано</span>')
+        return format_html('<span style="color:#059669;">Опубліковано</span>')
+    scheduled_status.short_description = 'Стан'
+
+    def schedule_publish(self, request, queryset):
+        """Адмін-екшн: запланувати публікацію на вказану дату/час."""
+        from django import forms
+
+        class ScheduleForm(forms.Form):
+            scheduled_at = forms.DateTimeField(label='Опублікувати о', widget=forms.DateTimeInput(attrs={'type': 'datetime-local'}))
+
+        if 'apply' in request.POST:
+            form = ScheduleForm(request.POST)
+            if form.is_valid():
+                when = form.cleaned_data['scheduled_at']
+                updated = queryset.update(status='published', published_at=when)
+                self.message_user(request, f'Заплановано {updated} статей на {when}.')
+                return None
+        else:
+            form = ScheduleForm()
+
+        from django.shortcuts import render
+        return render(request, 'admin/schedule_publish.html', context={
+            'title': 'Запланувати публікацію',
+            'queryset': queryset,
+            'form': form,
+            'action': 'schedule_publish',
+        })
+    schedule_publish.short_description = 'Запланувати на…'
 
 
 @admin.register(Review)

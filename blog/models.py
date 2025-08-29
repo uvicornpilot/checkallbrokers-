@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.utils.text import slugify
 from ckeditor.fields import RichTextField
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.utils import timezone
 
 
 class Category(models.Model):
@@ -127,7 +128,11 @@ class Post(models.Model):
     @property
     def is_published(self):
         """Опубликована ли статья"""
-        return self.status == 'published' and self.published_at is not None
+        return (
+            self.status == 'published' and 
+            self.published_at is not None and 
+            self.published_at <= timezone.now()
+        )
 
     @property
     def reading_time(self):
@@ -140,6 +145,8 @@ class Post(models.Model):
         """Получить предыдущую статью"""
         return Post.objects.filter(
             status='published',
+            published_at__isnull=False,
+            published_at__lte=timezone.now(),
             published_at__lt=self.published_at
         ).order_by('-published_at').first()
 
@@ -147,6 +154,8 @@ class Post(models.Model):
         """Получить следующую статью"""
         return Post.objects.filter(
             status='published',
+            published_at__isnull=False,
+            published_at__lte=timezone.now(),
             published_at__gt=self.published_at
         ).order_by('-published_at').first()
 

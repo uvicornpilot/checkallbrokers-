@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.views.generic import TemplateView
 from .models import SiteSection, Service, SiteSettings, HeroBanner, ContactInfo
 from blog.models import Post
+from django.utils import timezone
 from consultations.forms import ConsultationForm
 
 
@@ -25,7 +26,11 @@ class HomeView(TemplateView):
         context['services'] = services
         
         # Получаем последние посты блога
-        latest_posts = Post.objects.filter(status='published').order_by('-created_at')[:3]
+        latest_posts = Post.objects.filter(
+            status='published',
+            published_at__isnull=False,
+            published_at__lte=timezone.now()
+        ).order_by('-created_at')[:3]
         context['latest_posts'] = latest_posts
         
         # Добавляем форму консультации

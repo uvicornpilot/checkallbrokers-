@@ -8,6 +8,7 @@ from django.views.decorators.http import require_http_methods
 from django.utils.decorators import method_decorator
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.utils import timezone
 from .models import Post, Category, Tag, Review
 from .forms import ReviewForm
 
@@ -19,7 +20,7 @@ class PostListView(ListView):
     paginate_by = 9
 
     def get_queryset(self):
-        queryset = Post.objects.filter(status='published')
+        queryset = Post.objects.filter(status='published', published_at__isnull=False, published_at__lte=timezone.now())
         
         # Поиск
         q = self.request.GET.get('q')
@@ -55,7 +56,7 @@ class PostDetailView(DetailView):
     context_object_name = 'post'
 
     def get_queryset(self):
-        return Post.objects.filter(status='published').select_related('category').prefetch_related('tags')
+        return Post.objects.filter(status='published', published_at__isnull=False, published_at__lte=timezone.now()).select_related('category').prefetch_related('tags')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -68,12 +69,16 @@ class PostDetailView(DetailView):
         # Похожие статьи
         context['related_posts'] = Post.objects.filter(
             status='published',
+            published_at__isnull=False,
+            published_at__lte=timezone.now(),
             category=post.category
         ).exclude(id=post.id)[:3]
         
         # Популярные статьи
         context['popular_posts'] = Post.objects.filter(
-            status='published'
+            status='published',
+            published_at__isnull=False,
+            published_at__lte=timezone.now()
         ).order_by('-views_count')[:5]
         
         # Отзывы (только корневые) с пагинацией
@@ -123,7 +128,7 @@ def submit_review(request, post_id):
 
 def category_posts(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    posts = Post.objects.filter(category=category, status='published')
+    posts = Post.objects.filter(category=category, status='published', published_at__isnull=False, published_at__lte=timezone.now())
     
     paginator = Paginator(posts, 9)
     page_number = request.GET.get('page')
@@ -140,7 +145,7 @@ def category_posts(request, slug):
 
 def tag_posts(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
-    posts = Post.objects.filter(tags=tag, status='published')
+    posts = Post.objects.filter(tags=tag, status='published', published_at__isnull=False, published_at__lte=timezone.now())
     
     paginator = Paginator(posts, 9)
     page_number = request.GET.get('page')
@@ -162,7 +167,9 @@ def search_posts(request):
             Q(title__icontains=query) | 
             Q(content__icontains=query) | 
             Q(excerpt__icontains=query),
-            status='published'
+            status='published',
+            published_at__isnull=False,
+            published_at__lte=timezone.now()
         )
     else:
         posts = Post.objects.none()
