@@ -88,10 +88,14 @@ WSGI_APPLICATION = 'broker_control.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 if DEBUG:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'mydb',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': '69.48.186.49',  # або хост, який дав хостинг
+        'PORT': '5432',       # або інший, якщо нестандартний
+    }
     }
 else:
     DATABASES = {

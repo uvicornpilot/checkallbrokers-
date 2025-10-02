@@ -351,38 +351,50 @@ function initSmoothScrolling() {
 function initPhoneInputs() {
     const phoneInputs = document.querySelectorAll('.intl-tel-input');
     console.log('Found phone inputs:', phoneInputs.length); // Діагностика
-    
+
+    // Якщо плагін ще не завантажений, відкладаємо ініціалізацію,
+    // щоб скрипт не падав і інші частини (напр. initReviewForm) відпрацювали
+    if (phoneInputs.length > 0 && typeof window.intlTelInput !== 'function') {
+        console.warn('intlTelInput not loaded yet; deferring phone inputs init until window.load');
+        window.addEventListener('load', initPhoneInputs, { once: true });
+        return;
+    }
+
     phoneInputs.forEach((input, index) => {
         console.log(`Initializing phone input ${index + 1}:`, input.id || input.name); // Діагностика
-        
-        // Инициализируем intl-tel-input
-        const iti = window.intlTelInput(input, {
-            initialCountry: 'auto',
-            geoIpLookup: function(callback) {
-                fetch('https://ipapi.co/json')
-                    .then(res => res.json())
-                    .then(data => callback(data.country_code))
-                    .catch(() => callback('ua')); // По умолчанию Украина
-            },
-            preferredCountries: ['ua', 'ru', 'kz', 'by'],
-            separateDialCode: true,
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
-        });
-        
-        // Добавляем валидацию при вводе
-        input.addEventListener('blur', function() {
-            if (iti.isValidNumber()) {
-                input.classList.remove('form-group__input--error');
-                input.classList.add('form-group__input--valid');
-            } else {
-                input.classList.remove('form-group__input--valid');
-                input.classList.add('form-group__input--error');
-            }
-        });
-        
-        // Сохраняем экземпляр для использования в валидации
-        input.iti = iti;
-        console.log(`Phone input ${index + 1} initialized successfully`); // Діагностика
+
+        if (typeof window.intlTelInput === 'function') {
+            // Инициализируем intl-tel-input
+            const iti = window.intlTelInput(input, {
+                initialCountry: 'auto',
+                geoIpLookup: function(callback) {
+                    fetch('https://ipapi.co/json')
+                        .then(res => res.json())
+                        .then(data => callback(data.country_code))
+                        .catch(() => callback('ua')); // По умолчанию Украина
+                },
+                preferredCountries: ['ua', 'ru', 'kz', 'by'],
+                separateDialCode: true,
+                utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+            });
+
+            // Добавляем валидацию при вводе
+            input.addEventListener('blur', function() {
+                if (iti.isValidNumber()) {
+                    input.classList.remove('form-group__input--error');
+                    input.classList.add('form-group__input--valid');
+                } else {
+                    input.classList.remove('form-group__input--valid');
+                    input.classList.add('form-group__input--error');
+                }
+            });
+
+            // Сохраняем экземпляр для использования в валидации
+            input.iti = iti;
+            console.log(`Phone input ${index + 1} initialized successfully`); // Діагностика
+        } else {
+            console.warn('intlTelInput is still unavailable; skipping this input for now');
+        }
     });
 }
 // Mobile Menu Toggle
@@ -739,22 +751,45 @@ function initReviewForm() {
             handleReviewSubmission(this);
         });
     }
+    // Inline reply UX: move form under the selected review
+    const formHome = document.getElementById('reviewFormHome');
+    const replyingIndicator = document.getElementById('reviewReplyingIndicator');
+    const cancelReplyBtn = document.getElementById('cancelReplyBtn');
+    const formParentInput = reviewForm ? reviewForm.querySelector('input[name="parent"]') : null;
+
+    function moveFormUnderReview(reviewId) {
+        const reviewEl = document.getElementById(`review-${reviewId}`);
+        if (!reviewEl || !reviewForm) return;
+        // Вставляємо форму одразу після заголовка/контенту відгука
+        reviewEl.appendChild(reviewForm);
+        if (formParentInput) formParentInput.value = reviewId;
+        if (replyingIndicator) replyingIndicator.style.display = '';
+        const textarea = reviewForm.querySelector('textarea[name="text"]');
+        if (textarea) textarea.focus();
+    }
+
+    function resetFormPosition() {
+        if (!formHome || !reviewForm) return;
+        formHome.appendChild(reviewForm);
+        if (formParentInput) formParentInput.value = '';
+        if (replyingIndicator) replyingIndicator.style.display = 'none';
+    }
+
     // Reply buttons
     document.querySelectorAll('[data-reply-to]').forEach(btn => {
         btn.addEventListener('click', function() {
             const parentId = this.getAttribute('data-reply-to');
-            const form = document.getElementById('reviewForm');
-            if (!form) return;
-            const parentInput = form.querySelector('input[name="parent"]');
-            if (parentInput) {
-                parentInput.value = parentId;
-            }
-            // Scroll to form and focus text
-            form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            const textarea = form.querySelector('textarea[name="text"]');
-            if (textarea) textarea.focus();
+            moveFormUnderReview(parentId);
         });
     });
+
+    // Cancel reply
+    if (cancelReplyBtn) {
+        cancelReplyBtn.addEventListener('click', function() {
+            resetFormPosition();
+            reviewForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+    }
 }
 
 // Обробка відправки відгуку

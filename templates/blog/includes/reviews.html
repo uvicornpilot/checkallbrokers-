@@ -91,11 +91,15 @@
     {% endif %}
 
     <!-- Review Form -->
-    <div class="review-form-section">
+    <div class="review-form-section" id="reviewFormHome">
         <h4 class="review-form-title">Оставить отзыв</h4>
         <form method="post" action="{% url 'blog:submit_review' post.id %}" class="review-form" id="reviewForm">
             {% csrf_token %}
             {{ review_form.parent }}
+            <div class="review-form__replying" id="reviewReplyingIndicator" style="display:none">
+                <span class="review-form__replying-text" id="reviewReplyingText">Вы отвечаете на комментарий</span>
+                <button type="button" class="review-form__cancel-reply" id="cancelReplyBtn">Отменить ответ</button>
+            </div>
             <div class="review-form__row">
                 <div class="review-form__field">
                     <label for="{{ review_form.name.id_for_label }}" class="review-form__label">{{ review_form.name.label }}</label>

@@ -4486,6 +4486,40 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
     box-shadow: 0 0 0 3px var(--error-light) !important;
 }
 
+/* Review Replying Indicator */
+.review-form__replying {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--background-light);
+    border-left: 3px solid var(--primary-color);
+    border-radius: var(--border-radius);
+    margin: 10px 0 12px 0;
+}
+
+.review-form__replying-text {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.review-form__cancel-reply {
+    margin-left: auto;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.review-form__cancel-reply:hover {
+    background: var(--background-light);
+    color: var(--text-primary);
+}
+
 .nav__close {
     display: none;
     position: absolute;
