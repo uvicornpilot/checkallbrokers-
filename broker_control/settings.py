@@ -104,6 +104,7 @@ else:
         'NAME': 'mydb',
         'USER': 'myuser',
         'PASSWORD': 'mypassword',
+        #  'HOST': '69.48.186.49',
         'HOST': 'localhost',  # або хост, який дав хостинг
         'PORT': '5432',       # або інший, якщо нестандартний
     }

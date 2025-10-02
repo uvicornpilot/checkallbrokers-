@@ -518,20 +518,18 @@ function addChatMessage(text, sender) {
 
 // Мобильное меню
 function initMobileMenu() {
-    console.log('initMobileMenu called'); // Діагностика
-    
     const nav = document.getElementById('mainNav');
     const toggle = document.querySelector('.mobile-menu-toggle');
     const overlay = document.querySelector('.nav__overlay');
-    
-    console.log('initMobileMenu elements:', { nav, toggle, overlay }); // Діагностика
-    
+
+    // Тихо пропускаємо ініціалізацію, якщо елементи відсутні на поточній сторінці
+    if (!(nav && toggle)) {
+        return;
+    }
+
     if (nav && toggle) {
-        console.log('Adding event listeners to mobile menu'); // Діагностика
-        
         // Обработчик клика
         toggle.addEventListener('click', function() {
-            console.log('Toggle button clicked'); // Діагностика
             toggleMobileMenu();
         });
         
@@ -540,8 +538,7 @@ function initMobileMenu() {
             if (nav.classList.contains('nav--open') && 
                 !nav.contains(e.target) && 
                 !toggle.contains(e.target) &&
-                !overlay.contains(e.target)) {
-                console.log('Closing menu - clicked outside'); // Діагностика
+                !(overlay && overlay.contains(e.target))) {
                 toggleMobileMenu();
             }
         });
@@ -551,15 +548,10 @@ function initMobileMenu() {
         navLinks.forEach(link => {
             link.addEventListener('click', function() {
                 if (nav.classList.contains('nav--open')) {
-                    console.log('Closing menu - link clicked'); // Діагностика
                     toggleMobileMenu();
                 }
             });
         });
-        
-        console.log('Mobile menu initialized successfully'); // Діагностика
-    } else {
-        console.error('initMobileMenu: Nav or toggle element not found!'); // Діагностика
     }
 }
 
