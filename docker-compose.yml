@@ -18,6 +18,8 @@ services:
     build: .
     restart: unless-stopped
     env_file: .env
+    ports:
+      - "127.0.0.1:8003:8000"
     depends_on:
       db:
         condition: service_healthy
@@ -25,17 +27,18 @@ services:
       - media_volume:/app/media
       - static_volume:/app/staticfiles
 
-  nginx:
-    image: nginx:alpine
+  scheduler:
+    build: .
     restart: unless-stopped
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - media_volume:/app/media:ro
-      - static_volume:/app/staticfiles:ro
+    env_file: .env
     depends_on:
-      - web
+      db:
+        condition: service_healthy
+    entrypoint: >
+      sh -c "while true; do
+        python manage.py publish_scheduled_pages;
+        sleep 60;
+      done"
 
 volumes:
   postgres_data:
