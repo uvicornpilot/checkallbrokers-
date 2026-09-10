@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load wagtailimages_tags wagtailcore_tags %}
+
+{% block meta_title %}{{ page.title }} — {{ page.position }} | CheckAllBrokers{% endblock %}
+{% block meta_description %}{{ page.title }}, {{ page.position }}. Стаж {{ page.experience_years }} лет. Аудит регламентов и проверка финансовых платформ.{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap"
+      rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+{% load wagtailimages_tags %}
+{% if page.photo %}{% image page.photo width-400 as author_photo_img %}{% endif %}
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "{{ page.title|default:'Алексей Рихтер'|escapejs }}",
+        "jobTitle": "{{ page.position|default:'Compliance-аналитик, аудит и регламент компаний'|escapejs }}",
+        "description": "{{ page.position|default:'Compliance-аналитик, аудит и регламент компаний'|escapejs }}. Не оказывает юридических услуг и не осуществляет возврат денежных средств.",
+        "url": "{{ request.build_absolute_uri }}",
+    {% if author_photo_img %}"image": "{{ request.scheme }}://{{ request.get_host }}{{ author_photo_img.url }}", {% endif %}
+    {% if page.linkedin_url %}"sameAs": ["{{ page.linkedin_url|escapejs }}"],{% endif %}
+    "worksFor": {
+    "@type": "Organization",
+    "name": "CheckAllBrokers",
+    "legalName": "FIN CONSULTING LIMITED"
+    },
+    "knowsAbout": ["Compliance", "Аудит регламентов", "AML-комплаенс", "Проверка финансовых платформ"],
+    "disclaimer": "Не является юридической или финансовой услугой, не гарантирует возврат средств."
+    }
+</script>
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "Главная",
+                "item": "{{ request.scheme }}://{{ request.get_host }}/"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "{{ page.title|escapejs }}",
+                "item": "{{ request.build_absolute_uri }}"
+            }
+        ]
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="dossier">
+
+    {% if request.GET.from %}
+    <a href="{{ request.GET.from }}" class="dossier__back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+            <path d="M19 12H5M12 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round"/>
+        </svg>
+        Назад к статье
+    </a>
+    {% endif %}
+
+    <header class="dossier__header">
+        <div class="dossier__photo-frame">
+            {% if page.photo %}
+            {% image page.photo fill-280x340 as author_photo %}
+            <img src="{{ author_photo.url }}" alt="{{ page.title }}" class="dossier__photo">
+            {% else %}
+            <div class="dossier__photo dossier__photo--placeholder">{{ page.title|slice:":1" }}</div>
+            {% endif %}
+            <div class="dossier__stamp">
+                <svg viewBox="0 0 100 100" class="dossier__stamp-ring">
+                    <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="1.5"
+                            stroke-dasharray="2 3"/>
+                </svg>
+                <span class="dossier__stamp-text">Проверено</span>
+            </div>
+        </div>
+
+        <div class="dossier__identity">
+            <span class="dossier__eyebrow">Compliance Specialist</span>
+            <h1 class="dossier__name">{{ page.title|default:"Роберт Липса" }}</h1>
+
+
+            <dl class="dossier__facts">
+                <div class="dossier__fact">
+                    <dt>Стаж практики</dt>
+                    <dd>{{ page.experience_years|default:"8" }} лет</dd>
+                </div>
+                <div class="dossier__fact">
+                    <dt>Дел сопровождено</dt>
+                    <dd>{{ page.cases_count|default:"400" }}+</dd>
+                </div>
+                <div class="dossier__fact">
+                    <dt>Специализация</dt>
+                    <dd>{{ page.specialization }}</dd>
+                </div>
+                {% if page.registry_link %}
+                <div class="dossier__fact">
+                    <dt>Реестр адвокатов</dt>
+                    <dd><a href="{{ page.registry_link }}" target="_blank" rel="noopener">Проверить статус →</a></dd>
+                </div>
+                {% endif %}
+            </dl>
+
+    </header>
+
+    <div class="dossier__body">
+        <main class="dossier__main">
+
+            <section class="dossier__section">
+                <h2 class="dossier__section-title"><span>01</span>Образование и квалификация</h2>
+                <div class="dossier__text">
+                    {% if page.education %}
+                    {{ page.education|richtext }}
+                    {% else %}
+                    <p>Московский государственный юридический университет им. О. Е. Кутафина (МГЮА), специализация —
+                        гражданское и международное частное право.</p>
+                    <p>Дополнительная квалификация в области финансового права и AML‑комплаенса, сертификат Chartered
+                        Institute for Securities &amp; Investment (CISI).</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="dossier__section">
+                <h2 class="dossier__section-title"><span>02</span>Биография</h2>
+                <div class="dossier__text">
+                    {% if page.bio %}
+                    {{ page.bio|richtext }}
+                    {% else %}
+                    <p>CheckAllBrokers — независимый экспертно-аналитический центр, специализирующийся на аудите,
+                        проверке и мониторинге финансово-инвестиционных компаний, брокеров и торговых платформ. Наша
+                        главная цель — обеспечение прозрачности на финансовом рынке, защита пользователей от
+                        недобросовестных участников и помощь инвесторам в выборе надежного партнера на основе
+                        объективных данных.</p>
+                    <p>Специализируюсь на процедурном аудите, правовой экспертизе пользовательских соглашений (T&C) и
+                        OSINT-исследованиях операционной деятельности финансовых платформ. Регулярно взаимодействую с
+                        профильными регуляторами по вопросам проверки регуляторного статуса компаний.</p>
+                    <p><em>CheckAllBrokers не осуществляет возврат денежных средств и не оказывает юридических услуг.
+                        Проект не является финансовой организацией, регулятором или банковским агентом и не проводит
+                        операций по выплате или возврату депозитов.</em></p>
+                    {% endif %}
+                </div>
+            </section>
+
+            {% if page.articles.all %}
+            <section class="dossier__section">
+                <h2 class="dossier__section-title"><span>03</span>Статьи автора</h2>
+                <ul class="dossier__articles">
+                    {% for article in page.articles.all %}
+                    <li><a href="{{ article.url }}">{{ article.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+        </main>
+
+        <aside class="dossier__aside">
+            <div class="dossier__card">
+                <h3 class="dossier__card-title">Бесплатный аудит ситуации</h3>
+                <p class="dossier__card-subtitle">Без предоплаты и обязательств. Ответ в течение дня.</p>
+                {% include "includes/sidebar_form.html" %}
+            </div>
+        </aside>
+    </div>
+
+</div>
+{% endblock %}

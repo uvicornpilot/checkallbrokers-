@@ -1,103 +1,204 @@
 {% load static %}
 <!-- Footer -->
-<footer class="footer">
-   <div class="container">
-        <div class="footer__content">
-            <div class="footer__main">
-                <div class="footer__info">
-                    <div class="footer__logo">
-                        {% if site_settings.logo %}
-                            <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name }}" class="footer__logo-img">
-                        {% else %}
-                            <img src="{% static 'images/logo.png' %}" alt="{{ site_settings.site_name|default:'Broker Control' }}" class="footer__logo-img">
-                        {% endif %}
-                        <!-- <h3 class="footer__title">{{ site_settings.site_name|default:"Broker Control" }}</h3> -->
-                    </div>
-                    <!-- <p class="footer__description">{{ site_settings.site_description|default:"Независимый информационно-аналитический проект по защите инвесторов от мошеннических брокеров" }}</p> -->
-                    <p class="footer__description">Независимый информационно-аналитический проект с защитой инвесторов</p>
-                    <!-- Contact Info -->
-                    {% if site_settings.contact_email or site_settings.contact_phone %}
-                    <div class="footer__contacts">
-                        {% if site_settings.contact_email %}
-                        <div class="footer__contact-item">
-                            <span class="footer__contact-icon">📧</span>
-                            <a href="mailto:{{ contact_info.email }}" class="footer__contact-link">{{ contact_info.email }}</a>
-                        </div>
-                        {% endif %}
-                        {% if site_settings.contact_phone %}
-                        <div class="footer__contact-item">
-                            <span class="footer__contact-icon">📞</span>
-                            <a href="tel:{{ contact_info.phone }}" class="footer__contact-link">{{ contact_info.phone }}</a>
-                        </div>
-                        {% endif %}
-                    </div>
-                    {% endif %}
-                </div>
-                
-                <div class="footer__links">
-                    <div class="footer__column">
-                        <h4 class="footer__column-title">Услуги</h4>
-                        <ul class="footer__column-list">
-                            <li class="footer__column-item">
-                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Бесплатная консультация</a>
-                            </li>
-                            <li class="footer__column-item">
-                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Проверка брокеров</a>
-                            </li>
-                            <li class="footer__column-item">
-                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Правовая поддержка</a>
-                            </li>
-                            <li class="footer__column-item">
-                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Возврат средств</a>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer__column">
-                        <h4 class="footer__column-title">Информация</h4>
-                        <ul class="footer__column-list">
-                            <li class="footer__column-item">
-                                <a href="{% url 'content:about' %}" class="footer__column-link">О нас</a>
-                            </li>
-                            <li class="footer__column-item">
-                                <a href="{% url 'blog:post_list' %}" class="footer__column-link">Блог</a>
-                            </li>
-                            <li class="footer__column-item">
-                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">Контакты</a>
-                            </li>
-                            <li class="footer__column-item">
-                                <a href="#" class="footer__column-link" onclick="openConsultationForm(); return false;">FAQ</a>
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div class="footer__column">
-                        <h4 class="footer__column-title">Социальные сети</h4>
-                        <div class="footer__social">
-                            <a href="https://t.me/{{contact_info.telegram}}" target="_blank" class="footer__social-link" title="Telegram">
-                                <svg class="footer__social-icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                                </svg>
-                                <span>Telegram</span>
-                            </a>
-                            <a href="#" class="footer__social-link" onclick="openChat(); return false;" title="Онлайн чат">
-                                <span class="footer__social-icon">💬</span>
-                                <span>Онлайн чат</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
+<footer class="sf" itemscope itemtype="https://schema.org/Organization">
+    <div class="sf__ribbon" aria-hidden="true"></div>
+
+    <div class="sf__trust">
+        <div class="sf__container">
+            <div class="sf__badges">
+                <span class="sf__badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                    Проверенный аналитический источник
+                </span>
+                <span class="sf__badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                    SSL-шифрование
+                </span>
+                <span class="sf__badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5"/><path d="M9 13h6M9 16.5h6"/></svg>
+                    Независимая редакционная проверка
+                </span>
             </div>
         </div>
-        
-        <div class="footer__bottom">
-            <div class="footer__bottom-content">
-                <p class="footer__copyright">&copy; {% now "Y" %} {{ site_settings.site_name|default:"Broker Control" }}. Все права защищены.</p>
-                <div class="footer__legal">
-                    <a href="#" class="footer__legal-link">Политика конфиденциальности</a>
-                    <a href="#" class="footer__legal-link">Условия использования</a>
+    </div>
+
+    <div class="sf__container sf__main">
+        <div class="sf__grid">
+
+            <div class="sf__brand">
+                <div class="sf__logo">
+                    {% if site_settings.logo %}
+                        <img src="{{ site_settings.logo.url }}" alt="{{ site_settings.site_name|default:'checkallbrokers.com' }}" itemprop="logo">
+                    {% else %}
+                        <img src="{% static 'images/logo.png' %}" alt="checkallbrokers.com" itemprop="logo">
+                    {% endif %}
                 </div>
+
+                <meta itemprop="name" content="checkallbrokers.com">
+                <meta itemprop="url" content="https://checkallbrokers.com">
+
+                <p class="sf__desc">
+                    <strong itemprop="name">checkallbrokers.com</strong> — независимая исследовательская команда, специализирующаяся на проверке онлайн-брокеров и финансовых платформ. Наша цель — предоставлять пользователям объективную информацию и повышать уровень финансовой безопасности.
+                </p>
+
+                <div class="sf__org" itemprop="parentOrganization" itemscope itemtype="https://schema.org/Organization">
+                    <span class="sf__org-label">Управление и владение</span>
+                    <p class="sf__org-name" itemprop="legalName">FIN CONSULTING LIMITED</p>
+                    <p class="sf__org-addr" itemprop="address" itemscope itemtype="https://schema.org/PostalAddress">
+                        <span itemprop="streetAddress">182 High Street North</span>, <span itemprop="addressLocality">London</span>, <span itemprop="addressRegion">England</span> <span itemprop="postalCode">E6 2JA</span>, <span itemprop="addressCountry">United Kingdom</span>
+                    </p>
+                </div>
+
+                {% if site_settings.contact_email or site_settings.contact_phone %}
+                <div class="sf__contacts">
+                    {% if site_settings.contact_email %}
+                    <a href="mailto:{{ contact_info.email }}" class="sf__contact" itemprop="email">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>
+                        {{ contact_info.email }}
+                    </a>
+                    {% endif %}
+                    {% if site_settings.contact_phone %}
+                    <a href="tel:{{ contact_info.phone }}" class="sf__contact" itemprop="telephone">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L14 13l5 2v4a2 2 0 0 1-2 2C9.5 21 3 14.5 3 6a2 2 0 0 1 1-2z"/></svg>
+                        {{ contact_info.phone }}
+                    </a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <nav class="sf__col">
+                <h4 class="sf__col-title">О компании</h4>
+                <ul class="sf__col-list">
+                    <li><a href="/o-proekte-checkallbrokers/">Проект CheckAllBrokers</a></li>
+                    <li><a href="/redaktsionnaja-politika-checkallbrokers/">Редакционная политика</a></li>
+                    <li><a href="/metodologija-otsenki/">Методология оценки</a></li>
+                    <li><a href="/politika-moderatsii-otzyvov/">Политика модерации отзывов</a></li>
+                    <li><a href="/blog/">Блог</a></li>
+                </ul>
+            </nav>
+
+            <nav class="sf__col">
+                <h4 class="sf__col-title">Правовая помощь</h4>
+                <ul class="sf__col-list">
+                    {% for link in footer_investor_links %}
+                        {% if link.url == "#consultation" %}
+                        <li><a href="#" onclick="openConsultationForm(); return false;">{{ link.title }}</a></li>
+                        {% elif link.url == "#chat" %}
+                        <li><a href="#" onclick="openChat(); return false;">{{ link.title }}</a></li>
+                        {% else %}
+                        <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+                        {% endif %}
+                    {% empty %}
+                        <li><a href="#" onclick="openConsultationForm(); return false;">Сообщить о брокере</a></li>
+                        <li><a href="#" onclick="openConsultationForm(); return false;">Бесплатный аудит спорной ситуации</a></li>
+                        <li><a href="#" onclick="openChat(); return false;">Онлайн-чат</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            <nav class="sf__col">
+                <h4 class="sf__col-title">Юридические документы</h4>
+                <ul class="sf__col-list">
+                    <li><a href="/juridicheskaja-informatsija-checkallbrokers/">Юридическая информация</a></li>
+                    <li><a href="/privacy-policy/">Privacy Policy</a></li>
+                    <li><a href="/terms-of-service/">Terms of Use</a></li>
+                    <li><a href="/kontakty-checkallbrokers/">Контакты</a></li>
+                </ul>
+                <a href="https://t.me/{{ contact_info.telegram }}" target="_blank" rel="noopener" class="sf__tg" itemprop="sameAs">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    Telegram
+                </a>
+            </nav>
+        </div>
+
+        <div class="sf__notice">
+            <svg class="sf__notice-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3L2 20h20L12 3z"/><path d="M12 9.5v4.5"/><circle cx="12" cy="16.8" r="0.9" fill="currentColor" stroke="none"/></svg>
+            <div class="sf__notice-text">
+                <p><strong>Предупреждение о рисках.</strong> Торговля на финансовых рынках (включая Forex, CFD, акции и криптовалюты) сопряжена с высоким уровнем риска и может привести к полной потере инвестированного капитала. До 74–89% счетов розничных инвесторов теряют деньги при торговле CFD. Не инвестируйте средства, которые вы не можете позволить себе потерять. Вся информация на сайте CheckAllBrokers носит исключительно ознакомительный и образовательный характер и не является индивидуальной инвестиционной или финансовой рекомендацией.</p>
+                <p><strong>Правовой статус.</strong> Проект CheckAllBrokers и компания FIN CONSULTING LIMITED не являются брокером, дилером или финансовым посредником, не принимают депозиты и не оказывают услуг по доверительному управлению. Специализация проекта — независимый финансовый и правовой аудит брокерских регламентов, договоров и торговых условий. Мы не являемся представителями брокеров.</p>
+                <p><strong>Отмена юридических гарантий.</strong> Специалисты и эксперты по регламентам CheckAllBrokers осуществляют исключительно информационно-аналитический разбор спорных ситуаций, оценку рисков и аудит Пользовательских соглашений. Проект не является юридической фирмой или адвокатским бюро, не оказывает платных/бесплатных юридических услуг и не гарантирует возврат средств.</p>
+                <p><strong>Раскрытие партнёрства.</strong> CheckAllBrokers поддерживает бесплатный доступ к аналитике за счёт партнёрских комиссий от некоторых компаний. Наличие партнёрского соглашения не влияет на позиции брокеров в рейтингах и итоговую оценку наших аналитиков.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="sf__bottom">
+        <div class="sf__container sf__bottom-inner">
+            <p class="sf__copy">&copy; {% now "Y" %} checkallbrokers.com (FIN CONSULTING LIMITED). Все права защищены.</p>
+            <div class="sf__bottom-links">
+                <a href="/privacy-policy/">Privacy Policy</a>
+                <a href="/terms-of-service/">Terms of Service</a>
+                <a href="/risk-disclaimer/">Risk Disclaimer</a>
             </div>
         </div>
     </div>
 </footer>
+
+<style>
+.sf{position:relative;background:#0c0e13;color:#c8ccd6;font-family:'Inter',system-ui,-apple-system,sans-serif;font-size:14px;line-height:1.6;border-top:1px solid #1c1f28}
+.sf *{box-sizing:border-box}
+.sf a{color:inherit;text-decoration:none}
+.sf__ribbon{height:3px;background:linear-gradient(90deg,#2fbf8f 0 33.3%,#3391e0 33.3% 66.6%,#e0a83e 66.6% 100%)}
+.sf__container{max-width:1200px;margin:0 auto;padding:0 24px}
+
+.sf__trust{border-bottom:1px solid #1c1f28}
+.sf__badges{display:flex;flex-wrap:wrap;gap:24px;padding:16px 0;justify-content:center}
+.sf__badge{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#9ba1ae;letter-spacing:.2px}
+.sf__badge svg{width:16px;height:16px;flex-shrink:0;color:#2fbf8f}
+
+.sf__main{padding:48px 24px 32px}
+.sf__grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px}
+
+.sf__logo{margin-bottom:18px}
+.sf__logo img{max-height:34px;width:auto;display:block}
+.sf__desc{color:#9ba1ae;font-size:13.5px;line-height:1.7;margin:0 0 20px;max-width:340px}
+.sf__desc strong{color:#e7e9ee}
+
+.sf__org{border:1px solid #232733;border-left:2px solid #2fbf8f;border-radius:6px;padding:14px 16px;margin-bottom:20px;background:#10131a}
+.sf__org-label{display:block;font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#6d7280;margin-bottom:6px}
+.sf__org-name{font-size:13.5px;font-weight:600;color:#e7e9ee;margin:0 0 4px}
+.sf__org-addr{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#8b909d;margin:0;line-height:1.6}
+
+.sf__contacts{display:flex;flex-direction:column;gap:8px}
+.sf__contact{display:flex;align-items:center;gap:8px;font-size:13px;color:#9ba1ae;transition:color .15s}
+.sf__contact svg{width:15px;height:15px;flex-shrink:0;color:#6d7280}
+.sf__contact:hover{color:#e7e9ee}
+
+.sf__col-title{font-size:13px;font-weight:600;color:#e7e9ee;letter-spacing:.02em;margin:0 0 16px}
+.sf__col-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:11px}
+.sf__col-list a{font-size:13.5px;color:#9ba1ae;transition:color .15s}
+.sf__col-list a:hover{color:#e7e9ee}
+
+.sf__tg{display:inline-flex;align-items:center;gap:8px;margin-top:20px;font-size:13.5px;color:#3391e0;transition:opacity .15s}
+.sf__tg svg{width:18px;height:18px}
+.sf__tg:hover{opacity:.8}
+
+.sf__notice{display:flex;gap:14px;margin-top:40px;padding:20px 22px;background:#15130c;border:1px solid #3a2e12;border-left:3px solid #e0a83e;border-radius:6px}
+.sf__notice-icon{width:22px;height:22px;flex-shrink:0;color:#e0a83e;margin-top:2px}
+.sf__notice-text p{margin:0 0 12px;font-size:12.5px;line-height:1.7;color:#a8a196}
+.sf__notice-text p:last-child{margin-bottom:0}
+.sf__notice-text strong{color:#d9cba8}
+
+.sf__bottom{border-top:1px solid #1c1f28}
+.sf__bottom-inner{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding:20px 24px}
+.sf__copy{font-size:12.5px;color:#6d7280;margin:0}
+.sf__bottom-links{display:flex;gap:20px}
+.sf__bottom-links a{font-size:12.5px;color:#6d7280;transition:color .15s}
+.sf__bottom-links a:hover{color:#c8ccd6}
+
+.sf a:focus-visible,.sf button:focus-visible{outline:2px solid #3391e0;outline-offset:2px;border-radius:2px}
+
+@media(max-width:980px){
+  .sf__grid{grid-template-columns:1fr 1fr;row-gap:36px}
+  .sf__brand{grid-column:1/-1}
+}
+@media(max-width:600px){
+  .sf__badges{gap:14px 20px}
+  .sf__main{padding:36px 20px 24px}
+  .sf__grid{grid-template-columns:1fr;gap:32px}
+  .sf__desc{max-width:none}
+  .sf__notice{flex-direction:column}
+  .sf__bottom-inner{flex-direction:column;align-items:flex-start}
+}
+</style>

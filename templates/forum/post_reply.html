@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Відповісти на коментар - Форум{% endblock %}
+{% block title %}ОТветы - Форум{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
@@ -10,7 +10,7 @@
             <li class="breadcrumb-item"><a href="{% url 'forum:index' %}">Форум</a></li>
             <li class="breadcrumb-item"><a href="{% url 'forum:category_detail' topic.category.slug %}">{{ topic.category.name }}</a></li>
             <li class="breadcrumb-item"><a href="{% url 'forum:topic_detail' topic.slug %}">{{ topic.title }}</a></li>
-            <li class="breadcrumb-item active">Відповідь</li>
+            <li class="breadcrumb-item active">Ответ</li>
         </ol>
     </nav>
 

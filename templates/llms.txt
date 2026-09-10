@@ -1,0 +1,17 @@
+# CheckAllBrokers
+
+> Независимый информационно-аналитический проект по проверке онлайн-брокеров и финансовых платформ. Владелец: FIN CONSULTING LIMITED (Companies House No. 16382190), 182 High Street North, London, England, E6 2JA.
+
+CheckAllBrokers не является брокером, дилером или юридической фирмой. Проект публикует независимые обзоры брокеров, оценку рисков и информационно-аналитическую поддержку по вопросам финансовой безопасности.
+
+## Ключевые страницы
+
+- [О нас](/o-proekte-checkallbrokers/): о команде и миссии проекта
+- [Редакционная политика](/redaktsionnaja-politika-checkallbrokers/): как формируются оценки и обзоры
+- [Методология оценки](/metodologija-otsenki/): критерии рейтинга брокеров
+- [Политика модерации отзывов](/politika-moderatsii-otzyvov/): правила публикации пользовательских отзывов
+- [Risk Disclaimer](/risk-disclaimer/): предупреждение о рисках
+- [Privacy Policy](/privacy-policy/)
+- [Terms of Service](/terms-of-service/)
+- [Контакты](/kontakty-checkallbrokers/)
+- [Блог / обзоры брокеров](/blog/): каталог обзоров конкретных брокерских компаний

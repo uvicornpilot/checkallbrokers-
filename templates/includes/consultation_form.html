@@ -16,4 +16,74 @@
     </div>
 
     <button type="submit" class="btn btn--primary btn--full">Получить консультацию</button>
-</form> 
+
+    <div class="form-trust-box">
+        <p class="form-trust-box__text">
+            Отправляя запрос, вы соглашаетесь с
+            <a href="/privacy-policy/">Политикой обработки персональных данных</a>
+            и <a href="/terms-of-service/">Пользовательским соглашением</a>.
+            Аналитическая оценка процедурных отклонений проводится профильными специалистами проекта
+            <a href="/nashi-spetsialisty/">CheckAllBrokers</a> (FIN CONSULTING LIMITED).
+            Процедура носит информационно-аудиторский характер и не является оказанием платных
+            юридических или финансовых услуг.
+        </p>
+        <p class="form-trust-box__badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            SSL-шифрование. Полная конфиденциальность.
+        </p>
+
+    </div>
+</form>
+
+<style>
+.form-trust-box {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: #f7f9f8;
+    border: 1px solid #e5e9e7;
+    border-radius: 8px;
+}
+
+.form-trust-box__text {
+    font-size: 11px;
+    line-height: 1.55;
+    color: #8b909d;
+    margin: 0 0 8px;
+}
+
+.form-trust-box__text a {
+    color: #0f6d4c;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+.form-trust-box__badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #0f6d4c;
+    margin: 0;
+}
+
+/* ИСПРАВЛЕНИЕ ДЛЯ SVG */
+.form-trust-box__badge svg {
+    width: 14px;
+    height: 14px;
+    min-width: 14px; /* Защита от сжатия во Flexbox */
+    min-height: 14px;
+    flex-shrink: 0;
+    stroke: currentColor; /* Иконка наследует зеленый цвет текста (#0f6d4c) */
+    fill: none;           /* Убирает возможную черную заливку внутри замка */
+}
+
+.lawyer-card__author-link {
+    color: inherit;
+    text-decoration: none;
+}
+
+.lawyer-card__author-link:hover {
+    text-decoration: underline;
+}
+</style>

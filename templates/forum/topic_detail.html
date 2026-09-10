@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block meta_title %}{{ topic.meta_title|default:topic.title }} - Форум Broker Control{% endblock %}
+{% block meta_title %}{{ topic.meta_title|default:topic.title }} - Форум checkallbrokers.com {% endblock %}
 {% block meta_description %}{{ topic.meta_description|default:"Обсуждение темы: "|add:topic.title }}{% endblock %}
 {% block meta_keywords %}{{ topic.meta_keywords|default:"форум, брокер, обсуждение, "|add:topic.category.name }}{% endblock %}
 

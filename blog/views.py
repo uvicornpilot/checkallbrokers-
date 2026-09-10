@@ -1,187 +1,117 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import ListView, DetailView
-from django.contrib import messages
-from django.http import JsonResponse
-from django.contrib.auth.decorators import user_passes_test
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
-from django.utils.decorators import method_decorator
+from django.shortcuts import get_object_or_404, render
 from django.core.paginator import Paginator
-from django.db.models import Q
-from django.utils import timezone
-from .models import Post, Category, Tag, Review
+from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods
+
+from .models import ArticlePage, Category, Tag
 from .forms import ReviewForm
-
-
-class PostListView(ListView):
-    model = Post
-    template_name = 'blog/post_list.html'
-    context_object_name = 'posts'
-    paginate_by = 9
-
-    def get_queryset(self):
-        queryset = Post.objects.filter(status='published', published_at__isnull=False, published_at__lte=timezone.now())
-        
-        # Поиск
-        q = self.request.GET.get('q')
-        if q:
-            queryset = queryset.filter(
-                Q(title__icontains=q) | 
-                Q(content__icontains=q) | 
-                Q(excerpt__icontains=q)
-            )
-        
-        # Фильтр по категории
-        category_slug = self.kwargs.get('category_slug')
-        if category_slug:
-            queryset = queryset.filter(category__slug=category_slug)
-        
-        # Фильтр по тегу
-        tag_slug = self.kwargs.get('tag_slug')
-        if tag_slug:
-            queryset = queryset.filter(tags__slug=tag_slug)
-        
-        return queryset.select_related('category').prefetch_related('tags')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['categories'] = Category.objects.all()
-        context['tags'] = Tag.objects.all()
-        return context
-
-
-class PostDetailView(DetailView):
-    model = Post
-    template_name = 'blog/post_detail.html'
-    context_object_name = 'post'
-
-    def get_queryset(self):
-        return Post.objects.filter(status='published', published_at__isnull=False, published_at__lte=timezone.now()).select_related('category').prefetch_related('tags')
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        post = self.get_object()
-        
-        # Увеличиваем счетчик просмотров
-        post.views_count += 1
-        post.save(update_fields=['views_count'])
-        
-        # Похожие статьи
-        context['related_posts'] = Post.objects.filter(
-            status='published',
-            published_at__isnull=False,
-            published_at__lte=timezone.now(),
-            category=post.category
-        ).exclude(id=post.id)[:3]
-        
-        # Популярные статьи
-        context['popular_posts'] = Post.objects.filter(
-            status='published',
-            published_at__isnull=False,
-            published_at__lte=timezone.now()
-        ).order_by('-views_count')[:5]
-        
-        # Отзывы (только корневые) с пагинацией
-        reviews = post.reviews.filter(is_approved=True, parent__isnull=True).prefetch_related('replies')
-        paginator = Paginator(reviews, 5)  # 5 отзывов на страницу
-        page_number = self.request.GET.get('review_page')
-        reviews_page = paginator.get_page(page_number)
-        context['reviews'] = reviews_page
-        
-        # Форма отзыва
-        context['review_form'] = ReviewForm()
-        
-        return context
-
-
-@csrf_exempt
-@require_http_methods(["POST"])
-def submit_review(request, post_id):
-    """AJAX view для отправки отзыва"""
-    post = get_object_or_404(Post, id=post_id, status='published')
-    form = ReviewForm(request.POST, request.FILES)
-    
-    if form.is_valid():
-        review = form.save(commit=False)
-        review.post = post
-        review.ip_address = request.META.get('REMOTE_ADDR')
-        # Если пользователь отмечает как админский ответ, разрешаем только при авторизованном админ юзере
-        if form.cleaned_data.get('is_admin') and not (request.user.is_authenticated and request.user.is_staff):
-            review.is_admin = False
-        # Безопасность: parent должен принадлежать тому же посту
-        parent = form.cleaned_data.get('parent')
-        if parent and parent.post_id != post.id:
-            parent = None
-        review.parent = parent
-        review.save()
-        
-        return JsonResponse({
-            'success': True,
-            'message': 'Спасибо за ваш отзыв! Он будет опубликован после модерации.'
-        })
-    else:
-        return JsonResponse({
-            'success': False,
-            'errors': form.errors
-        })
+from django.db import models
+from .models import Review
 
 
 def category_posts(request, slug):
     category = get_object_or_404(Category, slug=slug)
-    posts = Post.objects.filter(category=category, status='published', published_at__isnull=False, published_at__lte=timezone.now())
-    
+    posts = (
+        ArticlePage.objects.live()
+        .filter(category=category)
+        .order_by("-first_published_at")
+    )
+
     paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'category': category,
-        'posts': page_obj,
-        'categories': Category.objects.all(),
-        'tags': Tag.objects.all(),
-    }
-    return render(request, 'blog/post_list.html', context)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "blog/post_list.html", {
+        "category": category,
+        "posts": page_obj,
+        "categories": Category.objects.filter(is_active=True),
+        "tags": Tag.objects.all(),
+    })
 
 
 def tag_posts(request, slug):
     tag = get_object_or_404(Tag, slug=slug)
-    posts = Post.objects.filter(tags=tag, status='published', published_at__isnull=False, published_at__lte=timezone.now())
-    
+    posts = (
+        ArticlePage.objects.live()
+        .filter(tags=tag)
+        .order_by("-first_published_at")
+    )
+
     paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'tag': tag,
-        'posts': page_obj,
-        'categories': Category.objects.all(),
-        'tags': Tag.objects.all(),
-    }
-    return render(request, 'blog/post_list.html', context)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "blog/post_list.html", {
+        "tag": tag,
+        "posts": page_obj,
+        "categories": Category.objects.filter(is_active=True),
+        "tags": Tag.objects.filter(is_active=True),
+    })
 
 
 def search_posts(request):
-    query = request.GET.get('q', '')
-    if query:
-        posts = Post.objects.filter(
-            Q(title__icontains=query) | 
-            Q(content__icontains=query) | 
-            Q(excerpt__icontains=query),
-            status='published',
-            published_at__isnull=False,
-            published_at__lte=timezone.now()
-        )
-    else:
-        posts = Post.objects.none()
-    
+    query = request.GET.get("q", "")
+    posts = ArticlePage.objects.live().search(query) if query else ArticlePage.objects.none()
+
     paginator = Paginator(posts, 9)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    
-    context = {
-        'posts': page_obj,
-        'query': query,
-        'categories': Category.objects.all(),
-        'tags': Tag.objects.all(),
-    }
-    return render(request, 'blog/post_list.html', context)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    return render(request, "blog/post_list.html", {
+        "posts": page_obj,
+        "query": query,
+        "categories": Category.objects.filter(is_active=True),
+        "tags": Tag.objects.filter(is_active=True),
+    })
+
+
+def _get_client_ip(request):
+    forwarded = request.META.get("HTTP_X_FORWARDED_FOR")
+    return forwarded.split(",")[0].strip() if forwarded else request.META.get("REMOTE_ADDR")
+
+
+@require_http_methods(["POST"])
+def submit_review(request, post_id):
+    """AJAX-приём комментария. Требует CSRF-токен из формы/куки — csrf_exempt убран намеренно (была дыра в безопасности)."""
+    post = get_object_or_404(ArticlePage.objects.live(), id=post_id)
+
+    # Honeypot: поле 'website' видимо только ботам (спрятано в CSS).
+    # Если оно заполнено — притворяемся, что всё прошло успешно, но ничего не сохраняем.
+    # Бот думает, что комментарий опубликован, и не пытается обойти защиту повторно.
+    if request.POST.get("website"):
+        return JsonResponse({
+            "success": True,
+            "message": "Спасибо за ваш отзыв! Он будет опубликован после модерации.",
+        })
+
+    form = ReviewForm(request.POST)
+
+    if not form.is_valid():
+        return JsonResponse({"success": False, "errors": form.errors}, status=400)
+
+    review = form.save(commit=False)
+    review.post = post
+    review.ip_address = _get_client_ip(request)
+
+    parent = form.cleaned_data.get("parent")
+    if parent and parent.post_id != post.id:
+        parent = None
+    review.parent = parent
+
+    review.save()
+
+    return JsonResponse({
+        "success": True,
+        "message": "Спасибо за ваш отзыв! Он будет опубликован после модерации.",
+    })
+
+@require_http_methods(["POST"])
+def mark_review_helpful(request, review_id):
+    """AJAX: +1 к счётчику 'Полезно' у отзыва. Без строгой защиты от повторных
+    голосов на сервере — блокировка повтора делается на клиенте (localStorage),
+    этого достаточно для косметической метрики, не для голосования с весом."""
+
+
+    review = get_object_or_404(Review, id=review_id, status=Review.Status.APPROVED)
+    Review.objects.filter(pk=review.pk).update(helpful_count=models.F("helpful_count") + 1)
+    review.refresh_from_db(fields=["helpful_count"])
+
+    return JsonResponse({"success": True, "helpful_count": review.helpful_count})
+

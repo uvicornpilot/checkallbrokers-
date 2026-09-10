@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,35 +23,55 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'fuck123_your123_123mother_bro123'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.getenv("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['forum-broker.com', 'localhost', '127.0.0.1','www.forum-broker.com']
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
+#ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    
-    # Third party apps
-    'ckeditor',
-    'ckeditor_uploader',
-    
-    # Local apps
-    'consultations',
-    'content',
-    'blog',
-    'forum',
+    "blog",
+    "consultations",
+    "content",
+    "forum",
+    "legal",
+
+
+    "wagtail.contrib.settings",
+    "wagtail.contrib.forms",
+    "wagtail.contrib.redirects",
+    "wagtail.contrib.sitemaps",
+    "wagtail.embeds",
+    "wagtail.sites",
+    "wagtail.users",
+    "wagtail.snippets",
+    "wagtail.documents",
+    "wagtail.images",
+    "wagtail.search",
+    "wagtail.admin",
+    "wagtail",
+
+    "modelcluster",
+    "taggit",
+
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
 ]
+
+
+WAGTAIL_SITE_NAME = "Blog"
+WAGTAILADMIN_BASE_URL = "https://checkallbrokers.com/"
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,8 +79,10 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "blog.middleware.CurrentUserMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware'
 ]
 
 ROOT_URLCONF = 'broker_control.urls'
@@ -86,29 +110,18 @@ WSGI_APPLICATION = 'broker_control.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if DEBUG:
-    DATABASES = {
+
+
+DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        'HOST': '69.48.186.49',  # або хост, який дав хостинг
-        'PORT': '5432',       # або інший, якщо нестандартний
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': os.getenv('DB_HOST'),
+        'PORT': os.getenv('DB_PORT'),
     }
-    }
-else:
-    DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mydb',
-        'USER': 'myuser',
-        'PASSWORD': 'mypassword',
-        #  'HOST': '69.48.186.49',
-        'HOST': 'localhost',  # або хост, який дав хостинг
-        'PORT': '5432',       # або інший, якщо нестандартний
-    }
-    }
+}
 
 
 # Password validation
@@ -141,7 +154,13 @@ USE_I18N = True
 
 USE_TZ = True
 
+SILENCED_SYSTEM_CHECKS = ["treebeard.E001"]
 
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+    }
+}
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -160,31 +179,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CKEditor settings
-CKEDITOR_UPLOAD_PATH = "uploads/"
-CKEDITOR_IMAGE_BACKEND = "pillow"
-CKEDITOR_CONFIGS = {
-    'default': {
-        'toolbar': 'Full',  # всі кнопки
-        'height': 300,
-        'width': '100%',
-        'resize_enabled': True,
-        'forcePasteAsPlainText': False,  # дозволяє вставку з форматуванням
-        'disableNativeSpellChecker': False,
-        'contextmenu': True,  # увімкнути контекстне меню
-        'menu_groups': 'clipboard,form,tablecell,tablecellproperties,tablerow,tablecolumn,table,anchor,link,image,flash,checkbox,radio,textfield,hiddenfield,imagebutton,button,select,textarea',  # групи меню
-    },
-    'simple': {
-        'toolbar': [['Bold', 'Italic', 'Underline'], ['NumberedList', 'BulletedList'], ['Link', 'Unlink']],
-        'height': 400,
-        'width': '100%',
-        'resize_enabled': True,
-        'forcePasteAsPlainText': False,
-        'disableNativeSpellChecker': False,
-        'contextmenu': True,  # увімкнути контекстне меню
-    }
-}
-
 
 
 
@@ -194,22 +188,29 @@ EMAIL_HOST = 'smtp.titan.email'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 EMAIL_USE_TLS = False
-EMAIL_HOST_USER = 'info@ab-legalgroup.com'
-EMAIL_HOST_PASSWORD = 'Asdf1234!'
-DEFAULT_FROM_EMAIL = 'info@ab-legalgroup.com'
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL = 'info@checkallbrokers.com'
 # Основні отримувачі лідів
-LEADS_EMAILS = ['koch98761@gmail.com']
-# LEADS_EMAILS = ['fert1k@icloud.com']
-# SEO Settings
-SITE_NAME = 'Broker Control'
-SITE_DESCRIPTION = 'Профессиональные консультации по вопросам брокеров и юридическая поддержка'
-SITE_KEYWORDS = 'брокер, консультации, юридическая помощь, форум, обсуждения'
-SITE_AUTHOR = 'Broker Control Team'
 
-# For production, use SMTP settings:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'  # or your SMTP server
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = 'your-email@gmail.com'
-# EMAIL_HOST_PASSWORD = 'your-app-password'
+# SEO Settings
+SITE_NAME = 'Check All Brokers'
+SITE_DESCRIPTION = 'Профессиональные консультации по вопросам брокерова'
+SITE_KEYWORDS = 'брокер, консультации, форум, обсуждения'
+SITE_AUTHOR = 'Check All Brokers Team'
+
+
+RESEND_API_KEY = os.getenv("RESEND_API_KEY")  # ваш ключ Resend =
+RESEND_FROM_EMAIL = "Check All Brokers <info@checkallbrokers.com>"# домен должен быть подтверждён в Resend
+LEADS_EMAILS = os.getenv("LEADS_EMAILS", "").split(",") # можно несколько адресов
+
+# Добавить в settings.py (только в проде — не включайте на localhost, иначе runserver сломается на http)
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True  # редиректит весь http:// → https://
+    SESSION_COOKIE_SECURE = True  # cookies сессии только по https
+    CSRF_COOKIE_SECURE = True  # csrf-cookie только по https
+    SECURE_HSTS_SECONDS = 31536000  # HSTS на год — говорит браузеру больше не пытаться http
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')  # нужно, если за nginx/прокси

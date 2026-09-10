@@ -1,36 +1,34 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block content %}
 
-<!-- Hero Section with Banner and Form -->
 {% if hero_banner %}
 <section class="hero-section">
     <div class="hero-background" style="background-color: {{ hero_banner.background_color|default:'#16C646' }}">
         {% if hero_banner.background_image %}
-            <img src="{{ hero_banner.background_image.url }}" alt="{{ hero_banner.title }}" class="hero-bg-image">
+            <img src="{{ hero_banner.background_image.url }}" alt="" class="hero-bg-image"
+                 width="1920" height="600" fetchpriority="high" loading="eager">
         {% endif %}
     </div>
-    <div class="container">
-        <div class="hero-content">
-            <div class="hero-text">
-                <h1 class="hero-title">{{ hero_banner.title }}</h1>
-                {% if hero_banner.subtitle %}
-                    <p class="hero-subtitle">{{ hero_banner.subtitle }}</p>
-                {% endif %}
-                {% if hero_banner.description %}
-                    <p class="hero-description">{{ hero_banner.description }}</p>
-                {% endif %}
-                {% if hero_banner.button_text and hero_banner.button_url %}
-                    <a href="{{ hero_banner.button_url }}" class="btn btn--primary hero-btn">{{ hero_banner.button_text }}</a>
-                {% endif %}
-            </div>
-            <div class="hero-form">
-                {% include "includes/sidebar_form.html" %}
-            </div>
+
+    <div class="hero-content-wrapper">
+        <div class="hero-text">
+            <h1>{{ hero_banner.title }}</h1>
+            <p>{{ hero_banner.subtitle }}</p>
+
+            {% if hero_banner.button_text and hero_banner.button_url %}
+                <a href="{{ hero_banner.button_url }}" class="btn btn--primary hero-btn">{{ hero_banner.button_text }}</a>
+            {% endif %}
+        </div>
+
+        <div class="hero-form">
+            {% include "includes/sidebar_form.html" %}
         </div>
     </div>
 </section>
+{% else %}
+<h1 class="visually-hidden">{{ site_settings.site_name|default:"CheckAllBrokers" }} — независимая проверка брокеров</h1>
 {% endif %}
 
 <!-- Main Content -->
@@ -59,12 +57,13 @@
                 <div class="service-card">
                     <div class="service-card__icon">
                         {% if service.icon_svg %}
-                            {{ service.icon_svg|safe }}
+                        {{ service.icon_svg|safe }}
                         {% else %}
-                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect width="48" height="48" rx="24" fill="#E8F5E8"/>
-                                <path d="M24 12L28.5 18.5L36 20L30 25.5L31.5 33L24 29.5L16.5 33L18 25.5L12 20L19.5 18.5L24 12Z" fill="#16C646"/>
-                            </svg>
+                        <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect width="48" height="48" rx="24" fill="#E8F5E8"/>
+                            <path d="M24 12L28.5 18.5L36 20L30 25.5L31.5 33L24 29.5L16.5 33L18 25.5L12 20L19.5 18.5L24 12Z"
+                                  fill="#16C646"/>
+                        </svg>
                         {% endif %}
                     </div>
                     <h3 class="service-card__title">{{ service.title }}</h3>
@@ -81,8 +80,10 @@
     <section class="broker-banner">
         <div class="container">
             <div class="broker-banner__content">
-                <h2 class="broker-banner__title">{{ sections.broker_banner.title|default:"Подобрать надежного брокера" }}</h2>
-                <p class="broker-banner__subtitle">{{ sections.broker_banner.subtitle|default:"Получите персональную рекомендацию от наших экспертов" }}</p>
+                <h2 class="broker-banner__title">{{ sections.broker_banner.title|default:"Подобрать надежного брокера"
+                    }}</h2>
+                <p class="broker-banner__subtitle">{{ sections.broker_banner.subtitle|default:"Получите персональную
+                    рекомендацию от наших экспертов" }}</p>
                 <button class="btn btn--primary" onclick="openConsultationForm()">Заполнить заявку</button>
             </div>
         </div>
@@ -98,15 +99,19 @@
                 <article class="blog-card">
                     <div class="blog-card__image">
                         {% if post.featured_image %}
-                            <img src="{{ post.featured_image.url }}" alt="{{ post.title }}" class="blog-card__img">
+                        {% image post.featured_image fill-400x225 as blog_card_img %}
+                        <img src="{{ blog_card_img.url }}" width="{{ blog_card_img.width }}" height="{{ blog_card_img.height }}"
+                             alt="{{ post.featured_image_alt|default:post.title }}"
+                             class="blog-card__img" loading="lazy">
                         {% else %}
-                            <img src="{% static 'images/blog-placeholder.jpg' %}" alt="{{ post.title }}" class="blog-card__img">
+                        <img src="{% static 'images/blog-placeholder.jpg' %}" alt="{{ post.title }}"
+                             class="blog-card__img" loading="lazy">
                         {% endif %}
                     </div>
                     <div class="blog-card__content">
                         <h3 class="blog-card__title">{{ post.title }}</h3>
                         <p class="blog-card__excerpt">{{ post.excerpt }}</p>
-                        <a href="{{ post.get_absolute_url }}" class="btn btn--secondary">Читать далее</a>
+                        <a href="{{ post.url }}" class="btn btn--secondary">Читать далее</a>
                     </div>
                 </article>
                 {% empty %}
@@ -117,11 +122,15 @@
             </div>
             {% if latest_posts %}
             <div class="blog__more">
-                <a href="{% url 'blog:post_list' %}" class="btn btn--secondary">Все статьи</a>
+                <a href="/blog/" class="btn btn--secondary">Все статьи</a>
             </div>
             {% endif %}
         </div>
     </section>
 
 </main>
-{% endblock %} 
+
+<style>
+.visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+</style>
+{% endblock %}

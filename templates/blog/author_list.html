@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block meta_title %}{{ page.seo_title|default:page.title }} | CheckAllBrokers{% endblock %}
+{% block meta_description %}{{ page.search_description|default:"Команда аналитиков CheckAllBrokers — правовой аудит брокерских регламентов и защита прав инвесторов." }}{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Главная", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ page.title|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
+    ]
+}
+</script>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {% for author in authors %}
+        {
+            "@type": "Person",
+            "name": "{{ author.title|escapejs }}",
+            "jobTitle": "{{ author.position|escapejs }}",
+            {% if author.experience_years %}"description": "Стаж {{ author.experience_years }} лет",{% endif %}
+            "url": "{{ request.scheme }}://{{ request.get_host }}{{ author.url }}"
+            {% if author.photo %}, "image": "{{ request.scheme }}://{{ request.get_host }}{% image author.photo fill-200x200 %}"{% endif %}
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="al">
+    <div class="al__container">
+        <nav class="al__breadcrumb"><a href="/">Главная</a><span>/</span><span class="al__current">{{ page.title }}</span></nav>
+
+        <header class="al__header">
+            <span class="al__eyebrow">Команда CheckAllBrokers</span>
+            <h1 class="al__title">{{ page.title|default:"Наши специалисты" }}</h1>
+            {% if page.intro %}
+            <div class="al__intro">{{ page.intro|richtext }}</div>
+            {% else %}
+            <p class="al__intro">Эксперты по правовому аудиту брокерских регламентов Специалисты, которые проводят независимую оценку пользовательских соглашений (T&C), выявляют процедурные нарушения, анализируют риски и формируют доказательную базу для официальных обращений.</p>
+            {% endif %}
+        </header>
+
+        <div class="al__grid">
+            {% for author in authors %}
+            <a href="{{ author.url }}" class="al__card">
+                {% if author.photo %}
+                    {% image author.photo fill-200x200 as author_photo %}
+                    <img src="{{ author_photo.url }}" alt="{{ author.title }}, {{ author.position }}" width="{{ author_photo.width }}" height="{{ author_photo.height }}" loading="lazy" class="al__card-photo">
+                {% else %}
+                    <div class="al__card-photo al__card-photo--placeholder">{{ author.title|slice:":1" }}</div>
+                {% endif %}
+                <h2 class="al__card-name">{{ author.title }}</h2>
+                <span class="al__card-position">{{ author.position }}</span>
+                {% if author.experience_years %}
+                <span class="al__card-meta">Стаж {{ author.experience_years }} лет</span>
+                {% endif %}
+            </a>
+            {% empty %}
+            <p class="al__empty">Специалисты скоро появятся здесь.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.al{--ink:#1c1f26;--ink-soft:#565b6b;--ink-faint:#9195a6;--paper:#faf8f4;--card:#ffffff;--border:#e8e3d8;--accent:#0f6d4c;--accent-soft:#eaf3ee;
+padding:64px 24px 96px;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,-apple-system,sans-serif}
+.al *{box-sizing:border-box}
+.al__container{max-width:960px;margin:0 auto}
+
+.al__breadcrumb{font-size:13px;color:var(--ink-faint);margin-bottom:36px}
+.al__breadcrumb a{color:var(--ink-faint);text-decoration:none}
+.al__breadcrumb a:hover{color:var(--ink)}
+.al__breadcrumb span:first-of-type{margin:0 8px}
+.al__current{color:var(--ink-soft)}
+
+.al__header{padding-bottom:40px;margin-bottom:48px;border-bottom:1px solid var(--border)}
+.al__eyebrow{display:block;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px}
+.al__title{font-family:'Fraunces',serif;font-weight:500;font-size:40px;line-height:1.15;color:var(--ink);margin:0 0 16px;letter-spacing:-.01em}
+.al__intro{font-size:16px;line-height:1.75;color:var(--ink-soft);max-width:620px}
+
+.al__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.al__card{display:block;text-align:left;padding:24px;background:var(--card);border:1px solid var(--border);border-radius:12px;text-decoration:none;color:inherit;transition:border-color .15s,transform .15s}
+.al__card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.al__card-photo{width:72px;height:72px;border-radius:50%;object-fit:cover;display:block;margin-bottom:16px}
+.al__card-photo--placeholder{display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);font-family:'Fraunces',serif;font-size:28px}
+.al__card-name{font-size:17px;font-weight:600;color:var(--ink);margin:0 0 4px}
+.al__card-position{display:block;font-size:13px;color:var(--accent);font-weight:600;margin-bottom:6px}
+.al__card-meta{display:block;font-size:12.5px;color:var(--ink-faint)}
+.al__empty{color:var(--ink-faint);font-size:14px}
+
+@media(max-width:800px){.al__grid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){
+  .al{padding:44px 20px 64px}
+  .al__title{font-size:30px}
+  .al__grid{grid-template-columns:1fr}
+}
+</style>
+{% endblock %}

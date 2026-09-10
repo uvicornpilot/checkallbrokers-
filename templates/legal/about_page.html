@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags wagtailimages_tags %}
+
+{% block meta_title %}{{ page.seo_title|default:page.title }}{% endblock %}
+{% block meta_description %}{{ page.search_description|default:"" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Главная", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ page.title|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="ap">
+    <div class="ap__container">
+        <nav class="ap__breadcrumb"><a href="/">Главная</a><span>/</span><span class="ap__current">{{ page.title }}</span></nav>
+
+        <header class="ap__header">
+            <span class="ap__eyebrow">Независимый проект · Проверка брокеров</span>
+            <h1 class="ap__title">{{ page.title }}</h1>
+            {% if page.intro %}
+            <div class="ap__intro">{{ page.intro|richtext }}</div>
+            {% endif %}
+        </header>
+
+        {% if page.mission %}
+        <section class="ap__section">
+            <h2 class="ap__section-title"><span>01</span>Миссия</h2>
+            <div class="ap__section-text ap__section-text--card">
+                {{ page.mission|richtext }}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if page.values.all %}
+        <section class="ap__section">
+            <h2 class="ap__section-title"><span>02</span>Наши ценности</h2>
+            <div class="ap__cards ap__cards--values">
+                {% for value in page.values.all %}
+                <div class="ap__card">
+                    <h3 class="ap__card-title">{{ value.title }}</h3>
+                    {% if value.description %}<p class="ap__card-text">{{ value.description }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        {% if page.team_members.all %}
+        <section class="ap__section">
+            <h2 class="ap__section-title"><span>03</span>Команда</h2>
+            <div class="ap__cards ap__cards--team">
+                {% for member in page.team_members.all %}
+                <div class="ap__card ap__card--member">
+                    {% if member.photo %}
+                        {% image member.photo fill-140x140 as member_img %}
+                        <img src="{{ member_img.url }}" alt="{{ member.name }}" class="ap__member-photo">
+                    {% else %}
+                        <div class="ap__member-photo ap__member-photo--placeholder">{{ member.name|slice:":1" }}</div>
+                    {% endif %}
+                    <h3 class="ap__card-title">{{ member.name }}</h3>
+                    {% if member.role %}<span class="ap__member-role">{{ member.role }}</span>{% endif %}
+                    {% if member.bio %}<p class="ap__card-text">{{ member.bio }}</p>{% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.ap{--ink:#1c1f26;--ink-soft:#565b6b;--ink-faint:#9195a6;--paper:#faf8f4;--card:#ffffff;--border:#e8e3d8;--accent:#0f6d4c;--accent-soft:#eaf3ee;
+padding:64px 24px 96px;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,-apple-system,sans-serif}
+.ap *{box-sizing:border-box}
+.ap__container{max-width:860px;margin:0 auto}
+
+.ap__breadcrumb{font-size:13px;color:var(--ink-faint);margin-bottom:36px}
+.ap__breadcrumb a{color:var(--ink-faint);text-decoration:none}
+.ap__breadcrumb a:hover{color:var(--ink)}
+.ap__breadcrumb span:first-of-type{margin:0 8px}
+.ap__current{color:var(--ink-soft)}
+
+.ap__header{padding-bottom:40px;margin-bottom:48px;border-bottom:1px solid var(--border)}
+.ap__eyebrow{display:block;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px}
+.ap__title{font-family:'Fraunces',serif;font-weight:500;font-size:40px;line-height:1.15;color:var(--ink);margin:0 0 18px;letter-spacing:-.01em}
+.ap__intro{font-size:16px;line-height:1.75;color:var(--ink-soft);max-width:620px}
+.ap__intro p{margin:0}
+.ap__intro a{color:var(--accent)}
+
+.ap__section{margin-bottom:56px}
+.ap__section:last-child{margin-bottom:0}
+.ap__section-title{display:flex;align-items:baseline;gap:12px;font-size:20px;font-weight:700;color:var(--ink);margin:0 0 24px}
+.ap__section-title span{font-size:13px;font-weight:700;color:var(--accent)}
+
+.ap__section-text{font-size:15.5px;line-height:1.8;color:var(--ink-soft)}
+.ap__section-text--card{padding:24px 28px;background:var(--card);border:1px solid var(--border);border-left:2px solid var(--accent);border-radius:10px}
+.ap__section-text p{margin:0 0 12px}
+.ap__section-text p:last-child{margin-bottom:0}
+.ap__section-text ul,.ap__section-text ol{margin:0 0 12px;padding-left:0;list-style:none}
+.ap__section-text ul li,.ap__section-text ol li{position:relative;padding-left:22px;margin-bottom:10px}
+.ap__section-text ul li::before{content:"";position:absolute;left:0;top:9px;width:6px;height:6px;border-radius:50%;background:var(--accent)}
+.ap__section-text li:last-child{margin-bottom:0}
+.ap__section-text strong{color:var(--ink)}
+
+.ap__cards{display:grid;gap:16px}
+.ap__cards--values{grid-template-columns:repeat(3,1fr)}
+.ap__cards--team{grid-template-columns:repeat(3,1fr)}
+.ap__card{padding:22px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.ap__card-title{font-size:15.5px;font-weight:600;color:var(--ink);margin:0 0 8px}
+.ap__card-text{font-size:13.5px;line-height:1.65;color:var(--ink-faint);margin:0;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+
+.ap__card--member{text-align:left}
+.ap__member-photo{width:64px;height:64px;border-radius:50%;object-fit:cover;display:block;margin-bottom:14px}
+.ap__member-photo--placeholder{display:flex;align-items:center;justify-content:center;background:var(--accent-soft);color:var(--accent);font-weight:600;font-size:22px}
+.ap__member-role{display:block;font-size:12.5px;color:var(--accent);font-weight:600;margin-bottom:10px}
+
+@media(max-width:800px){
+  .ap__cards--values,.ap__cards--team{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .ap{padding:44px 20px 64px}
+  .ap__title{font-size:30px}
+  .ap__cards--values,.ap__cards--team{grid-template-columns:1fr}
+}
+</style>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% load wagtailcore_tags %}
+
+{% block meta_title %}{{ page.seo_title|default:page.title }}{% endblock %}
+{% block meta_description %}{{ page.search_description|default:"" }}{% endblock %}
+
+{% block extra_css %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&display=swap" rel="stylesheet">
+{% endblock %}
+
+{% block extra_js %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "Главная", "item": "{{ request.scheme }}://{{ request.get_host }}/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ page.title|escapejs }}", "item": "{{ request.build_absolute_uri }}"}
+    ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<section class="lp">
+    <div class="lp__container">
+        <nav class="lp__breadcrumb"><a href="/">Главная</a><span>/</span><span class="lp__current">{{ page.title }}</span></nav>
+
+        <header class="lp__header">
+            <span class="lp__eyebrow">Юридический документ</span>
+            <h1 class="lp__title">{{ page.title }}</h1>
+            {% if page.last_published_at %}
+            <span class="lp__updated">Обновлено {{ page.last_published_at|date:"d.m.Y" }}</span>
+            {% endif %}
+        </header>
+
+        <div class="lp__body">
+            {{ page.body|richtext }}
+        </div>
+    </div>
+</section>
+
+<style>
+.lp{--ink:#1c1f26;--ink-soft:#565b6b;--ink-faint:#9195a6;--paper:#faf8f4;--card:#ffffff;--border:#e8e3d8;--accent:#0f6d4c;--accent-soft:#eaf3ee;
+padding:64px 24px 96px;background:var(--paper);color:var(--ink);font-family:'Inter',system-ui,-apple-system,sans-serif}
+.lp *{box-sizing:border-box}
+.lp__container{max-width:760px;margin:0 auto}
+
+.lp__breadcrumb{font-size:13px;color:var(--ink-faint);margin-bottom:36px}
+.lp__breadcrumb a{color:var(--ink-faint);text-decoration:none}
+.lp__breadcrumb a:hover{color:var(--ink)}
+.lp__breadcrumb span:first-of-type{margin:0 8px}
+.lp__current{color:var(--ink-soft)}
+
+.lp__header{padding-bottom:40px;margin-bottom:48px;border-bottom:1px solid var(--border)}
+.lp__eyebrow{display:block;font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:16px}
+.lp__title{font-family:'Fraunces',serif;font-weight:500;font-size:38px;line-height:1.18;color:var(--ink);margin:0 0 14px;letter-spacing:-.01em}
+.lp__updated{font-size:13px;color:var(--ink-faint)}
+
+.lp__body{font-size:15.5px;line-height:1.8;color:var(--ink-soft);counter-reset:section}
+.lp__body h2{counter-increment:section;display:flex;align-items:baseline;gap:12px;font-size:20px;font-weight:700;color:var(--ink);margin:44px 0 20px}
+.lp__body h2::before{content:counter(section,decimal-leading-zero);font-size:13px;font-weight:700;color:var(--accent)}
+.lp__body h3{font-size:16px;font-weight:600;color:var(--ink);margin:28px 0 10px}
+.lp__body p{margin:0 0 16px}
+.lp__body ul,.lp__body ol{margin:0 0 16px;padding-left:22px}
+.lp__body li{margin-bottom:8px}
+.lp__body a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
+.lp__body strong{color:var(--ink);font-weight:600}
+.lp__body blockquote{border-left:2px solid var(--accent);padding:2px 0 2px 18px;margin:24px 0;color:var(--ink-soft);font-style:italic}
+
+@media(max-width:600px){
+  .lp{padding:44px 20px 64px}
+  .lp__title{font-size:29px}
+}
+</style>
+{% endblock %}

@@ -1,75 +1,202 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block content %}
-<div class="blog-detail">
+<div class="blog-detail" {% if post.disable_copy %}data-disable-copy="true" {% endif %} {% if post.disable_right_click %}
+     data-disable-right-click="true"
+     {% endif %}>
     <div class="container">
+
+        <!-- Хлебные крошки -->
+        <nav class="breadcrumbs" aria-label="breadcrumb">
+            <ol itemscope itemtype="https://schema.org/BreadcrumbList">
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="/" itemprop="item"><span itemprop="name">Главная</span></a>
+                    <meta itemprop="position" content="1">
+                </li>
+                {% if post.category %}
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <a href="{% url 'blog:category' post.category.slug %}" itemprop="item"><span itemprop="name">{{ post.category.name }}</span></a>
+                    <meta itemprop="position" content="2">
+                </li>
+                {% endif %}
+                <li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                    <span itemprop="name">{{ post.title }}</span>
+                    <meta itemprop="position" content="{% if post.category %}3{% else %}2{% endif %}">
+                </li>
+            </ol>
+        </nav>
+
         <div class="row">
             <div class="col-lg-8">
                 <div class="col-lg-8__header">
-                <article class="blog-detail__article">
-                    <!-- Заголовок статьи -->
-                    <header class="blog-detail__header">
-                        <div class="blog-detail__meta">
-                            <span class="blog-detail__date">{{ post.created_at|date:"d.m.Y" }}</span>
-                            {% if post.category %}
-                            <a href="{% url 'blog:category' post.category.slug %}" class="blog-detail__category">
-                                {{ post.category.name }}
+                    <article class="blog-detail__article">
+                        <!-- Заголовок статьи -->
+                        <header class="blog-detail__header">
+                            <div class="blog-detail__meta">
+                                <span class="blog-detail__date">
+                                    Создано: {{ post.first_published_at|date:"d.m.Y" }}
+                                    {% if post.last_published_at and post.last_published_at|date:"Y-m-d" != post.first_published_at|date:"Y-m-d" %}
+                                    · Обновлено: {{ post.last_published_at|date:"d.m.Y" }}
+                                    {% endif %}
+                                </span>
+                                {% if post.category %}
+                                <a href="{% url 'blog:category' post.category.slug %}" class="blog-detail__category">
+                                    {{ post.category.name }}
+                                </a>
+                                {% endif %}
+                                <span class="blog-detail__views">{{ post.views_count }} просмотров</span>
+                            </div>
+
+                            {% if post.last_reviewed_at %}
+                            <div class="blog-detail__review-badge">
+                                ✓ Проверено юристом {{ post.last_reviewed_at|date:"d.m.Y" }}
+                            </div>
+                            {% endif %}
+
+                            <div class="blog-detail__author">
+                                {% if post.author %}
+                                <div class="blog-detail__author-card">
+                                    {% if post.author.photo %}
+                                    {% image post.author.photo fill-48x48 as author_avatar_small %}
+                                    <img src="{{ author_avatar_small.url }}" alt="{{ post.author.title }}"
+                                         width="{{ author_avatar_small.width }}" height="{{ author_avatar_small.height }}"
+                                         loading="lazy"
+                                         class="author-avatar-round author-avatar-round--sm">
+                                    {% endif %}
+                                    <span class="blog-detail__author-name">Автор:
+                                            <a href="{{ post.author.url }}?from={{ post.url|urlencode }}">{{ post.author.title }}</a></span>
+                                </div>
+                                {% endif %}
+
+                                <a href="#reviews" class="blog-detail__author-link">
+                                    <span>Отзывы</span>
+                                    <img src="{% static '/images/arrow-down-circle.svg' %}" alt="arrow-down" width="16" height="16" loading="lazy">
+                                </a>
+                            </div>
+                            <h1 class="blog-detail__title">{{ post.title }}</h1>
+
+                            {% if post.excerpt %}
+                            <p class="blog-detail__excerpt">{{ post.excerpt }}</p>
+                            {% endif %}
+                        </header>
+                        {% if post.show_risk_warning %}
+                        <div class="risk-warning">
+                            <div class="risk-warning__overlay"></div>
+                            <svg class="risk-warning__icon" width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                 xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16.0006 28.547H7.92056C3.29389 28.547 1.36056 25.2404 3.60056 21.2004L7.76056 13.707L11.6806 6.66703C14.0539 2.38703 17.9472 2.38703 20.3206 6.66703L24.2406 13.7204L28.4006 21.2137C30.6406 25.2537 28.6939 28.5604 24.0806 28.5604H16.0006V28.547Z"
+                                      fill="#C41200"/>
+                                <path d="M15.9922 22.667H16.0042" stroke="white" stroke-width="2" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                                <path d="M16 12V18.6667" stroke="white" stroke-width="1.5" stroke-linecap="round"
+                                      stroke-linejoin="round"/>
+                            </svg>
+                            <p class="risk-warning__text">
+                                <span class="risk-warning__bold">Предупреждение о рисках</span>. {{ post.risk_warning_text }}
+                                Полный текст — в <a href="/risk-disclaimer/">Risk Disclaimer</a>.
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Изображение статьи (LCP-элемент: приоритетная загрузка) -->
+                        {% if post.featured_image %}
+                        <div class="blog-detail__image">
+                            {% image post.featured_image fill-800x450 as hero_img %}
+                            <img src="{{ hero_img.url }}" width="{{ hero_img.width }}" height="{{ hero_img.height }}"
+                                 alt="{{ post.featured_image_alt|default:post.title }}"
+                                 fetchpriority="high" loading="eager">
+                        </div>
+                        {% endif %}
+                        <!-- Основной контент -->
+                        <div class="{% if post.disable_copy %}no-copy{% endif %} blog-detail__content">
+                            {{ post.content|safe }}
+                        </div>
+
+                        <!-- Похожие обзоры внутри текста (внутренняя перелинковка) -->
+                        {% if related_posts %}
+                        <div class="inline-related-links">
+                            <strong>Похожие обзоры:</strong>
+                            {% for rp in related_posts|slice:":3" %}
+                            <a href="{{ rp.url }}">{{ rp.title }}</a>{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Методология оценки -->
+                        {% if post.is_company_review %}
+                        <div class="editorial-note">
+                            <svg class="editorial-note__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>
+                            <p class="editorial-note__text">
+                                Оценка брокера сформирована по единой методологии — регуляция, ликвидность, скорость вывода средств и отзывы пользователей. Подробнее — в <a href="/redaktsionnaja-politika-checkallbrokers/">Редакционной политике</a> и <a href="/metodologija-otsenki/">Методологии оценки</a>.
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        <!-- Теги -->
+                        {% if post.tags.all %}
+                        <div class="blog-detail__tags">
+                            <h3>Теги:</h3>
+                            {% for tag in post.tags.all %}
+                            <a href="{% url 'blog:tag' tag.slug %}" class="blog-detail__tag">
+                                #{{ tag.name }}
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Карточка автора в конце статьи -->
+                        {% if post.author %}
+                        <div class="blog-detail__author-footer">
+                            {% if post.author.photo %}
+                            {% image post.author.photo fill-64x64 as author_avatar %}
+                            <a href="{{ post.author.url }}?from={{ post.url|urlencode }}">
+                                <img src="{{ author_avatar.url }}" alt="{{ post.author.title }}"
+                                     width="{{ author_avatar.width }}" height="{{ author_avatar.height }}"
+                                     loading="lazy"
+                                     class="author-avatar-round">
                             </a>
                             {% endif %}
-                            <span class="blog-detail__views">{{ post.views_count }} просмотров</span>
+                            <div>
+                                <p class="blog-detail__author-footer-label">Автор статьи</p>
+                                <a href="{{ post.author.url }}?from={{ post.url|urlencode }}">{{ post.author.title }}</a>
+                            </div>
                         </div>
-                        <div class="blog-detail__author">
-                            <span class="blog-detail__author-name">Автор: {{ post.author }}</span>
-                        
-                            <a href="#reviews" class="blog-detail__author-link">
-                                <span>Отзывы</span>
-                                <img src="{% static '/images/arrow-down-circle.svg' %}" alt="arrow-down">
-                            </a>
-                        </div>
-                        <h1 class="blog-detail__title">{{ post.title }}</h1>
-                        
-                        {% if post.excerpt %}
-                        <p class="blog-detail__excerpt">{{ post.excerpt }}</p>
                         {% endif %}
-                    </header>
 
-                    <!-- Изображение статьи -->
-                    {% if post.featured_image %}
-                    <div class="blog-detail__image">
-                        <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
-                    </div>
-                    {% endif %}
-
-                    <!-- Основной контент -->
-                    <div class="blog-detail__content">
-                        {{ post.content|safe }}
-                    </div>
-
-                    <!-- Теги -->
-                    {% if post.tags.all %}
-                    <div class="blog-detail__tags">
-                        <h3>Теги:</h3>
-                        {% for tag in post.tags.all %}
-                        <a href="{% url 'blog:tag' tag.slug %}" class="blog-detail__tag">
-                            #{{ tag.name }}
-                        </a>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
+                        <!-- FAQ -->
+                        {% with faq_items=post.get_faq_items %}
+                        {% if post.show_faq and faq_items %}
+                        <section class="faq-section" id="faq">
+                            <h2 class="faq-title">Часто задаваемые вопросы (FAQ)</h2>
+                            <div class="faq-list">
+                                {% for item in faq_items %}
+                                <div class="faq-item">
+                                    <button class="faq-question" type="button" aria-expanded="false">
+                                        <span>{{ item.question }}</span>
+                                        <span class="faq-toggle-icon">+</span>
+                                    </button>
+                                    <div class="faq-answer">
+                                        <div class="faq-answer__inner">{{ item.answer|safe }}</div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </section>
+                        {% endif %}
+                        {% endwith %}
 
                     </article>
                     {% include 'includes/form_banner.html' %}
-                    
-                  
+
                 </div>
-                  <!-- Form -->
-                  <div class="col-lg-4" style="margin-top: 60px;">
+                <!-- Form -->
+                <div class="col-lg-4" style="margin-top: 60px;">
                     {% include "includes/sidebar_form.html" %}
                 </div>
-                  <!-- Reviews Section -->
-                  {% include 'blog/includes/reviews.html' %}
-                
+                <!-- Reviews Section -->
+                {% include 'blog/includes/reviews.html' %}
+
                 <!-- Похожие статьи -->
                 {% if related_posts %}
                 <section class="blog-detail__related">
@@ -79,15 +206,18 @@
                         <article class="blog-detail__related-post">
                             {% if related_post.featured_image %}
                             <div class="blog-detail__related-image">
-                                <img src="{{ related_post.featured_image.url }}" alt="{{ related_post.title }}">
+                                {% image related_post.featured_image fill-400x225 as related_img %}
+                                <img src="{{ related_img.url }}" width="{{ related_img.width }}" height="{{ related_img.height }}"
+                                     alt="{{ related_post.featured_image_alt|default:related_post.title }}"
+                                     loading="lazy">
                             </div>
                             {% endif %}
                             <div class="blog-detail__related-content">
                                 <h3 class="blog-detail__related-title">
-                                    <a href="{% url 'blog:post_detail' related_post.slug %}">{{ related_post.title }}</a>
+                                    <a href="{{ related_post.url }}">{{ related_post.title }}</a>
                                 </h3>
                                 <p class="blog-detail__related-excerpt">{{ related_post.excerpt }}</p>
-                                <a href="{% url 'blog:post_detail' related_post.slug %}" class="btn btn--primary">
+                                <a href="{{ related_post.url }}" class="btn btn--primary">
                                     Читать далее
                                 </a>
                             </div>
@@ -96,22 +226,7 @@
                     </div>
                 </section>
                 {% endif %}
-                  <!-- Навигация между статьями -->
-                  <nav class="blog-detail__navigation">
-                    <div class="blog-detail__nav-links">
-                        {% if post.get_previous_post %}
-                        <a href="{% url 'blog:post_detail' post.get_previous_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--prev">
-                            ← {{ post.get_previous_post.title }}
-                        </a>
-                        {% endif %}
-                        
-                        {% if post.get_next_post %}
-                        <a href="{% url 'blog:post_detail' post.get_next_post.slug %}" class="blog-detail__nav-link blog-detail__nav-link--next">
-                            {{ post.get_next_post.title }} →
-                        </a>
-                        {% endif %}
-                    </div>
-                </nav>
+
                 <!-- Популярные статьи -->
                 {% if popular_posts %}
                 <section class="blog-detail__popular">
@@ -120,10 +235,10 @@
                         {% for popular_post in popular_posts %}
                         <article class="blog-detail__popular-post">
                             <h3 class="blog-detail__popular-title">
-                                <a href="{% url 'blog:post_detail' popular_post.slug %}">{{ popular_post.title }}</a>
+                                <a href="{{ popular_post.url }}">{{ popular_post.title }}</a>
                             </h3>
                             <div class="blog-detail__popular-meta">
-                                <span class="blog-detail__popular-date">{{ popular_post.created_at|date:"d.m.Y" }}</span>
+                                <span class="blog-detail__popular-date">{{ popular_post.first_published_at|date:"d.m.Y" }}</span>
                                 <span class="blog-detail__popular-views">{{ popular_post.views_count }} просмотров</span>
                             </div>
                         </article>
@@ -135,4 +250,98 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+
+<style>
+.breadcrumbs{margin-bottom:16px;font-size:13px;color:var(--text-light)}
+.breadcrumbs ol{display:flex;flex-wrap:wrap;align-items:center;gap:6px;list-style:none;padding:0;margin:0}
+.breadcrumbs li{display:flex;align-items:center;gap:6px}
+.breadcrumbs li:not(:last-child)::after{content:"›";margin-left:6px;color:var(--text-light)}
+.breadcrumbs a{color:var(--text-secondary);text-decoration:none}
+.breadcrumbs a:hover{color:var(--primary-color)}
+.editorial-note{display:flex;gap:12px;padding:16px 18px;margin:28px 0;background:#f2f7f4;border:1px solid #d8e6de;border-left:3px solid #0f6d4c;border-radius:8px}
+.editorial-note__icon{flex-shrink:0;color:#0f6d4c;margin-top:1px}
+.editorial-note__text{margin:0;font-size:13.5px;line-height:1.65;color:#4a5568}
+.editorial-note__text a{color:#0f6d4c;text-decoration:underline;text-underline-offset:2px}
+.blog-detail__review-badge{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--primary-dark);background:rgba(22,198,70,0.08);padding:6px 12px;border-radius:20px;margin-bottom:16px}
+.inline-related-links{margin:24px 0;padding:14px 18px;background:#f7fbf8;border-left:3px solid var(--primary-color);border-radius:8px;font-size:14px}
+.inline-related-links a{color:var(--primary-dark);text-decoration:underline;margin-right:4px}
+.blog-detail__image img{width:100%;height:auto;display:block}
+</style>
+
+<!-- Article JSON-LD -->
+{% image post.featured_image fill-1200x630 as og_article_image %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "{{ post.title|escapejs }}",
+    "description": "{{ post.excerpt|default:post.title|escapejs }}",
+    "datePublished": "{{ post.first_published_at|date:'c' }}",
+    "dateModified": "{{ post.last_published_at|default:post.first_published_at|date:'c' }}",
+    {% if og_article_image %}
+    "image": "{{ request.scheme }}://{{ request.get_host }}{{ og_article_image.url }}",
+    {% endif %}
+    "author": {
+        "@type": "Person",
+        "name": "{{ post.author.title|default:'CheckAllBrokers'|escapejs }}"
+        {% if post.author %}, "url": "{{ request.scheme }}://{{ request.get_host }}{{ post.author.url }}"{% endif %}
+        {% if post.author.linkedin_url %}, "sameAs": ["{{ post.author.linkedin_url|escapejs }}"]{% endif %}
+    },
+    "publisher": {
+        "@type": "Organization",
+        "name": "CheckAllBrokers",
+        "logo": {
+            "@type": "ImageObject",
+            "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}"
+        }
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ request.build_absolute_uri }}"
+    }
+}
+</script>
+
+<!-- AggregateRating JSON-LD -->
+{% if post.is_company_review and post.get_reviews_count > 0 %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "{{ post.company_name|default:post.title|escapejs }}",
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ post.get_average_rating }}",
+        "reviewCount": "{{ post.get_reviews_count }}",
+        "bestRating": "5",
+        "worstRating": "1"
+    }
+}
+</script>
+{% endif %}
+
+<!-- FAQ JSON-LD -->
+{% with faq_items=post.get_faq_items %}
+{% if post.show_faq and faq_items %}
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+        {% for item in faq_items %}
+        {
+            "@type": "Question",
+            "name": "{{ item.question|escapejs }}",
+            "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "{{ item.answer|striptags|escapejs }}"
+            }
+        }{% if not forloop.last %},{% endif %}
+        {% endfor %}
+    ]
+}
+</script>
+{% endif %}
+{% endwith %}
+
+{% endblock %}

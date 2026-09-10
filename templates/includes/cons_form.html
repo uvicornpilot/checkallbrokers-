@@ -4,29 +4,176 @@
     <div class="container">
         <div class="contact-section__content">
             <div class="contact-section__info">
-                <h2 class="contact-section__title">Нужна консультация?</h2>
+                <span class="contact-section__eyebrow">Бесплатная</span>
+                <h2 class="contact-section__title">Аудит регуляторного статуса брокера</h2>
                 <p class="contact-section__text">
-                    Получите бесплатную консультацию от наших экспертов. 
-                    Мы поможем вам вернуть потерянные деньги и защитить ваши права.
+                    Получите экспертный разбор вашей ситуации. Первичный анализ регуляторного статуса компании и проверка условий договора.
                 </p>
+
                 <div class="contact-section__features">
                     <div class="feature">
-                        <span class="feature__icon">⚖️</span>
-                        <span class="feature__text">Юридическая поддержка</span>
+                        <span class="feature__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="10.5" cy="10.5" r="6.5"/>
+                                <line x1="15.3" y1="15.3" x2="21" y2="21"/>
+                            </svg>
+                        </span>
+                        <span class="feature__text">Аудит регуляторного статуса брокера</span>
                     </div>
                     <div class="feature">
-                        <span class="feature__icon">💰</span>
-                        <span class="feature__text">Возврат средств</span>
+                        <span class="feature__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/>
+                                <path d="M9 12l2 2 4-4"/>
+                            </svg>
+                        </span>
+                        <span class="feature__text">Методология досудебной защиты инвесторов</span>
                     </div>
                     <div class="feature">
-                        <span class="feature__icon">🛡️</span>
-                        <span class="feature__text">Защита прав</span>
+                        <span class="feature__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="9"/>
+                                <path d="M12 7v5l3.5 2"/>
+                            </svg>
+                        </span>
+                        <span class="feature__text">Анализ причин задержки обработки операций</span>
                     </div>
                 </div>
             </div>
+
             <div class="contact-section__form">
+                <div class="contact-section__form-badge">Ответим в течение дня</div>
                 {% include 'includes/consultation_form.html' %}
             </div>
         </div>
     </div>
 </section>
+<style>
+/* === Contact section: современный дизайн === */
+.contact-section {
+    padding: 64px 0;
+    background: linear-gradient(180deg, #f7fbf8 0%, #ffffff 100%);
+}
+
+.contact-section__content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 56px;
+    align-items: center;
+}
+
+.contact-section__eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--primary-dark);
+    background: rgba(22, 198, 70, 0.1);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+}
+
+.contact-section__title {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 14px;
+    line-height: 1.2;
+}
+
+.contact-section__text {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 28px;
+}
+
+.contact-section__features {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.feature__icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(22, 198, 70, 0.1);
+    border-radius: 50%;
+}
+
+.feature__icon svg {
+    width: 19px;
+    height: 19px;
+    color: var(--primary-dark);
+}
+
+.feature__text {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+/* Form card */
+.contact-section__form {
+    position: relative;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 32px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08);
+    border: 1px solid #eef1f0;
+}
+
+.contact-section__form-badge {
+    position: absolute;
+    top: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary-color);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 18px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(22, 198, 70, 0.3);
+    white-space: nowrap;
+}
+
+@media (max-width: 991px) {
+    .contact-section__content {
+        grid-template-columns: 1fr;
+        gap: 32px;
+    }
+
+    .contact-section__title {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .contact-section__eyebrow {
+        display: block;
+        text-align: center;
+        margin: 0 auto 16px;
+        width: fit-content;
+    }
+
+    .contact-section__text {
+        text-align: center;
+    }
+}
+    </style>

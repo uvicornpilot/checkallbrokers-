@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ваша заявка принята</title>
+</head>
+<body style="margin:0; padding:0; background-color:#f0f1f2; font-family: Georgia, 'Times New Roman', serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f0f1f2; padding:40px 16px;">
+<tr>
+<td align="center">
+
+<table role="presentation" width="100%" style="max-width:640px; background:#ffffff; border:1px solid #dcdfe1;">
+
+    <!-- Top accent bar -->
+    <tr>
+        <td style="height:6px; background:linear-gradient(90deg, #16C646, #0f6d4c);"></td>
+    </tr>
+
+    <!-- Header -->
+    <tr>
+        <td style="padding:36px 48px 28px; border-bottom:1px solid #e0e2e4;">
+            <table role="presentation" width="100%">
+                <tr>
+                    <td>
+                        <p style="margin:0; font-family: Arial, Helvetica, sans-serif; font-size:12px; letter-spacing:1.5px; text-transform:uppercase; color:#0f6d4c; font-weight:700;">CheckAllBrokers</p>
+                        <h1 style="margin:8px 0 0; font-size:24px; font-weight:400; color:#1a1a1a;">Ваша заявка принята</h1>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Body -->
+    <tr>
+        <td style="padding:36px 48px;">
+            <p style="margin:0 0 18px; font-family: Arial, Helvetica, sans-serif; font-size:16px; line-height:1.7; color:#1a1a1a;">
+                Здравствуйте, <strong>{{ name }}</strong>!
+            </p>
+            <p style="margin:0 0 12px; font-family: Arial, Helvetica, sans-serif; font-size:15px; line-height:1.7; color:#3a3a3a;">
+               Мы понимаем, что ситуация с брокером требует оперативного участия и внимательного разбора. Подтверждаем регистрацию вашей заявки на бесплатную консультацию по досудебному урегулированию и правовому содействию в выводе средств. Обращение уже передано экспертам аналитического отдела.
+            </p>
+            <p style="margin:0 0 28px; font-family: Arial, Helvetica, sans-serif; font-size:15px; line-height:1.7; color:#3a3a3a;">
+                Специалист свяжется с вами <strong>в ближайшее время</strong> — вы не останетесь без ответа.
+            </p>
+
+            <!-- Ticket info -->
+            <table role="presentation" width="100%" style="border:1px solid #e0e2e4; border-left:3px solid #16C646; margin-bottom:28px;">
+                <tr>
+                    <td style="padding:18px 24px; font-family: Arial, Helvetica, sans-serif;">
+                        <table role="presentation" width="100%">
+                            <tr>
+                                <td style="padding:2px 0; font-size:13px; color:#6b7280; white-space:nowrap;">Номер обращения</td>
+                                <td style="padding:2px 0 2px 12px; font-size:15px; font-weight:700; color:#1a1a1a; text-align:right;">№{{ ticket_id }}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:2px 0; font-size:13px; color:#6b7280; white-space:nowrap;">Статус</td>
+                                <td style="padding:2px 0 2px 12px; font-size:15px; font-weight:700; color:#0f6d4c; text-align:right;">Направлено в экспертный отдел</td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+
+            <p style="margin:0 0 16px; font-family: Arial, Helvetica, sans-serif; font-size:15px; font-weight:700; color:#1a1a1a;">
+                В рамках первичной консультации мы:
+            </p>
+
+            <table role="presentation" width="100%" style="margin-bottom:28px; font-family: Arial, Helvetica, sans-serif; border-collapse:collapse;">
+                <tr>
+                    <td style="width:36px; padding:10px 0; vertical-align:top;">
+                        <table role="presentation"><tr><td style="width:26px; height:26px; background:#0f6d4c; text-align:center; font-size:13px; font-weight:700; color:#ffffff; line-height:26px;">1</td></tr></table>
+                    </td>
+                    <td style="padding:10px 0 10px 12px; font-size:14px; line-height:1.6; color:#3a3a3a; border-bottom:1px solid #eef1f0;">
+                        Проанализируем причины блокировки счёта или задержки выплаты
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:36px; padding:10px 0; vertical-align:top;">
+                        <table role="presentation"><tr><td style="width:26px; height:26px; background:#0f6d4c; text-align:center; font-size:13px; font-weight:700; color:#ffffff; line-height:26px;">2</td></tr></table>
+                    </td>
+                    <td style="padding:10px 0 10px 12px; font-size:14px; line-height:1.6; color:#3a3a3a; border-bottom:1px solid #eef1f0;">
+                        Оценим правомерность требований брокера (комиссии, налоги, KYC).
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:36px; padding:10px 0; vertical-align:top;">
+                        <table role="presentation"><tr><td style="width:26px; height:26px; background:#0f6d4c; text-align:center; font-size:13px; font-weight:700; color:#ffffff; line-height:26px;">3</td></tr></table>
+                    </td>
+                    <td style="padding:10px 0 10px 12px; font-size:14px; line-height:1.6; color:#3a3a3a;">
+                        Оценим перспективы вывода и составим пошаговый план действий.
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Contact data -->
+            <table role="presentation" width="100%" style="border-top:1px solid #e0e2e4; padding-top:18px; font-family: Arial, Helvetica, sans-serif;">
+                <tr><td style="padding:3px 0; font-size:13px; color:#6b7280;">Ваши данные</td></tr>
+                <tr><td style="padding:6px 0 3px; font-size:13px; color:#6b7280;">Имя: <span style="color:#1a1a1a;">{{ name }}</span></td></tr>
+                <tr><td style="padding:3px 0; font-size:13px; color:#6b7280;">Телефон: <span style="color:#1a1a1a;">{{ phone }}</span></td></tr>
+                <tr><td style="padding:3px 0 12px; font-size:13px; color:#6b7280;">Email: <span style="color:#1a1a1a;">{{ email }}</span></td></tr>
+                <tr>
+                    <td style="padding:12px 0 0; font-size:12px; line-height:1.6; color:#9aa5ad;">
+                        В соответствии с нашей <a href="/privacy-policy/" style="color:#0f6d4c;">Политикой конфиденциальности</a>, мы не передаём ваши данные третьим лицам.
+                    </td>
+                </tr>
+            </table>
+
+            <!-- Telegram -->
+            <table role="presentation" width="100%" style="margin-top:32px;">
+                <tr>
+                    <td align="center">
+                        <a href="https://t.me/{{ telegram_username }}" style="display:inline-block; font-family: Arial, Helvetica, sans-serif; background:#ffffff; color:#0f6d4c; text-decoration:none; font-size:14px; font-weight:700; padding:13px 32px; border:1.5px solid #16C646;">
+                            Связаться в Telegram
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+    <!-- Footer -->
+    <tr>
+        <td style="padding:24px 48px; background:#fafafa; border-top:1px solid #e0e2e4;">
+            <p style="margin:0; font-family: Arial, Helvetica, sans-serif; font-size:11px; line-height:1.6; color:#9aa5ad;">
+                CheckAllBrokers · Независимый информационно-аналитический проект по проверке брокеров.<br>
+
+            </p>
+        </td>
+    </tr>
+
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>

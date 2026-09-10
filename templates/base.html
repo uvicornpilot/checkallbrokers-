@@ -1,46 +1,52 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    
+
+
     <!-- SEO Meta Tags -->
-    <title>{% block meta_title %}{{ meta_title|default:"Broker Control - Анализ и оценка брокерских компаний" }}{% endblock %}</title>
-    <meta name="description" content="{% block meta_description %}{{ meta_description|default:"Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций жертвам мошеннических компаний" }}{% endblock %}">
-    <meta name="keywords" content="{% block meta_keywords %}{{ meta_keywords|default:"брокер, проверка брокера, юридическая консультация, мошенничество, финансовые услуги, защита инвесторов" }}{% endblock %}">
-    <meta name="author" content="Broker Control">
+    <title>{% block meta_title %}{{ meta_title|default:'CheckAllBrokers — Независимая проверка брокеров и защита инвесторов' }}{% endblock %}</title>
+    <meta name="description"
+          content="{% block meta_description %}{{ meta_description|default:'Независимый информационно-аналитический проект по проверке онлайн-брокеров, оценке рисков и информационной поддержке инвесторов, пострадавших от недобросовестных финансовых компаний.' }}{% endblock %}">
+    <meta name="keywords"
+          content="{% block meta_keywords %}{{ meta_keywords|default:'проверка брокера, рейтинг брокеров, отзывы о брокерах, защита инвесторов, финансовая безопасность, checkallbrokers' }}{% endblock %}">
+    <meta name="author" content="{{ site_settings.site_name|default:'CheckAllBrokers' }}">
     <meta name="robots" content="index, follow">
-    <meta name="google-site-verification" content="2g4LNCXhntEi9J9Fqc6bdYFWzG0-jg-N3l8WEX8xPIo" />
-    
+    <meta name="google-site-verification" content="2g4LNCXhntEi9J9Fqc6bdYFWzG0-jg-N3l8WEX8xPIo"/>
+
     <!-- Additional SEO Meta Tags -->
     <meta name="language" content="ru">
-    <meta name="revisit-after" content="7 days">
     <meta name="distribution" content="global">
     <meta name="rating" content="general">
-    <meta name="geo.region" content="RU">
-    <meta name="geo.placename" content="Russia">
-    <meta name="geo.position" content="50.4501;30.5234">
-    <meta name="ICBM" content="50.4501, 30.5234">
-    
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
+    <meta property="og:site_name" content="{{ site_settings.site_name|default:'CheckAllBrokers' }}">
+    <meta property="og:locale" content="ru_RU">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
-    <meta property="og:title" content="{% block og_title %}{{ meta_title|default:"Broker Control - Анализ и оценка брокерских компаний" }}{% endblock %}">
-    <meta property="og:description" content="{% block og_description %}{{ meta_description|default:"Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций" }}{% endblock %}">
-    <meta property="og:image" content="{% block og_image %}{% if site_settings.og_image %}{{ request.build_absolute_uri }}{{ site_settings.og_image.url }}{% else %}{{ request.build_absolute_uri }}{% static 'images/og-default.jpg' %}{% endif %}{% endblock %}">
+    <meta property="og:title"
+          content="{% block og_title %}{{ meta_title|default:'CheckAllBrokers — Независимая проверка брокеров и защита инвесторов' }}{% endblock %}">
+    <meta property="og:description"
+          content="{% block og_description %}{{ meta_description|default:'Независимый информационно-аналитический проект по проверке онлайн-брокеров и защите прав инвесторов.' }}{% endblock %}">
+    <meta property="og:image"
+          content="{% block og_image %}{% if site_settings.og_image %}{{ request.scheme }}://{{ request.get_host }}{{ site_settings.og_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/og-default.jpg' %}{% endif %}{% endblock %}">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="{{ request.build_absolute_uri }}">
-    <meta property="twitter:title" content="{% block twitter_title %}{{ meta_title|default:"Broker Control - Анализ и оценка брокерских компаний" }}{% endblock %}">
-    <meta property="twitter:description" content="{% block twitter_description %}{{ meta_description|default:"Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций" }}{% endblock %}">
-    <meta property="twitter:image" content="{% block twitter_image %}{% if site_settings.twitter_image %}{{ request.build_absolute_uri }}{{ site_settings.twitter_image.url }}{% else %}{{ request.build_absolute_uri }}{% static 'images/twitter-default.jpg' %}{% endif %}{% endblock %}">
+    <meta property="twitter:title"
+          content="{% block twitter_title %}{{ meta_title|default:'CheckAllBrokers — Независимая проверка брокеров и защита инвесторов' }}{% endblock %}">
+    <meta property="twitter:description"
+          content="{% block twitter_description %}{{ meta_description|default:'Независимый информационно-аналитический проект по проверке онлайн-брокеров и защите прав инвесторов.' }}{% endblock %}">
+    <meta property="twitter:image"
+          content="{% block twitter_image %}{% if site_settings.twitter_image %}{{ request.scheme }}://{{ request.get_host }}{{ site_settings.twitter_image.url }}{% else %}{{ request.scheme }}://{{ request.get_host }}{% static 'images/twitter-default.jpg' %}{% endif %}{% endblock %}">
 
     <!-- Favicon -->
     {% if site_settings.favicon %}
-        <link rel="icon" type="image/x-icon" href="{{ site_settings.favicon.url }}">
+    <link rel="icon" type="image/x-icon" href="{{ site_settings.favicon.url }}">
     {% endif %}
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/apple-touch-icon.png' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon-32x32.png' %}">
@@ -48,121 +54,218 @@
 
     <!-- Canonical URL -->
     <link rel="canonical" href="{{ request.build_absolute_uri }}">
-    
-    <!-- Structured Data (JSON-LD) -->
+
+    <!-- Structured Data (JSON-LD): Organization — сайтовая идентичность, на каждой странице -->
     <script type="application/ld+json">
-    {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Broker Control",
-        "url": "{{ request.build_absolute_uri }}",
-        "logo": "{{ request.build_absolute_uri }}{% static 'images/logo.png' %}",
-        "description": "Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций",
-        "address": {
-            "@type": "PostalAddress",
-            "addressCountry": "RU"
-        },
-        "contactPoint": {
-            "@type": "ContactPoint",
-            "contactType": "customer service",
-            "availableLanguage": "Russian"
+        {
+
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "{{ site_settings.site_name|default:'CheckAllBrokers' }}",
+            "legalName": "FIN CONSULTING LIMITED",
+            "url": "{{ request.scheme }}://{{ request.get_host }}/",
+            "logo": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}",
+            "description": "{{ site_settings.site_description|default:'Независимый информационно-аналитический проект по проверке онлайн-брокеров и финансовых платформ.' }}",
+            "address": {
+                "@type": "PostalAddress",
+                "streetAddress": "182 High Street North",
+                "addressLocality": "London",
+                "addressRegion": "England",
+                "postalCode": "E6 2JA",
+                "addressCountry": "GB"
+            },
+
+            {% if site_settings.company_registration_number %}
+            "identifier": {
+                "@type": "PropertyValue",
+                "propertyID": "Companies House",
+                "value": "{{ site_settings.company_registration_number }}"
+            },
+            {% endif %}
+            {% if site_settings.contact_telegram %}
+            "sameAs": ["https://t.me/{{ site_settings.contact_telegram }}"],
+            {% endif %}
+            "contactPoint": {
+                "@type": "ContactPoint",
+                "contactType": "customer service",
+                {% if site_settings.contact_email %}"email": "{{ site_settings.contact_email }}",{% endif %}
+                {% if site_settings.contact_phone %}"telephone": "{{ site_settings.contact_phone }}",{% endif %}
+                "areaServed": "Worldwide",
+                "availableLanguage": ["Russian", "English"]
+            },
+            "knowsAbout": [
+                "Проверка брокеров",
+                "Финансовая безопасность",
+                "Защита прав инвесторов",
+                "Регуляторный комплаенс финансовых платформ"
+            ],
+            "publishingPrinciples": "{{ request.scheme }}://{{ request.get_host }}/redaktsionnaja-politika-checkallbrokers/",
+            "correctionsPolicy": "{{ request.scheme }}://{{ request.get_host }}/politika-moderatsii-otzyvov/",
+            "disclaimer": "{{ request.scheme }}://{{ request.get_host }}/risk-disclaimer/"
         }
-    }
     </script>
-    
+
+    <!-- Structured Data (JSON-LD): WebSite — для sitelinks search box в выдаче Google -->
+    <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            "name": "{{ site_settings.site_name|default:'CheckAllBrokers' }}",
+            "url": "{{ request.scheme }}://{{ request.get_host }}/"
+        }
+    </script>
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <!-- Intl Tel Input CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
-    
+
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    {% include 'consultations/header.html' %}
-    {% block content %}{% endblock %}
-    {% include 'includes/cons_form.html' %}
-    {% include 'consultations/footer.html' %}
-
-    <!-- Modal Popup -->
-    <div id="consultationModal" class="modal">
-        <div class="modal__content">
-            <div class="modal__close" onclick="closeConsultationForm()">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><g clip-path="url(#clip0_8112_9446)"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z" fill="black"></path></g><defs><clipPath id="clip0_8112_9446"><rect width="24" height="24" rx="12" fill="white"></rect></clipPath></defs></svg>
-            </div>
-            <div class="modal__header">
-                <div class="form-banner__icon">
-                    <img src="{% static '/images/helga.webp' %}" alt="Money">
-                </div>
-                <dit class="modal__head">
-                    <h2 class="modal__header-title">Юрист Вера Андреева</h2>
-                    <p class="modal__header-subtitle">Бесплатная юридическая консультация.</p>
-                </dit>
-            </div>
-            {% include 'includes/modal_consultation_form.html' %}
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script src="{% static 'js/main.js' %}"></script>
-    
-    <!-- Intl Tel Input JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-    
-    {% block extra_js %}{% endblock %}
-
-    <!-- Floating Action Buttons -->
-    <div class="floating-buttons">
-        <a href="https://t.me/{{contact_info.telegram}}" target="_blank" class="floating-btn floating-btn--telegram" title="Telegram">
-            <svg class="floating-btn__icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+{% include 'consultations/header.html' %}
+{% block content %}{% endblock %}
+{% include 'includes/cons_form.html' %}
+{% include 'consultations/footer.html' %}
+<!-- Modal Popup -->
+<div id="consultationModal" class="modal">
+    <div class="modal__content">
+        <div class="modal__close" onclick="closeConsultationForm()">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_8112_9446)">
+                    <path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41Z"
+                          fill="black"></path>
+                </g>
+                <defs>
+                    <clipPath id="clip0_8112_9446">
+                        <rect width="24" height="24" rx="12" fill="white"></rect>
+                    </clipPath>
+                </defs>
             </svg>
-        </a>
-        <button class="floating-btn floating-btn--chat" onclick="openChat()" title="Онлайн чат">
-            <span class="floating-btn__icon">💬</span>
-        </button>
+        </div>
+        <div class="modal__header">
+            <div class="modal__icon">
+                <img src="{% static 'images/anna.webp' %}" alt="...">
+            </div>
+<div class="modal__head">
+                {% if post and post.company_name %}
+                <h2 class="modal__header-title">Отказ в выводе средств из {{ post.company_name }}?</h2>
+                <p class="modal__header-subtitle">Проведём экспресс-аудит регламента и условий T&C для досудебного урегулирования.</p>
+                {% elif post and post.title %}
+                <h2 class="modal__header-title">Проблемы с выводом из {{ post.title }}?</h2>
+                <p class="modal__header-subtitle">Анализ отклонений и сверка действий платформы с её регламентом для досудебного урегулирования.</p>
+                {% else %}
+                <h2 class="modal__header-title">Задержки или отказ в выводе средств?</h2>
+                <p class="modal__header-subtitle">Экспресс-аудит регламента и условий T&C для досудебного урегулирования</p>
+                {% endif %}
+                <span class="modal__trust-badge modal__trust-badge--center">✓ Бесплатная консультация</span>
+            </div>
+        </div>
+        {% include 'includes/modal_consultation_form.html' %}
+        <div class="form-trust-box">
+            <p class="form-trust-box__text">
+                Отправляя запрос, вы соглашаетесь с
+                <a href="/privacy-policy/">Политикой обработки персональных данных</a>
+                и <a href="/terms-of-service/">Пользовательским соглашением</a>.
+                Оценку проводит <a href="/nashi-spetsialisty/anna-kislitskaya/">Анна Кислицкая</a>,
+                compliance-аналитик проекта <a href="/nashi-spetsialisty/">CheckAllBrokers</a> —
+                услуга носит информационно-аудиторский характер и не является платной юридической консультацией.
+            </p>
+            <p class="form-trust-box__badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+                SSL-шифрование. Полная конфиденциальность.
+            </p>
+        </div>
+        <script type="application/ld+json">
+        {
+            "@context": "https://schema.org",
+            "@type": "ContactPoint",
+            "contactType": "customer service",
+            "areaServed": "Worldwide",
+            "availableLanguage": ["Russian", "English"],
+            "description": "Форма обращения не анонимна. Оценку проводит именованный специалист Анна Кислицкая, compliance-аналитик проекта CheckAllBrokers. Процедура носит информационно-аудиторский характер и не является оказанием платных юридических услуг.",
+            "url": "{{ request.build_absolute_uri }}",
+            "provider": {
+                "@type": "Organization",
+                "name": "CheckAllBrokers",
+                "legalName": "FIN CONSULTING LIMITED",
+                "identifier": "UK Co. No. 16382190"
+            }
+        }
+        </script>
     </div>
-    
-    <!-- Chat Widget -->
-    <div id="chatWidget" class="chat-widget">
-        <div class="chat-widget__header">
-            <div class="chat-widget__title">
+</div>
+
+<style>
+.modal__form{padding-bottom:8px}
+.form-consent{font-size:11px;line-height:1.4;color:#8b909d;margin:-6px 0 0;text-align:center}
+.form-consent a{color:#0f6d4c;text-decoration:underline;text-underline-offset:2px}
+</style>
+<!-- Scripts -->
+<script src="{% static 'js/geo-phone.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+<!-- Intl Tel Input JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+
+{% block extra_js %}{% endblock %}
+
+<!-- Floating Action Buttons -->
+<div class="floating-buttons">
+    {% if site_settings.contact_telegram %}
+    <a href="https://t.me/{{ site_settings.contact_telegram }}" target="_blank"
+       class="floating-btn floating-btn--telegram" title="Telegram">
+        <svg class="floating-btn__icon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+        </svg>
+    </a>
+    {% endif %}
+    <button class="floating-btn floating-btn--chat" onclick="openChat()" title="Онлайн чат">
+        <span class="floating-btn__icon">💬</span>
+    </button>
+</div>
+
+<!-- Chat Widget -->
+<div id="chatWidget" class="chat-widget">
+    <div class="chat-widget__header">
+        <div class="chat-widget__title">
                 <span class="chat-widget__icon">
                     <img src="{% static '/images/sergey.webp' %}" alt="Sergey">
                 </span>
-                <span>Сергей Буров <br> Юрист международного права</span>
-               
-            </div>
-            <button class="chat-widget__close" onclick="closeChat()">&times;</button>
+            <span>Сергей Буров <br>Аналитик финансово-правовых рисков и спорных ситуаций</span>
+
         </div>
-        <div class="chat-widget__messages" id="chatMessages">
-            <div class="chat-message chat-message--bot">
-                <div class="chat-message__content">
-                    <p>Здравствуйте! 👋 Я Сергей Буров. Чем могу помочь?</p>
-                </div>
-                <div class="chat-message__time">Сейчас</div>
+        <button class="chat-widget__close" onclick="closeChat()">&times;</button>
+    </div>
+    <div class="chat-widget__messages" id="chatMessages">
+        <div class="chat-message chat-message--bot">
+            <div class="chat-message__content">
+                <p>Здравствуйте! 👋 Я Сергей Буров. Есть вопросы по брокеру?</p>
             </div>
-        </div>
-        <div class="chat-widget__input">
-            <input type="text" id="chatInput" placeholder="Введите сообщение..." onkeypress="handleChatKeyPress(event)">
-            <button onclick="sendChatMessage()" class="chat-widget__send">📤</button>
+            <div class="chat-message__time">Сейчас</div>
         </div>
     </div>
+    <div class="chat-widget__input">
+        <input type="text" id="chatInput" placeholder="Введите сообщение..." onkeypress="handleChatKeyPress(event)">
+        <button onclick="sendChatMessage()" class="chat-widget__send">📤</button>
+    </div>
+</div>
 
-    <!-- Analytics -->
-    {% if site_settings.google_analytics_id %}
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site_settings.google_analytics_id }}"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', '{{ site_settings.google_analytics_id }}');
-    </script>
-    {% endif %}
+<!-- Analytics -->
+{% if site_settings.google_analytics_id %}
+<script async src="https://www.googletagmanager.com/gtag/js?id={{ site_settings.google_analytics_id }}"></script>
+<script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site_settings.google_analytics_id }}');
+</script>
+{% endif %}
 
-  
+
 </body>
-</html> 
+</html>

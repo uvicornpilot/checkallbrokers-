@@ -8,4 +8,4 @@ class LossReport(models.Model):
     created_at = models.DateTimeField("Дата", auto_now_add=True)
 
     def __str__(self):
-        return f"{self.name} - {self.loss_amount} грн"
+        return f"{self.name} - {self.loss_amount} usd"

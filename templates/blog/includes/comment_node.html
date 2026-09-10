@@ -1,0 +1,43 @@
+{% load review_extras %}
+
+<div class="review-reply {% if comment.is_admin %}review-reply--admin{% endif %}"
+     id="review-{{ comment.id }}" itemprop="comment" itemscope itemtype="https://schema.org/Comment">
+    <div class="review-reply__header">
+        {% if comment.avatar_image %}
+            <img src="{{ comment.avatar_image.url }}" alt="{{ comment.name }}" class="review-avatar-img review-avatar--sm">
+        {% else %}
+            <span class="review-avatar review-avatar--sm {% if comment.is_admin %}review-avatar--admin{% endif %}"
+                  style="{% if not comment.is_admin %}background: {{ comment.name|name_color }}{% endif %}">
+                {% if comment.is_admin %}👤{% else %}{{ comment.name|initial }}{% endif %}
+            </span>
+        {% endif %}
+        <span class="review-reply__author-info">
+            <strong class="review-name" itemprop="author">{{ comment.name }}</strong>
+            {% if comment.is_admin %}<span class="review-badge">Администратор</span>{% endif %}
+        </span>
+        <time class="review-date" itemprop="datePublished" datetime="{{ comment.created_at|date:'c' }}">{{ comment.created_at|date:"d.m.Y" }}</time>
+    </div>
+    <div class="review-reply__text" itemprop="text">{{ comment.text|linebreaksbr }}</div>
+
+    <div class="review-meta">
+        <button
+            class="review-helpful-btn"
+            type="button"
+            data-review-id="{{ comment.id }}"
+            data-url="{% url 'blog:mark_review_helpful' comment.id %}"
+        >
+            <span class="review-helpful-btn__icon">👍</span>
+            Полезно
+            <span class="review-helpful-btn__count">{{ comment.helpful_count }}</span>
+        </button>
+        <button class="review-reply-link" data-reply-to="{{ comment.id }}" data-reply-name="{{ comment.name }}">Ответить</button>
+    </div>
+
+    {% if comment.approved_replies %}
+    <div class="review-replies review-replies--nested">
+        {% for child in comment.approved_replies %}
+            {% include "blog/includes/comment_node.html" with comment=child %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>

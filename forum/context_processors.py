@@ -1,5 +1,5 @@
 from django.conf import settings
-
+from blog.models import BlogIndexPage
 
 def forum_seo(request):
     """SEO контекст процессор для форума"""
@@ -20,4 +20,14 @@ def forum_seo(request):
                 'forum_keywords': 'форум, брокер, обсуждение, консультации, юридическая помощь, отзывы',
             })
     
-    return seo_context 
+    return seo_context
+
+
+
+def site_settings(request):
+    ...
+    blog_index = BlogIndexPage.objects.live().first()
+    return {
+        'site_settings': settings,
+        'blog_index_url': blog_index.url if blog_index else '/blog/',
+    }

@@ -1,4 +1,4 @@
-# 🏦 Broker Control
+# 🏦 Check All Brokers
 
 **Незалежний інформаційно-аналітичний проект з перевірки брокерів та надання юридичних консультацій**
 
@@ -28,18 +28,18 @@
 
 ## 🛠 Технології
 
-- **Backend**: Django 4.2
+- **Backend**: Django 4.2 + Wagtail CMS
 - **Frontend**: HTML5, CSS3, JavaScript
-- **База даних**: SQLite/PostgreSQL
-- **Редактор**: CKEditor
+- **База даних**: PostgreSQL (продакшн) / SQLite (розробка)
 - **Стилі**: Bootstrap 5
+- **Email**: Resend API / SMTP
 
 ## 🚀 Встановлення
 
 1. **Клонування репозиторію**
    ```bash
-   git clone https://github.com/your-username/broker-control.git
-   cd broker-control
+   git clone https://github.com/your-username/check-all-brokers.git
+   cd check-all-brokers
    ```
 
 2. **Створення віртуального середовища**
@@ -55,24 +55,41 @@
    pip install -r requirements.txt
    ```
 
-4. **Налаштування бази даних**
+4. **Налаштування змінних оточення**
+
+   Створіть файл `.env` у корені проекту (див. `.env.example`):
+   ```env
+   SECRET_KEY=your-secret-key
+   DEBUG=False
+   ALLOWED_HOSTS=checkallbrokers.com,www.checkallbrokers.com
+   DB_NAME=broker_control
+   DB_USER=broker_user
+   DB_PASSWORD=your-db-password
+   DB_HOST=localhost
+   DB_PORT=5432
+   EMAIL_HOST_PASSWORD=your-email-password
+   RESEND_API_KEY=your-resend-api-key
+   WAGTAILADMIN_BASE_URL=https://checkallbrokers.com
+   ```
+
+5. **Налаштування бази даних**
    ```bash
    python manage.py makemigrations
    python manage.py migrate
    ```
 
-5. **Створення суперкористувача**
+6. **Створення суперкористувача**
    ```bash
    python manage.py createsuperuser
    ```
 
-6. **Створення тестових даних**
+7. **Створення тестових даних**
    ```bash
    python manage.py create_forum_data
    python manage.py create_demo_topics
    ```
 
-7. **Запуск сервера**
+8. **Запуск сервера**
    ```bash
    python manage.py runserver
    ```
@@ -80,18 +97,19 @@
 ## 📁 Структура проекту
 
 ```
-BrokerControl/
+CheckAllBrokers/
 ├── broker_control/          # Налаштування проекту
 ├── content/                 # Головний контент
 ├── blog/                    # Блог
 ├── consultations/           # Консультації
 ├── forum/                   # Форум
-├── templates/               # Шаблони
-│   ├── includes/           # Включені шаблони
-│   ├── forum/              # Шаблони форуму
+├── legal/                   # Юридичний розділ
+├── templates/                # Шаблони
+│   ├── includes/            # Включені шаблони
+│   ├── forum/               # Шаблони форуму
 │   └── ...
-├── static/                  # Статичні файли
-└── media/                   # Завантажені файли
+├── static/                   # Статичні файли (включно з robots.txt)
+└── media/                    # Завантажені файли
 ```
 
 ## 🎯 Основні сторінки
@@ -107,7 +125,7 @@ BrokerControl/
 - Корисні поради
 
 ### 💬 Форум
-- **4 категорії**: Загальні питання, Юридичні консультації, Відгуки про брокерів, Технічна підтримка
+- **Категорії**: Загальні питання, Відгуки про брокерів, Технічна підтримка
 - **Створення тем** з модерацією
 - **Коментування** з модерацією
 - **Пошук** по форуму
@@ -120,6 +138,8 @@ BrokerControl/
 
 ## 🔧 Адміністрація
 
+Адмін-панель на базі Wagtail CMS доступна за адресою `/admin/`.
+
 ### Модерація форуму
 - Одобрення/відхилення постів
 - Управління темами
@@ -128,7 +148,14 @@ BrokerControl/
 ### Управління контентом
 - Редагування сторінок
 - Управління блогом
-- Налаштування сайту
+- SEO-налаштування (title, description для кожної сторінки)
+
+## 🔍 SEO
+
+- `robots.txt` — віддається статично через nginx
+- `sitemap.xml` — генерується автоматично на основі дерева сторінок Wagtail
+- Canonical URL та meta-теги налаштовані для кожної сторінки
+- Google Search Console підключено для моніторингу індексації
 
 ## 📱 Мобільна версія
 
@@ -141,14 +168,15 @@ BrokerControl/
 
 - Модерація всіх постів форуму
 - Захист від спаму
-- Безпечні форми
+- HTTPS обов'язковий на продакшні (SSL/HSTS)
+- Секрети зберігаються у змінних оточення, не в коді
 - Валідація даних
 
 ## 📞 Контакти
 
-- **Telegram**: [@brokercontrol](https://t.me/brokercontrol)
-- **Email**: info@brokercontrol.com
-- **Сайт**: https://brokercontrol.com
+- **Telegram**: [@checkallbrokers](https://t.me/checkallbrokers)
+- **Email**: info@checkallbrokers.com
+- **Сайт**: https://checkallbrokers.com
 
 ## 🤝 Внесок
 
@@ -163,4 +191,4 @@ BrokerControl/
 
 ---
 
-**Broker Control** - ваш надійний партнер у світі фінансів! 💪 
+**Check All Brokers** — ваш надійний партнер у світі фінансів! 💪

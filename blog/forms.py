@@ -1,10 +1,23 @@
 from django import forms
 from .models import Review
 
+
 class ReviewForm(forms.ModelForm):
+    # honeypot: обычный посетитель это поле не видит, боты — часто заполняют всё подряд
+    website = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'review-form__website',
+            'autocomplete': 'off',
+            'tabindex': '-1',
+        }),
+        label='',
+    )
+
     class Meta:
         model = Review
-        fields = ['name', 'rating', 'text', 'parent', 'is_admin']
+        fields = ['name', 'rating', 'text', 'parent']
+
         widgets = {
             'name': forms.TextInput(attrs={
                 'class': 'review-form__input',
@@ -22,20 +35,16 @@ class ReviewForm(forms.ModelForm):
                 'required': True
             }),
             'parent': forms.HiddenInput(),
-            'avatar': forms.TextInput(attrs={
-                'class': 'review-form__input',
-                'placeholder': '🙂 Аватар (эмодзи, опционально)'
-            }),
-            'avatar_image': forms.FileInput(attrs={
-                'class': 'review-form__input'
-            }),
-            'is_admin': forms.CheckboxInput(attrs={
-                'class': 'review-form__checkbox'
-            })
         }
+
         labels = {
             'name': 'Имя *',
             'rating': 'Оценка *',
             'text': 'Отзыв *',
-            'is_admin': 'Ответ администратора'
-        } 
+        }
+
+    def clean_website(self):
+        value = self.cleaned_data.get('website')
+        if value:
+            raise forms.ValidationError('Ошибка отправки. Попробуйте ещё раз.')
+        return value

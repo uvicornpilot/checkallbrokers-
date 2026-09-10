@@ -1,18 +1,71 @@
 {% load static %}
 <div class="blog-sidebar__widget sidebar-form">
-    <div class="sidebar-form__header">
-        <div class="sidebar-form__icon">
-            <img src="{% static '/images/aleskandr.webp' %}" alt="Money">
-            <div class="sidebar-form__icon-text">
-                <h2 class="sidebar-form__main-title">Юрист Александр Корчаков</h2>
+    <div class="lawyer-card">
+        <div class="lawyer-card__photo">
+            <img
+                src="{% static 'images/aleskandr.webp' %}"
+                alt="Алексей Рихтер — аудит, риск менеджмент CheckAllBrokers"
+                loading="lazy"
+            >
+        </div>
+        <div class="lawyer-card__info">
+            <h2 class="lawyer-card__title">
+                Столкнулись с задержкой выплат или отказом в выводе средств?
+            </h2>
+            <p class="lawyer-card__subtitle">
+                Запросите экспертный аудит: детальная сверка фактических операций платформы с её опубликованным регламентом (T&C) для формирования правовой основы досудебного урегулирования.
+            </p>
+            <div class="lawyer-card__author">
+                <strong><a href="/nashi-spetsialisty/aleksey-rihter/" class="lawyer-card__author-link">Алексей Рихтер</a></strong>
+                <span>Аналитик CheckAllBrokers</span>
             </div>
         </div>
-        <h3 class="sidebar-form__main-title">        Оставьте заявку и получите бесплатную консультацию по возврату средств.</h3>
-        
     </div>
-    <b class="sidebar-form__title">
 
-        Помогу вернуть ваши деньги.
-    </b>
-    {% include 'includes/sidebar_consultation_form.html' %}
-</div> 
+    <div class="consultation-form">
+        {% include 'includes/sidebar_consultation_form.html' %}
+    </div>
+
+    <div class="form-trust-box">
+        <p class="form-trust-box__text">
+            Отправляя запрос, вы соглашаетесь с
+            <a href="/privacy-policy/">Политикой обработки персональных данных</a>
+            и <a href="/terms-of-service/">Пользовательским соглашением</a>.
+            Аналитическая оценка процедурных отклонений проводится профильными специалистами проекта
+            <a href="/nashi-spetsialisty/">CheckAllBrokers</a> (FIN CONSULTING LIMITED).
+            Процедура носит информационно-аудиторский характер и не является оказанием платных
+            юридических или финансовых услуг.
+        </p>
+        <p class="form-trust-box__badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="5" y="10" width="14" height="10" rx="1.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+            SSL-шифрование. Полная конфиденциальность.
+        </p>
+    </div>
+</div>
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "areaServed": "Worldwide",
+    "availableLanguage": ["Russian", "English"],
+    "description": "Форма обращения не анонимна. Оценку проводит именованный специалист проекта CheckAllBrokers. Процедура носит информационно-аудиторский характер и не является оказанием платных юридических или финансовых услуг. Проект не осуществляет возврат денежных средств.",
+    "url": "{{ request.build_absolute_uri }}",
+    "provider": {
+        "@type": "Organization",
+        "name": "CheckAllBrokers",
+        "legalName": "FIN CONSULTING LIMITED",
+        "identifier": "UK Co. No. 16382190"
+    }
+}
+</script>
+
+<style>
+.form-trust-box{margin-top:14px;padding:12px 14px;background:#f7f9f8;border:1px solid #e5e9e7;border-radius:8px}
+.form-trust-box__text{font-size:11px;line-height:1.55;color:#8b909d;margin:0 0 8px}
+.form-trust-box__text a{color:#0f6d4c;text-decoration:underline;text-underline-offset:2px}
+.form-trust-box__badge{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#0f6d4c;margin:0}
+.form-trust-box__badge svg{width:14px;height:14px;flex-shrink:0}
+.lawyer-card__author-link{color:inherit;text-decoration:none}
+.lawyer-card__author-link:hover{text-decoration:underline}
+</style>

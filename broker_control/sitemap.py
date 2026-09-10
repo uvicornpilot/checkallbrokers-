@@ -1,38 +1,39 @@
 from django.contrib.sitemaps import Sitemap
 from django.urls import reverse
-from blog.models import Post, Category, Tag
-from django.utils import timezone
+from blog.models import Category, Tag
+
 
 class StaticViewSitemap(Sitemap):
     priority = 0.9
-    changefreq = 'weekly'
+    changefreq = "weekly"
 
     def items(self):
-        return ['content:home', 'content:about', 'blog:post_list', 'forum:index', 'consultations:consultation']
+        # "content:about" убран — эта страница теперь Wagtail AboutPage
+        # и уже попадает в sitemap через wagtail.contrib.sitemaps.Sitemap
+        # (зарегистрирован в urls.py как "pages")
+        return ["content:home", "forum:index", "consultations:consultation"]
 
     def location(self, item):
         return reverse(item)
 
-class PostSitemap(Sitemap):
-    changefreq = "weekly"
-    priority = 0.8
-
-    def items(self):
-        return Post.objects.filter(status='published', published_at__isnull=False, published_at__lte=timezone.now())
-
-    def lastmod(self, obj):
-        return obj.updated_at
 
 class CategorySitemap(Sitemap):
     changefreq = "monthly"
     priority = 0.6
 
     def items(self):
-        return Category.objects.all()
+        return Category.objects.filter(is_active=True)
+
+    def location(self, obj):
+        return reverse("blog:category", kwargs={"slug": obj.slug})
+
 
 class TagSitemap(Sitemap):
     changefreq = "monthly"
     priority = 0.5
 
     def items(self):
-        return Tag.objects.all() 
+        return Tag.objects.all()
+
+    def location(self, obj):
+        return reverse("blog:tag", kwargs={"slug": obj.slug})

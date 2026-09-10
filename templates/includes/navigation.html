@@ -11,19 +11,19 @@
     </button>
     <ul class="mobile-nav__list">
         <li><a href="{% url 'content:home' %}">Главная</a></li>
-        <li><a href="{% url 'blog:post_list' %}">Блог</a></li>
+        <li><a href="/blog/">Блог</a></li>
         <li><a href="#" onclick="openConsultationForm(); return false;">Консультации</a></li>
         <li><a href="{% url 'forum:index' %}">Форум</a></li>
-        <li><a href="{% url 'content:about' %}">О нас</a></li>
+        <li><a href="/o-proekte-checkallbrokers/">О нас</a></li>
     </ul>
 </nav>
 <nav class="desktop-nav" id="desktopNav">
     <div class="desktop-nav__list">
        <a href="{% url 'content:home' %}">Главная</a>
-        <a href="{% url 'blog:post_list' %}">Блог</a>
+        <a href="/blog/">Блог</a>
         <a href="#" onclick="openConsultationForm(); return false;">Консультации</a>
         <a href="{% url 'forum:index' %}">Форум</a>
-        <a href="{% url 'content:about' %}">О нас</a>
+        <a href="/o-proekte-checkallbrokers/">О нас</a>
     </div>
 </nav>
 <div class="mobile-nav__overlay" id="mobileNavOverlay"></div>

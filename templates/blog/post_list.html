@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% load static %}
+{% load static wagtailimages_tags %}
 
 {% block content %}
 <div class="blog">
     <div class="blog__header">
         <div class="container">
             <h1 class="blog__title">Блог</h1>
-            <p class="blog__subtitle">Полезные статьи о проверке брокеров, защите инвесторов и юридических консультациях</p>
+            <p class="blog__subtitle">База знаний экспертно-аналитического совета: регулярные проверки лицензий, предупреждения для инвесторов и практические руководства по минимизации финансовых рисков.</p>
         </div>
     </div>
 
@@ -21,27 +21,29 @@
                             <article class="blog-post">
                                 {% if post.featured_image %}
                                 <div class="blog-post__image">
-                                    <img src="{{ post.featured_image.url }}" alt="{{ post.title }}">
+                                    {% image post.featured_image fill-400x225 %}
                                 </div>
                                 {% endif %}
                                 <div class="blog-post__content">
                                     <div class="blog-post__meta">
-                                        <span class="blog-post__date">{{ post.created_at|date:"d.m.Y" }}</span>
+                                        <span class="blog-post__date">{{ post.first_published_at|date:"d.m.Y" }}</span>
                                         {% if post.category %}
                                         <a href="{% url 'blog:category' post.category.slug %}" class="blog-post__category">
                                             {{ post.category.name }}
                                         </a>
                                         {% endif %}
+                                        {% if post.author %}
                                         <div class="blog-post__author">
-                                            <span class="blog-post__author-name">Автор: {{ post.author }}</span>
+                                            <span class="blog-post__author-name">Автор: {{ post.author.title }}</span>
                                         </div>
+                                        {% endif %}
                                     </div>
                                     <h2 class="blog-post__title">
-                                        <a href="{% url 'blog:post_detail' post.slug %}">{{ post.title }}</a>
+                                        <a href="{{ post.url }}">{{ post.title }}</a>
                                     </h2>
                                     <p class="blog-post__excerpt">{{ post.excerpt }}</p>
                                     <div class="blog-post__footer">
-                                        <a href="{% url 'blog:post_detail' post.slug %}" class="btn btn--primary">
+                                        <a href="{{ post.url }}" class="btn btn--primary">
                                             Читать далее
                                         </a>
                                         {% if post.tags.all %}
@@ -60,20 +62,20 @@
                         </div>
 
                         <!-- Пагинация -->
-                        {% if is_paginated %}
+                        {% if posts.has_other_pages %}
                         <div class="pagination">
-                            {% if page_obj.has_previous %}
+                            {% if posts.has_previous %}
                                 <a href="?page=1" class="pagination__link">&laquo; Первая</a>
-                                <a href="?page={{ page_obj.previous_page_number }}" class="pagination__link">Предыдущая</a>
+                                <a href="?page={{ posts.previous_page_number }}" class="pagination__link">Предыдущая</a>
                             {% endif %}
 
                             <span class="pagination__current">
-                                Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+                                Страница {{ posts.number }} из {{ posts.paginator.num_pages }}
                             </span>
 
-                            {% if page_obj.has_next %}
-                                <a href="?page={{ page_obj.next_page_number }}" class="pagination__link">Следующая</a>
-                                <a href="?page={{ page_obj.paginator.num_pages }}" class="pagination__link">Последняя &raquo;</a>
+                            {% if posts.has_next %}
+                                <a href="?page={{ posts.next_page_number }}" class="pagination__link">Следующая</a>
+                                <a href="?page={{ posts.paginator.num_pages }}" class="pagination__link">Последняя &raquo;</a>
                             {% endif %}
                         </div>
                         {% endif %}
@@ -87,11 +89,12 @@
                 <!-- Сайдбар -->
                 <aside class="blog__sidebar">
                     {% include "includes/sidebar_form.html" %}
+
                     <!-- Поиск -->
                     <div class="blog-sidebar__widget">
                         <h3 class="blog-sidebar__title">Поиск</h3>
                         <form method="get" action="{% url 'blog:search' %}" class="search-form">
-                            <input type="text" name="q" placeholder="Поиск по статьям..." 
+                            <input type="text" name="q" placeholder="Поиск по статьям..."
                                    value="{{ request.GET.q }}" class="search-form__input">
                             <button type="submit" class="search-form__btn">Поиск</button>
                         </form>
@@ -131,4 +134,4 @@
         </div>
     </div>
 </div>
-{% endblock %} 
+{% endblock %}

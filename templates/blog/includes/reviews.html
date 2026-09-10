@@ -7,7 +7,7 @@
         <h3 class="reviews-title">Отзывы ({{ post.get_reviews_count }})</h3>
         {% if post.get_average_rating > 0 %}
         <div class="reviews-rating">
-            <div class="rating-stars">
+            <div class="rating-stars rating-stars--small">
                 {% for i in "12345" %}
                     {% if forloop.counter <= post.get_average_rating %}
                         <span class="star star--filled">★</span>
@@ -25,46 +25,63 @@
     {% if reviews %}
     <div class="reviews-list">
         {% for review in reviews %}
-        <div class="review-item" id="review-{{ review.id }}">
+        <article class="review-item" id="review-{{ review.id }}" itemscope itemtype="https://schema.org/Comment">
             <div class="review-header">
-                <div class="review-author">
-                    <span class="review-avatar-initial" style="background: {{ review.name|name_color }}">{{ review.name|initial }}</span>
-                    <strong class="review-name">{% if review.is_admin %}Администратор{% else %}{{ review.name }}{% endif %}</strong>
+                <div class="review-author" itemprop="author" itemscope itemtype="https://schema.org/Person">
+                    {% if review.avatar_image %}
+                        <img src="{{ review.avatar_image.url }}" alt="{{ review.name }}" class="review-avatar-img">
+                    {% else %}
+                        <span class="review-avatar" style="background: {{ review.name|name_color }}">{{ review.name|initial }}</span>
+                    {% endif %}
+                    <span class="review-author__info">
+                        <strong class="review-name" itemprop="name">{% if review.is_admin %}Администратор{% else %}{{ review.name }}{% endif %}</strong>
+                        <div class="review-rating rating-stars--small" itemprop="reviewRating" itemscope itemtype="https://schema.org/Rating">
+                            <meta itemprop="ratingValue" content="{{ review.rating }}">
+                            <meta itemprop="bestRating" content="5">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <span class="star star--filled">★</span>
+                                {% else %}
+                                    <span class="star star--empty">☆</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    </span>
                 </div>
-                <div class="review-rating">
-                    {% for i in "12345" %}
-                        {% if forloop.counter <= review.rating %}
-                            <span class="star star--filled">★</span>
-                        {% else %}
-                            <span class="star star--empty">☆</span>
-                        {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="review-date">{{ review.created_at|date:"d.m.Y H:i" }}</div>
-            </div>
-            <div class="review-text">{{ review.text|linebreaksbr }}</div>
-
-            <!-- Кнопка ответить -->
-            <div class="review-actions">
-                <button class="btn btn--secondary btn--sm" data-reply-to="{{ review.id }}">Ответить</button>
             </div>
 
-            <!-- Ответы -->
+            <div class="review-text" itemprop="text">{{ review.text|linebreaksbr }}</div>
+
+            <div itemprop="interactionStatistic" itemscope itemtype="https://schema.org/InteractionCounter" style="display:none">
+                <meta itemprop="interactionType" content="https://schema.org/LikeAction">
+                <meta itemprop="userInteractionCount" content="{{ review.helpful_count }}">
+            </div>
+
+            <div class="review-meta">
+                <time class="review-date" itemprop="datePublished" datetime="{{ review.created_at|date:'c' }}">
+                    Опубликовано: {{ review.created_at|date:"d.m.Y" }}
+                </time>
+                <button
+                    class="review-helpful-btn"
+                    type="button"
+                    data-review-id="{{ review.id }}"
+                    data-url="{% url 'blog:mark_review_helpful' review.id %}"
+                >
+                    <span class="review-helpful-btn__icon">👍</span>
+                    Полезно
+                    <span class="review-helpful-btn__count">{{ review.helpful_count }}</span>
+                </button>
+                <button class="review-reply-link" data-reply-to="{{ review.id }}" data-reply-name="{{ review.name }}">Ответить</button>
+            </div>
+
             {% if review.approved_replies %}
             <div class="review-replies">
                 {% for reply in review.approved_replies %}
-                <div class="review-reply">
-                    <div class="review-reply__header">
-                        <span class="review-avatar-initial" style="background: {{ reply.name|name_color }}">{{ reply.name|initial }}</span>
-                        <strong class="review-name">{% if reply.is_admin %}Администратор{% else %}{{ reply.name }}{% endif %}</strong>
-                        <span class="review-date">{{ reply.created_at|date:"d.m.Y H:i" }}</span>
-                    </div>
-                    <div class="review-reply__text">{{ reply.text|linebreaksbr }}</div>
-                </div>
+                    {% include "blog/includes/comment_node.html" with comment=reply %}
                 {% endfor %}
             </div>
             {% endif %}
-        </div>
+        </article>
         {% endfor %}
     </div>
 
@@ -74,11 +91,7 @@
         {% if reviews.has_previous %}
             <a href="?review_page={{ reviews.previous_page_number }}" class="pagination-link">&laquo; Предыдущая</a>
         {% endif %}
-        
-        <span class="pagination-current">
-            Страница {{ reviews.number }} из {{ reviews.paginator.num_pages }}
-        </span>
-        
+        <span class="pagination-current">Страница {{ reviews.number }} из {{ reviews.paginator.num_pages }}</span>
         {% if reviews.has_next %}
             <a href="?review_page={{ reviews.next_page_number }}" class="pagination-link">Следующая &raquo;</a>
         {% endif %}
@@ -91,15 +104,19 @@
     {% endif %}
 
     <!-- Review Form -->
+    {% if post.pk %}
     <div class="review-form-section" id="reviewFormHome">
-        <h4 class="review-form-title">Оставить отзыв</h4>
+        <h4 class="review-form-title" id="reviewFormTitle">Оставить отзыв</h4>
         <form method="post" action="{% url 'blog:submit_review' post.id %}" class="review-form" id="reviewForm">
             {% csrf_token %}
             {{ review_form.parent }}
+            {{ review_form.website }}
+
             <div class="review-form__replying" id="reviewReplyingIndicator" style="display:none">
                 <span class="review-form__replying-text" id="reviewReplyingText">Вы отвечаете на комментарий</span>
                 <button type="button" class="review-form__cancel-reply" id="cancelReplyBtn">Отменить ответ</button>
             </div>
+
             <div class="review-form__row">
                 <div class="review-form__field">
                     <label for="{{ review_form.name.id_for_label }}" class="review-form__label">{{ review_form.name.label }}</label>
@@ -116,7 +133,7 @@
                     {% endif %}
                 </div>
             </div>
-            
+
             <div class="review-form__field">
                 <label for="{{ review_form.text.id_for_label }}" class="review-form__label">{{ review_form.text.label }}</label>
                 {{ review_form.text }}
@@ -124,19 +141,67 @@
                     <div class="review-form__error">{{ review_form.text.errors.0 }}</div>
                 {% endif %}
             </div>
-            <div class="review-form__row">
-                <div class="review-form__field">
-                    <label for="{{ review_form.avatar.id_for_label }}" class="review-form__label">{{ review_form.avatar.label }}</label>
-                    {{ review_form.avatar }}
-                </div>
-                {% if request.user.is_staff %}
-                <div class="review-form__field">
-                    <label for="{{ review_form.is_admin.id_for_label }}" class="review-form__label">{{ review_form.is_admin.label }}</label>
-                    {{ review_form.is_admin }}
-                </div>
-                {% endif %}
-            </div>
+
             <button type="submit" class="review-form__submit">Отправить отзыв</button>
         </form>
     </div>
-</section> 
+    {% else %}
+    <div class="review-form-section review-form-section--preview">
+        <p>Форма отзыва будет доступна после публикации статьи.</p>
+    </div>
+    {% endif %}
+</section>
+
+<style>
+.review-helpful-btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#6d7280;background:none;border:1px solid #e0e0e0;border-radius:20px;padding:4px 10px;cursor:pointer;transition:color .15s,border-color .15s}
+.review-helpful-btn:hover{color:#0f6d4c;border-color:#0f6d4c}
+.review-helpful-btn.is-voted{color:#0f6d4c;border-color:#0f6d4c;background:#eaf3ee;cursor:default}
+.review-helpful-btn__icon{font-size:12px;line-height:1}
+.review-helpful-btn__count{font-weight:600}
+</style>
+
+<script>
+(function(){
+    function getCookie(name){
+        const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return v ? v.pop() : '';
+    }
+    const votedKey = 'review_helpful_voted';
+    function getVoted(){
+        try { return JSON.parse(localStorage.getItem(votedKey) || '[]'); } catch(e){ return []; }
+    }
+    function setVoted(id){
+        const voted = getVoted();
+        voted.push(id);
+        localStorage.setItem(votedKey, JSON.stringify(voted));
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+        const voted = getVoted();
+        document.querySelectorAll('.review-helpful-btn').forEach(function(btn){
+            const id = btn.dataset.reviewId;
+            if (voted.includes(id)){
+                btn.classList.add('is-voted');
+                btn.disabled = true;
+            }
+            btn.addEventListener('click', function(){
+                if (btn.classList.contains('is-voted')) return;
+                fetch(btn.dataset.url, {
+                    method: 'POST',
+                    headers: {'X-CSRFToken': getCookie('csrftoken')},
+                })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success){
+                        btn.querySelector('.review-helpful-btn__count').textContent = data.helpful_count;
+                        btn.classList.add('is-voted');
+                        btn.disabled = true;
+                        setVoted(id);
+                    }
+                })
+                .catch(function(){});
+            });
+        });
+    });
+})();
+</script>
