@@ -17,13 +17,13 @@ from .auto_slug_mixin import AutoSlugPage  # поправьте путь под 
 @register_setting
 class SiteSettings(BaseGenericSetting):
     """Общие настройки сайта — одна запись, редактируется в Settings → Site settings."""
-    site_name = models.CharField(max_length=100, default="Broker Control")
+    site_name = models.CharField(max_length=100, default="Check All Brokers")
     site_description = models.CharField(max_length=500, default="Независимый информационно-аналитический проект по проверке брокеров")
     logo = models.ImageField(upload_to='site/', blank=True)
     favicon = models.ImageField(upload_to='site/', blank=True)
 
-    meta_title = models.CharField(max_length=60, default="Broker Control - Анализ и оценка брокерских компаний")
-    meta_description = models.CharField(max_length=160, default="Независимый информационно-аналитический проект по проверке брокеров и предоставлению юридических консультаций")
+    meta_title = models.CharField(max_length=60, default="Check All Brokers - Анализ и оценка брокерских компаний")
+    meta_description = models.CharField(max_length=160, default="Независимый информационно-аналитический проект по проверке брокеров")
 
     og_image = models.ImageField(upload_to='site/', blank=True)
     twitter_image = models.ImageField(upload_to='site/', blank=True)
@@ -34,8 +34,8 @@ class SiteSettings(BaseGenericSetting):
 
     company_registration_number = models.CharField(
         max_length=20, blank=True,
-        verbose_name="Регистрационный номер компании (Companies House)",
-        help_text="Например: 12345678",
+        verbose_name="FIN CONSULTING LIMITED",
+        help_text="Company Number: 16382190",
     )
 
     google_analytics_id = models.CharField(max_length=50, blank=True)
