@@ -173,7 +173,7 @@
                                 {% for item in faq_items %}
                                 <div class="faq-item">
                                     <button class="faq-question" type="button" aria-expanded="false">
-                                        <span>{{ item.question }}</span>
+                                        <span>{{ item.question|safe }}</span>
                                         <span class="faq-toggle-icon">+</span>
                                     </button>
                                     <div class="faq-answer">

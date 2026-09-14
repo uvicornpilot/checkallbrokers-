@@ -5635,7 +5635,7 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 /* === Modal form: тот же современный стиль полей === */
 .modal__form .form-group__input {
-    padding: 15px 18px;
+    padding: 13px 16px;
     border: 1.5px solid #e5e8eb;
     border-radius: 12px;
     background: #fafbfc;
@@ -5824,4 +5824,37 @@ p, h1, h2, h3, h4, h5, h6, span, div, a {
 
 .form-trust__item i {
     font-size: 12px;
+}
+/* === MODAL smaller === */
+@media (max-width: 480px) {
+    .modal__content {
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+
+    .modal__form {
+        padding: 16px 20px 20px;
+    }
+
+    .modal__form .form-group {
+        margin-bottom: 10px;
+    }
+
+    .modal__form .form-group__input {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+
+    .modal__form .btn--primary {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+/* === FAQ strong colour === */
+.faq-broker-name {
+    color: var(--primary-dark);
+    font-weight: 800;
+    background: rgba(22, 198, 70, 0.1);
+    padding: 1px 6px;
+    border-radius: 4px;
 }
