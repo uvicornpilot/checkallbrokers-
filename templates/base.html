@@ -156,10 +156,10 @@
                 <h2 class="modal__header-title">Отказ в выводе средств из {{ post.company_name }}?</h2>
                 <p class="modal__header-subtitle">Проведём экспресс-аудит регламента и условий T&C для досудебного урегулирования.</p>
                 {% elif post and post.title %}
-                <h2 class="modal__header-title">Проблемы с выводом из {{ post.title }}?</h2>
+                <h2 class="modal__header-title">Компания {{ post.title }} не выводит депозит?</h2>
                 <p class="modal__header-subtitle">Анализ отклонений и сверка действий платформы с её регламентом для досудебного урегулирования.</p>
                 {% else %}
-                <h2 class="modal__header-title">Задержки или отказ в выводе средств?</h2>
+                <h2 class="modal__header-title">Отказ в выводе средств?</h2>
                 <p class="modal__header-subtitle">Экспресс-аудит регламента и условий T&C для досудебного урегулирования</p>
                 {% endif %}
                 <span class="modal__trust-badge modal__trust-badge--center">✓ Бесплатная консультация</span>

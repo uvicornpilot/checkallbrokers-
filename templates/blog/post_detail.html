@@ -315,7 +315,8 @@
         "reviewCount": "{{ post.get_reviews_count }}",
         "bestRating": "5",
         "worstRating": "1"
-    }
+    },
+    "termsOfService": "{{ request.scheme }}://{{ request.get_host }}/politika-moderatsii-otzyvov/"
 }
 </script>
 {% endif %}
