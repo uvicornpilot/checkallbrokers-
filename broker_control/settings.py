@@ -47,6 +47,8 @@ INSTALLED_APPS = [
     "forum",
     "legal",
 
+    "django.contrib.sitemaps",
+
 
     "wagtail.contrib.settings",
     "wagtail.contrib.forms",

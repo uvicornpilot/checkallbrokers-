@@ -179,25 +179,28 @@ class BlogIndexPage(Page):
         if category_slug:
             posts = posts.filter(category__slug=category_slug)
 
-            # Лимит видимых статей в листинге — не применяется при поиске (q),
-            # чтобы новые статьи сверх лимита всё равно находились через поиск.
-            if not q:
-                category_obj = Category.objects.filter(slug=category_slug).first()
-                if category_obj and category_obj.visible_limit:
-                    visible_ids = list(
-                        ArticlePage.objects.live().child_of(self)
-                        .filter(category__slug=category_slug)
-                        .order_by("first_published_at")
-                        .values_list("id", flat=True)[:category_obj.visible_limit]
-                    )
-                    posts = posts.filter(id__in=visible_ids)
-
         tag_slug = request.GET.get("tag")
         if tag_slug:
             posts = posts.filter(tags__slug=tag_slug)
 
         if q:
             posts = posts.search(q)
+        else:
+            # Лимит применяется всегда (общий список и список по категории),
+            # кроме поиска (q) — там доступны все статьи без ограничений.
+            limited_categories = Category.objects.filter(visible_limit__isnull=False)
+            excluded_ids = []
+            for cat in limited_categories:
+                extra_ids = list(
+                    ArticlePage.objects.live().child_of(self)
+                    .filter(category=cat)
+                    .order_by("first_published_at")
+                    .values_list("id", flat=True)[cat.visible_limit:]
+                )
+                excluded_ids.extend(extra_ids)
+
+            if excluded_ids:
+                posts = posts.exclude(id__in=excluded_ids)
 
         paginator = Paginator(posts, 9)
         context["posts"] = paginator.get_page(request.GET.get("page"))
