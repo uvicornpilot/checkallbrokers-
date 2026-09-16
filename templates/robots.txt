@@ -4,7 +4,7 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /static/admin/
 
-# AI-РєСЂР°СѓР»РµСЂС‹ вЂ” СЂР°Р·СЂРµС€РµРЅС‹ СЏРІРЅРѕ
+# AI-краулеры — разрешены явно
 User-agent: GPTBot
 Allow: /
 
