@@ -1,4 +1,4 @@
-// Broker Control - Main JavaScript
+//  Main JavaScript
 
 // CKEditor context menu enhancement
 function enhanceCKEditorContextMenu() {
@@ -914,8 +914,18 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 });
 
-// === Exit-intent: mouseleave (desktop) + скролл 60% (mobile) + таймер 12 сек как гарантированный fallback ===
+// === Exit-intent: mouseleave (desktop) + скролл 60% (mobile) + таймер 25 сек как гарантированный fallback ===
+// Работает только на статьях из категорий: obzor-brokerov, proverennyye-birzhi-white-list, preduprezhdeniya-i-skam-black-list
 function initExitIntent() {
+    const ALLOWED_CATEGORIES = ['obzor-brokerov', 'proverennyye-birzhi-white-list', 'preduprezhdeniya-i-skam-black-list'];
+
+    const articleEl = document.querySelector('.blog-detail');
+    const categorySlug = articleEl ? articleEl.dataset.categorySlug : null;
+
+    if (!ALLOWED_CATEGORIES.includes(categorySlug)) {
+        return;
+    }
+
     if (sessionStorage.getItem('modalShown')) {
         return;
     }
@@ -946,11 +956,12 @@ function initExitIntent() {
         }, { passive: true });
     }
 
-    // --- Fallback: гарантированный показ через 12 секунд, если ничего выше не сработало ---
+    // --- Fallback: гарантированный показ через 25 секунд, если ничего выше не сработало ---
     setTimeout(function () {
         showConsultationModal();
-    }, 12000);
+    }, 25000);
 }
+
 // === FAQ: аккордеон ===
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.faq-question').forEach(function (btn) {

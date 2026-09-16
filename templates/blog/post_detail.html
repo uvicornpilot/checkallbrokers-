@@ -2,7 +2,7 @@
 {% load static wagtailimages_tags %}
 
 {% block content %}
-<div class="blog-detail" {% if post.disable_copy %}data-disable-copy="true" {% endif %} {% if post.disable_right_click %}
+<div class="blog-detail" data-category-slug="{% if post.category %}{{ post.category.slug }}{% endif %}" {% if post.disable_copy %}data-disable-copy="true" {% endif %} {% if post.disable_right_click %}
      data-disable-right-click="true"
      {% endif %}>
     <div class="container">
