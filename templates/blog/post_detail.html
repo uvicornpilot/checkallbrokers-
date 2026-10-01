@@ -166,7 +166,7 @@
 
                         <!-- FAQ -->
                         {% with faq_items=post.get_faq_items %}
-                        {% if post.show_faq and faq_items %}
+{% if post.show_faq and faq_items and show_contact_form %}
                         <section class="faq-section" id="faq">
                             <h2 class="faq-title">Часто задаваемые вопросы (FAQ)</h2>
                             <div class="faq-list">
@@ -187,13 +187,17 @@
                         {% endwith %}
 
                     </article>
-                    {% include 'includes/form_banner.html' %}
+                    {% if show_contact_form %}
+    {% include 'includes/form_banner.html' %}
+    {% endif %}
 
                 </div>
                 <!-- Form -->
+                {% if show_contact_form %}
                 <div class="col-lg-4" style="margin-top: 60px;">
                     {% include "includes/sidebar_form.html" %}
                 </div>
+                {% endif %}
                 <!-- Reviews Section -->
                 {% include 'blog/includes/reviews.html' %}
 
@@ -323,7 +327,7 @@
 
 <!-- FAQ JSON-LD -->
 {% with faq_items=post.get_faq_items %}
-{% if post.show_faq and faq_items %}
+{% if post.show_faq and faq_items and show_contact_form %}
 <script type="application/ld+json">
 {
     "@context": "https://schema.org",

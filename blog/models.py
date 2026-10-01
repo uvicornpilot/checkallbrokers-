@@ -226,6 +226,18 @@ class FAQItem(Orderable):
 class ArticlePage(Page):
     template = "blog/post_detail.html"
 
+    FORM_CATEGORY_SLUGS = [
+        "obzor-brokerov",
+        "preduprezhdeniya-i-skam-black-list",
+        "proverennyye-birzhi-white-list",
+        "vozvrat-sredstv_i_osparivaniye_platezhey",
+    ]
+
+    def show_contact_form(self):
+        """Показывать ли форму обратной связи в сайдбаре, в зависимости от категории."""
+        return bool(self.category and self.category.slug in self.FORM_CATEGORY_SLUGS)
+
+
     excerpt = models.CharField(
         max_length=300, blank=True,
         help_text="Короткое описание для карточек статей и OG-превью",
@@ -434,6 +446,7 @@ class ArticlePage(Page):
     def get_context(self, request, *args, **kwargs):
         context = super().get_context(request, *args, **kwargs)
         context["post"] = self
+        context["show_contact_form"] = self.show_contact_form()
 
         if self.pk:
             related = (
