@@ -915,9 +915,14 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 // === Exit-intent: mouseleave (desktop) + скролл 60% (mobile) + таймер 25 сек как гарантированный fallback ===
-// Работает только на статьях из категорий: obzor-brokerov, proverennyye-birzhi-white-list, preduprezhdeniya-i-skam-black-list
+// Работает только на статьях из категорий: obzor-brokerov, proverennyye-birzhi-white-list, preduprezhdeniya-i-skam-black-list. vozvrat-sredstv_i_osparivaniye_platezhey
 function initExitIntent() {
-    const ALLOWED_CATEGORIES = ['obzor-brokerov', 'proverennyye-birzhi-white-list', 'preduprezhdeniya-i-skam-black-list'];
+    const ALLOWED_CATEGORIES = [
+        'obzor-brokerov',
+        'proverennyye-birzhi-white-list',
+        'preduprezhdeniya-i-skam-black-list',
+        'vozvrat-sredstv_i_osparivaniye_platezhey'
+    ];
 
     const articleEl = document.querySelector('.blog-detail');
     const categorySlug = articleEl ? articleEl.dataset.categorySlug : null;
@@ -932,7 +937,6 @@ function initExitIntent() {
 
     const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-    // --- Desktop: курсор уходит за верх окна ---
     if (!isMobile) {
         document.addEventListener('mouseleave', function (e) {
             if (e.clientY <= 0) {
@@ -941,7 +945,6 @@ function initExitIntent() {
         });
     }
 
-    // --- Mobile: скролл 60%+ страницы ---
     if (isMobile) {
         window.addEventListener('scroll', function () {
             if (sessionStorage.getItem('modalShown')) return;
@@ -956,12 +959,10 @@ function initExitIntent() {
         }, { passive: true });
     }
 
-    // --- Fallback: гарантированный показ через 25 секунд, если ничего выше не сработало ---
     setTimeout(function () {
         showConsultationModal();
     }, 25000);
 }
-
 // === FAQ: аккордеон ===
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.faq-question').forEach(function (btn) {
